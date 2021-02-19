@@ -1,0 +1,9 @@
+mail:
+  from: aufnahmekommission@mind-hochschul-netzwerk.de
+  bcc:
+  - aufnahmekommission@mind-hochschul-netzwerk.de
+mysql:
+  host: $MYSQL_HOST
+  user: $MYSQL_USER
+  password: $MYSQL_PASSWORD
+  database: $MYSQL_DATABASE

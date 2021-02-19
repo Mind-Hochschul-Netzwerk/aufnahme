@@ -1,0 +1,24 @@
+hilfe:
+  title: Hilfe
+  template: hilfe.tpl
+antraege:
+  title: Zu bearbeitende Anträge
+  ladenfunktion: antraege__laden
+  lib: lib_antraege.php
+mails:
+  title: Versandte Mails
+  template: mails.tpl
+  ladenfunktion: mails__laden
+  lib: lib_mails.php
+  nichtimmenue: true
+entschiedeneAntraege:
+  title: Bereits bearbeitete (aufgenommene, abgelehnte) Anträge
+  ladenfunktion: antraege__laden
+  ladenparameter:
+    archiv: true
+  lib: lib_antraege.php
+benutzer:
+  title: Benutzer dieses Web-Systems einsehen und verwalten
+  template: benutzer.tpl
+  ladenfunktion: benutzer__laden
+  lib: UserController.php

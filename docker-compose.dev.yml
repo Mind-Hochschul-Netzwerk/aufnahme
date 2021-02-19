@@ -1,0 +1,23 @@
+version: "3.5"
+services:
+  aufnahme:
+    volumes:
+      - "./app:/var/www"
+      - "./update.d:/update.d"
+
+  aufnahme-adminer:
+    image: adminer
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.aufnahme-adminer.entrypoints=websecure
+      - traefik.http.routers.aufnahme-adminer.rule=Host(`aufnahme-adminer.${DOMAINNAME}`)
+      - traefik.http.routers.aufnahme-adminer.tls=true
+      - traefik.http.routers.aufnahme-adminer.tls.certresolver=myresolver
+      - traefik.http.routers.aufnahme-adminer.middlewares=secheader
+    depends_on:
+      - aufnahme-database
+    networks:
+      - traefik
+      - aufnahme

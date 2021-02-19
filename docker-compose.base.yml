@@ -1,0 +1,55 @@
+version: '3.5'
+services:
+  aufnahme-database:
+    image: mariadb
+    restart: unless-stopped
+    environment:
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD
+      - MYSQL_DATABASE=database
+      - MYSQL_ROOT_PASSWORD
+    volumes:
+      - "./docker/sql:/docker-entrypoint-initdb.d:ro"
+      - "${VOLUMES_DIR}/mariadb:/var/lib/mysql"
+    networks:
+      - aufnahme
+
+  aufnahme:
+    image: mindhochschulnetzwerk/aufnahme
+    restart: unless-stopped
+    environment:
+      - DOMAINNAME
+      - MYSQL_HOST=aufnahme-database
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD
+      - MYSQL_DATABASE=database
+      - TOKEN_KEY
+      - LDAP_HOST=ldap://ldap:389/
+      - LDAP_ROLES_DN=ou=roles,dc=mind-hochschul-netzwerk,dc=de
+      - LDAP_PEOPLE_DN=ou=people,dc=mind-hochschul-netzwerk,dc=de
+      - LDAP_BIND_DN=cn=admin,dc=mind-hochschul-netzwerk,dc=de
+      - LDAP_BIND_PASSWORD
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.aufnahme.entrypoints=websecure
+      - traefik.http.routers.aufnahme.rule=Host(`aufnahme.${DOMAINNAME}`)
+      - traefik.http.routers.aufnahme.tls=true
+      - traefik.http.routers.aufnahme.tls.certresolver=myresolver
+      - traefik.http.routers.aufnahme.middlewares=secheader
+    depends_on:
+      - aufnahme-database
+    networks:
+      - traefik
+      - aufnahme
+      - ldap
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+  ldap:
+    name: ldap
+    external: true
+  aufnahme:
+    name: aufnahme

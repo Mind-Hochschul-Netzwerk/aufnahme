@@ -1,0 +1,340 @@
+/* ##### Common Styles ##### */
+
+body{
+  color: black;
+  background-color: rgb(240,240,240);
+  font-family: verdana, helvetica, arial, sans-serif;
+  font-size: 71%;  /* Enables font size scaling in MSIE */
+  margin: 0;
+  padding: 0;
+}
+
+form{font-size:inherit;}
+
+img{border:0;}
+
+th, td{
+  vertical-align:top;
+  font-size:8.5pt;
+}
+
+table{
+  text-align:left;
+}
+
+
+html > body{
+  font-size: 8.5pt;
+}
+
+acronym, .titleTip {
+  border-bottom: 1px dotted rgb(153,153,153);
+  cursor: help;
+  margin: 0;
+  padding: 0 0 0.4px 0;
+}
+
+.doNotDisplay {
+  display: none;
+}
+
+.smallCaps {
+  font-size: 110%;
+  font-variant: small-caps;
+}
+
+
+/* ##### Header ##### */
+
+.superHeader {
+  color: white;
+  background-color: rgb(100,135,220);
+  height: 2em;
+}
+
+.superHeader a {
+  color: white;
+  background-color: transparent;
+  text-decoration: none;
+  font-size: 91%;
+  margin: 0;
+  padding: 0 0.5ex 0 0.25ex;
+}
+
+.superHeader a:hover {
+  text-decoration: underline;
+}
+
+.superHeader .left {
+  position: absolute;
+  left: 1.5mm;
+  top: 0.75ex;
+}
+
+.superHeader .right {
+  position: absolute;
+  right: 1.5mm;
+  top: 0.75ex;
+}
+
+.midHeader {
+  color: rgb(39,78,144);
+  background-color: rgb(140,170,230);
+  height:62px;
+}
+
+.midHeader .right{
+  position:absolute;
+  right:1.5mm;
+}
+
+.headerTitle {
+  font-size: 337%;
+  font-weight: normal;
+  margin: 0 0 0 4mm;
+  padding: 0.25ex 0;
+}
+
+.subHeader {
+  color: white;
+  font-weight:bold;
+  background-color: rgb(0,51,153);
+  margin: 0;
+  padding: 1ex 1ex 1ex 1.5mm;
+}
+
+.superHeader .highlight, .subHeader .highlight {
+  color: rgb(253,160,91);
+  background-color: transparent;
+}
+
+
+/* ##### Side Bar ##### */
+
+#side-bar {
+  width: 180px;
+  float: left;
+  clear: left;
+  border-right: 1px solid rgb(153,153,153);
+  font-size: 105%;
+  padding: 0;
+  margin: 0;
+}
+
+#side-bar div {
+  border-bottom: 1px solid rgb(153,153,153);
+}
+
+#side-bar div.login{
+   border:none;
+   font-size:90%;
+   margin-top:5em;
+   margin-bottom:0.5em;
+   padding-left:0.5em;
+   line-height:2em;
+}
+
+#side-bar ul {
+  list-style-type: none;
+  list-style-position: outside;
+  margin: 0 0 0 0;
+  padding: 0 0 0 1.5em;
+}
+
+#side-bar li {
+  margin: 0;
+  padding: 0.3ex 0;
+}
+
+#side-bar a, #side-bar strong{
+  color: rgb(0,102,204);
+  background-color: transparent;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  padding-left:3px;
+  display: block;
+}
+
+#side-bar a:hover {
+  color: white;
+  background-color: rgb(100,135,220);
+  text-decoration: none;
+}
+
+#side-bar strong {
+  font-weight:normal;
+  color: rgb(253,160,91);
+  border-top: 1px solid rgb(153,153,153);
+  border-bottom: 1px solid rgb(153,153,153);
+  border-left: 1px solid rgb(153,153,153);
+}
+
+#side-bar a.offen {
+  color:black;
+}
+
+.lighterBackground {
+  padding-top:2em;
+  color: inherit;
+  background-color: white;
+}
+
+
+/* ##### Main Copy ##### */
+#main-copy {
+  color: black;
+  background-color: white;
+  text-align: justify;
+  line-height: 1.5em;
+  margin: 0 0 0 180px;
+  padding: 0.5mm 25mm 25mm 25mm;
+  border-left: 1px solid rgb(153,153,153);
+  font-size:inherit;
+}
+
+#main-copy p, #main-copy address {
+  margin: 2.2em 1ex 0.3em 1ex;
+  padding: 0;
+}
+
+#main-copy a {
+  color: rgb(0,102,204);
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+#main-copy a:hover {
+  text-decoration: none;
+}
+
+#main-copy h1 {
+  color: white;
+  background-color: rgb(100,135,220);
+  font-size: 100%;
+  font-weight: bold;
+  margin: 3em 0 0 0;
+  padding: 0.5ex 0 0.5ex 1ex;
+}
+
+#main-copy h2 {
+  color: white;
+  background-color: rgb(0,51,153);
+  font-size: 90%;
+  font-weight: bold;
+  margin: 2em 0 0 0;
+  padding: 0.1ex 0 0.1ex 1ex;
+}
+
+dl {
+  margin: 1em 1ex 2em 1ex;
+  padding: 0;
+}
+
+dt {
+  font-weight: bold;
+  margin: 0 0 0 0;
+  padding: 0;
+}
+
+dd {
+  margin: 0 0 2em 2em;
+  padding: 0;
+}
+
+#main-copy ul{
+ margin-left:1em;
+ padding-left:1em;
+}
+
+
+/* ##### Footer ##### */
+
+#footer {
+  color: white;
+  background-color: rgb(100,135,220);
+  font-size: 91%;
+  margin: 0;
+  padding: 1em 2.5mm 2.5ex 2.5mm;
+  clear: both;
+}
+
+#footer .left {
+  line-height: 1.45em;
+  float: left;
+  clear: left;
+}
+
+#footer .right {
+  text-align: right;
+  line-height: 1.45em;
+}
+
+#footer .center {
+ text-align:center;
+}
+
+#footer a {
+  color: white;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+#footer a:hover {
+  text-decoration: none;
+}
+
+#footer img{
+   margin-left: 5px;
+   margin-right:5px;
+
+}
+
+/* Dringlichkeiten */
+.UAmittel{
+  background: #ff0;
+}
+
+.UAhoch{
+  background: #f00;
+}
+
+.UAwarten{
+   background: #888;
+}
+
+.gruen{
+  background: #0b0;
+}
+
+.antrag_bewertung_rot{
+  background: #FCC;
+}
+
+.antrag_bewertung_gelb{
+  background: #FFC;
+}
+
+.antrag_bewertung_gruen{
+  background: #CFC;
+}
+
+.antrag_bewertung_weiss{
+  background: #FFF;
+}
+
+
+/* Formularsachen */
+
+.formwarnung{color:red; font-weight:bold;}
+.formmeldung{
+  color:#000;
+  font-weight:bold;
+  border:2px solid #990;
+  padding:3px;
+  background:#ee0;
+}
+
+input, select, textarea {
+ border:1px solid #888;
+}
