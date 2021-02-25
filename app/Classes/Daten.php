@@ -335,7 +335,7 @@ class Daten
     }
 
     //gibt alle Datenbankfelder als ass. Array zurück.
-    public function toArray()
+    public function toArray(): array
     {
         global $daten__keys;
         $array = [];
@@ -343,53 +343,5 @@ class Daten
             $array[$k] = $this->$k;
         }
         return $array;
-    }
-
-    //Übernimmt die Daten in die Mitgliederdatenbank (bei Aufnahme).
-    //gibt ass. Array zurück mit 'success' (true/false) und 'meldung'.
-    public function inMitgliederDB()
-    {
-        $daten = $this->toArray();
-        $secret = getenv('SECRET_MITGLIEDERVERWALTUNG');
-
-        $json = json_encode($daten, true);
-        $hash = md5($json);
-        $signature = md5("$secret-$hash");
-
-        $mv_url = getenv('MHN_MV_API_URL');
-        $curl = curl_init($mv_url);
-        //set the url, number of POST vars, POST data
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(['data' => $json, 'signature' => $signature]));
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-        //execute post
-        $response = curl_exec($curl);
-
-        if ($response === false) {
-            return [
-                'success' => false,
-                'meldung' => 'Fehler beim Übertragen der Daten an die Mitgliederverwaltung ("' . curl_error($curl
-                    ) . '")!',
-            ];
-        } else {
-            $json_decode = json_decode($response);
-            //close connection
-            curl_close($curl);
-
-            if ($json_decode->status == 'success') {
-                return [
-                    'success' => true,
-                    'meldung' => 'Alles super! :)',
-                    'aktivierungslink' => $json_decode->aktivierungslink,
-                ];
-            } else {
-                return [
-                    'success' => false,
-                    'meldung' => 'Fehler beim Übertragen der Daten an die Mitgliederverwaltung ("' . curl_error($curl
-                        ) . '","' . $json_decode->text . '")!',
-                ];
-            }
-        }
     }
 }

@@ -28,7 +28,8 @@ $global_status = [
     Antrag::STATUS_AUFNEHMEN => 'Aufnehmen',
     Antrag::STATUS_ABLEHNEN => 'Ablehnen',
     Antrag::STATUS_AUF_ANTWORT_WARTEN => 'Auf Antwort warten',
-    Antrag::STATUS_AUFGENOMMEN => 'Aufgenommen',
+    Antrag::STATUS_AUFGENOMMEN => 'Aktivierungslink verschickt',
+    Antrag::STATUS_AKTIVIERT => 'Mitgliedskonto aktiviert',
     Antrag::STATUS_ABGELEHNT => 'Abgelehnt',
 ];
 

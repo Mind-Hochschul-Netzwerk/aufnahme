@@ -10,6 +10,7 @@ use MHN\Aufnahme\Service\Configuration;
 use PHPMailer;
 use Smarty;
 use MHN\Aufnahme\Antrag;
+use MHN\Aufnahme\Service\Token;
 
 class lib_antraege
 {
@@ -382,15 +383,13 @@ class lib_antraege
         if ($_POST['formular'] != 'aufnahme') {
             return;
         }
-        $r = $this->antrag->daten->inMitgliederDB();
-        if (!$r['success']) {
-            $this->smarty->assign('meldung_speichern', 'Fehler beim importieren in Mitglieder-DB: ' . $r['meldung']);
-            return;
-        }
 
         $mailtext_orig = $_POST['mailtext'];
+
         // Aktivierungslink ersetzen:
-        $mailtext = str_replace('%aktivierungslink%', $r['aktivierungslink'], $mailtext_orig);
+        $token = Token::encode([$this->antrag->getId()], '', getenv('TOKEN_KEY'));
+        $link = 'https://mitglieder.' . getenv('DOMAINNAME') . '/aufnahme.php?token=' . $token;
+        $mailtext = str_replace('%aktivierungslink%', $link, $mailtext_orig);
 
         try {
             $this->sende_email_kand($_POST['betreff'], $mailtext, 'aufnahme', $mailtext_orig);

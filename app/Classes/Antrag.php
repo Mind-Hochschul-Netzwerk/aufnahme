@@ -18,7 +18,8 @@ class Antrag
     const STATUS_AUF_ANTWORT_WARTEN = 4;
     const STATUS_AUFGENOMMEN = 5;
     const STATUS_ABGELEHNT = 6;
-
+    const STATUS_AKTIVIERT = 7;
+    
     /** @var Sql */
     private $sql = null;
 
@@ -305,6 +306,11 @@ class Antrag
         $this->daten = $daten;
     }
 
+    public function getDaten(): Daten
+    {
+        return $this->daten;
+    }
+
     /**
      * Speichert einen neuen Antrag.
      *
@@ -409,9 +415,8 @@ class Antrag
     public static function alleOffenenAntraege()
     {
         $antraege = Sql::queryToArray(Sql::getInstance()->select(self::TABLE_NAME, 'antrag_id',
-            'status != ' . self::STATUS_AUFGENOMMEN . ' AND status != ' . self::STATUS_ABGELEHNT . ' ORDER BY ts_antrag'
-        )
-        );
+            'status NOT IN ( ' . implode(',', [self::STATUS_AUFGENOMMEN, self::STATUS_ABGELEHNT, self::STATUS_AKTIVIERT]) . ') ORDER BY ts_antrag'
+        ));
         $result = [];
         foreach ($antraege as $a) {
             array_push($result, new Antrag($a['antrag_id']));
@@ -422,7 +427,7 @@ class Antrag
     public static function alleEntschiedenenAntraege()
     {
         $antraege = Sql::queryToArray(Sql::getInstance()->select(self::TABLE_NAME, 'antrag_id',
-            'status = ' . self::STATUS_AUFGENOMMEN . ' OR status = ' . self::STATUS_ABGELEHNT . ' ORDER BY ts_entscheidung'
+            'status IN ( ' . implode(',', [self::STATUS_AUFGENOMMEN, self::STATUS_ABGELEHNT, self::STATUS_AKTIVIERT]) . ') ORDER BY ts_entscheidung'
         )
         );
         $result = [];
@@ -458,15 +463,19 @@ class Antrag
 
     /**
      * Löscht alle alten Anträge
-     *   - angenommene Anträge nach 2 Wochen
+     *   - angenommene Anträge, die in die Mitgliederdatenbank übernommen wurden, 14 Tage nach der Entscheidung
+     *   - angenommene Anträge, die nicht in die Mitgliederdatenbank übernommen wurden, nach 365 Tagen
      *   - abgelehnte Anträge nach 60 Wochen (Einspruchsmöglichkeit bis zur Mitgliederversammlung)
      */
     public function deleteOld()
     {
-        // angenommene Anträge
-        Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_AUFGENOMMEN . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*14');
+        // aktivierte Benutzerkonten
+        Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_AKTIVIERT . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*14');
+
+        // nicht aktivierte Benutzerkonten
+        Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_AUFGENOMMEN . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*365');
 
         // abgelehnte Anträge
-        Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_ABGELEHNT . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*60');
+        Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_ABGELEHNT . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*7*60');
     }
 }
