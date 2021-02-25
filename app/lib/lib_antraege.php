@@ -50,7 +50,7 @@ class lib_antraege
             die('Ungültiger Statuscode');
         }
 
-        $this->antrag->setStatus((int)$_POST['status'], $this->loggedInUser->getId());
+        $this->antrag->setStatus((int)$_POST['status'], $this->loggedInUser->getUserName());
 
         $this->antrag->setBemerkung($_POST['bemerkung']);
         $ts_nachfrage = Util::datumToTs($_POST['datum_nachfrage']);
@@ -127,7 +127,7 @@ class lib_antraege
         }
 
         $vote = new Vote();
-        $vote->setUserId($this->loggedInUser->getId());
+        $vote->setUserName($this->loggedInUser->getUserName());
         $vote->setAntragId($this->antrag->getId());
         $vote->setValue((int)$_POST['votum']);
         $vote->setNachfrage(trim($_POST['nachfrage']));
@@ -199,7 +199,7 @@ class lib_antraege
             // ggf. alle rausschmeissen, die selbst schon gevotet:
             if (strpos($this->parameter['urlparams'], 'nichtvonmirgevotet') !== false) {
                 foreach ($antraege as $k => $antrag) {
-                    $vote = $antrag->getLatestVoteByUserId($this->loggedInUser->getId());
+                    $vote = $antrag->getLatestVoteByUserName($this->loggedInUser->getUserName());
 
                     if ($vote === null) {
                         continue;
@@ -215,27 +215,27 @@ class lib_antraege
                 $this->smarty->assign('nichtvonmirgevotet', true);
             }
             // die Voten extrahieren:
-            $userids_gevotet = [];
+            $names_gevotet = [];
             foreach ($antraege as $antrag) {
                 $votes = $antrag->getVotes();
                 foreach ($votes as $vote) {
-                    $userid = $vote->getUserId();
-                    if (!in_array($userid, $userids_gevotet, true)) {
-                        $userids_gevotet[] = $userid;
+                    $userName = $vote->getUserName();
+                    if (!in_array($userName, $userNames_gevotet, true)) {
+                        $userNames_gevotet[] = $userName;
                     }
                 }
             }
-            $usernames = [];
-            foreach ($userids_gevotet as $uid) {
-                $user = UserRepository::getInstance()->findOneById((int)$uid);
+            $realNames = [];
+            foreach ($userNames_gevotet as $userName) {
+                $user = UserRepository::getInstance()->findOneByUserName($userName);
                 if (!$user) {
-                    $usernames[$uid] = '(unbekannt)';
+                    $realName[$userName] = '(unbekannt)';
                 } else {
-                    $usernames[$uid] = $user->getUsername();
+                    $realNames[$userName] = $user->getRealName();
                 }
             }
-            $this->smarty->assign('usernames', $usernames);
-            $this->smarty->assign('userids_gevotet', $userids_gevotet);
+            $this->smarty->assign('realNames', $realNames);
+            $this->smarty->assign('userNames_gevotet', $userNames_gevotet);
             $this->smarty->assign('antraege', $antraege);
 
             return;
@@ -277,7 +277,7 @@ class lib_antraege
             $emails = EmailRepository::getInstance()->findByAntrag($this->antrag);
             $emailData = [];
             foreach ($emails as $email) {
-                $user = UserRepository::getInstance()->findOneById($email->getSenderUserId());
+                $user = UserRepository::getInstance()->findOneByUserName($email->getSenderUserName());
                 $emailData[] = [
                     'userName' => ($user !== null) ? $user->getUserName() : 'unbekannt',
                     'time' => $email->getCreationTime()->getTimestamp(),
@@ -342,7 +342,7 @@ class lib_antraege
         $db_mail = new Email();
         $db_mail->setAntragId($this->antrag->getID());
         $db_mail->setGrund($grund);
-        $db_mail->setSenderUserId($this->loggedInUser->getId());
+        $db_mail->setSenderUserName($this->loggedInUser->getUserName());
         $db_mail->setSubject($betreff);
         if ($inhalt_alt == '') {
             $db_mail->setText($inhalt);
@@ -399,7 +399,7 @@ class lib_antraege
             return;
         }
 
-        $this->antrag->setStatus(Antrag::STATUS_AUFGENOMMEN, $this->loggedInUser->getId());
+        $this->antrag->setStatus(Antrag::STATUS_AUFGENOMMEN, $this->loggedInUser->getUserName());
         $this->antrag->setTsEntscheidung(time());
 
         if (!$this->antrag->save()) {
@@ -436,7 +436,7 @@ class lib_antraege
             return;
         }
 
-        $this->antrag->setStatus(Antrag::STATUS_AUF_ANTWORT_WARTEN, $this->loggedInUser->getId());
+        $this->antrag->setStatus(Antrag::STATUS_AUF_ANTWORT_WARTEN, $this->loggedInUser->getUserName());
         $this->antrag->setTsNachfrage(time());
         if (!$this->antrag->save()) {
             $this->smarty->assign('meldung_speichern', 'Fehler beim Ändern des Status. Die E-Mail wurde aber versandt.');
@@ -467,7 +467,7 @@ class lib_antraege
             return;
         }
 
-        $this->antrag->setStatus(Antrag::STATUS_ABGELEHNT, $this->loggedInUser->getId());
+        $this->antrag->setStatus(Antrag::STATUS_ABGELEHNT, $this->loggedInUser->getUserName());
         $this->antrag->setTsEntscheidung(time());
         if (!$this->antrag->save()) {
             $this->smarty->assign('meldung_speichern', 'Fehler beim Ändern des Status. Die E-Mail wurde aber versandt.');

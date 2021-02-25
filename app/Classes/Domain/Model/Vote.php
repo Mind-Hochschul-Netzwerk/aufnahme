@@ -7,6 +7,7 @@ namespace MHN\Aufnahme\Domain\Model;
  */
 
 use DateTime;
+use MHN\Aufnahme\Domain\Model\User;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
 
 /**
@@ -48,8 +49,8 @@ class Vote
     /** @var int */
     private $antragId = 0;
 
-    /** @var int */
-    private $userId = 0;
+    /** @var string */
+    private $userName = '';
 
     /** @var int */
     private $value = 0;
@@ -77,7 +78,7 @@ class Vote
     /**
      * @return UserRepository
      */
-    private function getUserRepository()
+    private function getUserRepository(): UserRepository
     {
         $this->userRepository = $this->userRepository ?: UserRepository::getInstance();
 
@@ -86,46 +87,28 @@ class Vote
 
     /**
      * Gibt die ID des Antrags zurück, zu der das Votum gehört
-     *
-     * @return int
      */
-    public function getAntragId()
+    public function getAntragId(): int
     {
         return $this->antragId;
     }
 
     /**
      * Setzt die ID des Antrags, zu der das Votum gehört
-     *
-     * @param int $antragId
-     *
-     * @return void
      */
-    public function setAntragId($antragId)
+    public function setAntragId(int $antragId): void
     {
         $this->antragId = $antragId;
     }
 
-    /**
-     * Gibt die User-ID des abstimmenden Users zurück.
-     *
-     * @return int
-     */
-    public function getUserId()
+    public function getUserName(): string
     {
-        return $this->userId;
+        return $this->userName;
     }
 
-    /**
-     * Setzt die User-ID des abstimmenden Users.
-     *
-     * @param int $userId
-     *
-     * @return void
-     */
-    public function setUserId($userId)
+    public function setUserName(string $userName): void
     {
-        $this->userId = $userId;
+        $this->userName = $userName;
     }
 
     /**
@@ -133,20 +116,14 @@ class Vote
      *
      * @return User|null User-Objekt, falls gefunden
      */
-    public function getUser()
+    public function getUser(): ?User
     {
-        return $this->getUserRepository()->findOneById($this->getUserId());
+        return $this->getUserRepository()->findOneByUserName($this->getUserName());
     }
 
-    /**
-     * Gibt den Namen des abstimmenden Users zurück.
-     *
-     * @return string
-     */
-    public function getUserName()
+    public function getRealName(): string
     {
-        $user = $this->getUser();
-        return ($user !== null) ? $user->getUserName() : 'unbekannt';
+        return $this->getUser()->getRealName();
     }
 
     /**
@@ -154,105 +131,79 @@ class Vote
      *
      * @return DateTime
      */
-    public function getTime()
+    public function getTime(): DateTime
     {
         return $this->time;
     }
 
     /**
      * Setzt den Zeitpunkt zurück, an dem das Votum abgegeben wurde.
-     *
-     * @param DateTime $time
-     *
-     * @return void
      */
-    public function setTime(DateTime $time)
+    public function setTime(DateTime $time): void
     {
         $this->time = $time;
     }
 
     /**
      * Gibt das Abstimmungsverhalten (Vote::NEIN/JA/NACHFRAGEN/ENTHALTUNG) zurück.
-     *
-     * @return int
      */
-    public function getValue()
+    public function getValue(): int
     {
         return $this->value;
     }
 
     /**
      * Setzt das Abstimmungsverhalten (Vote::NEIN/JA/NACHFRAGEN/ENTHALTUNG).
-     *
-     * @param int $value
-     *
-     * @return void
      */
-    public function setValue($value)
+    public function setValue(int $value): void
     {
         $this->value = $value;
     }
 
     /**
      * Gibt das Abstimmungsverhalten als lesbare Kurzfassung zurück.
-     *
-     * @return string
      */
-    public function getValueReadable()
+    public function getValueReadable(): string
     {
         return self::VALUE_READABLE[$this->value];
     }
 
     /**
      * Gibt die CSS-Klasse zur Einfärbung zurück
-     *
-     * @return string
      */
-    public function getValueColor()
+    public function getValueColor(): string
     {
         return self::VALUE_COLORS[$this->value];
     }
 
     /**
      * Gibt die Bemerkung zurück.
-     *
-     * @return string
      */
-    public function getBemerkung()
+    public function getBemerkung(): string
     {
         return $this->bemerkung;
     }
 
     /**
      * Setzt die Bemerkung.
-     *
-     * @param string $bemerkung
-     *
-     * @return void
      */
-    public function setBemerkung($bemerkung)
+    public function setBemerkung(string $bemerkung): void
     {
         $this->bemerkung = $bemerkung;
     }
 
     /**
      * Gibt den Nachfragen-Text zurück.
-     *
-     * @return string
      */
-    public function getNachfrage()
+    public function getNachfrage(): string
     {
         return $this->nachfrage;
     }
 
     /**
      * Setzt den Nachfragen-Text.
-     *
-     * @param string $nachfrage
-     *
-     * @return void
      */
-    public function setNachfrage($nachfrage)
+    public function setNachfrage(string $nachfrage): void
     {
         $this->nachfrage = $nachfrage;
     }

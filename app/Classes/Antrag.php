@@ -38,7 +38,7 @@ class Antrag
 
     private $ts_statusaenderung = 0;
 
-    private $statusaenderung_uid = 0;
+    private $statusaenderung_userName = '';
 
     private $bemerkung;
 
@@ -92,7 +92,7 @@ class Antrag
         $this->ts_antwort = $row['ts_antwort'];
         $this->ts_entscheidung = $row['ts_entscheidung'];
         $this->ts_statusaenderung = $row['ts_statusaenderung'];
-        $this->statusaenderung_uid = (int)$row['statusaenderung_uid'];
+        $this->statusaenderung_userName = (string)$row['statusaenderung_username'];
         $this->bemerkung = $row['bemerkung'];
         $this->kommentare = $row['kommentare'];
         $this->fragen_werte = @unserialize($row['fragen_werte']);
@@ -219,14 +219,9 @@ class Antrag
      *
      * @return string Benutzername; "system", falls der Status nie geändert wurde.
      */
-    public function getStatusaenderungUsername()
+    public function getStatusaenderungUserName(): string
     {
-        $user = UserRepository::getInstance()->findOneById($this->statusaenderung_uid);
-
-        if ($user === null) {
-            return 'system';
-        }
-        return $user->getUsername();
+        return $this->statusaenderung_userName ? $this->statusaenderung_userName : "system";
     }
 
     //gibt 'niedrig', 'mittel' oder 'hoch' zurÃ¼ck, je nach
@@ -250,10 +245,9 @@ class Antrag
      * Ändert den Status
      *
      * @param $status neuer Status
-     * @param $userId User-ID
-     * @return void
+     * @param $userName
      */
-    public function setStatus($status, $userId)
+    public function setStatus(int $status, string $userName): void
     {
         global $global_status;
         assert(in_array($status, array_keys($global_status), true));
@@ -262,7 +256,7 @@ class Antrag
         }
         $this->status = $status;
         $this->ts_statusaenderung = time();
-        $this->statusaenderung_uid = $userId;
+        $this->statusaenderung_username = $userName;
     }
 
     public function setBemerkung($bem)
@@ -327,7 +321,7 @@ class Antrag
             'ts_antwort' => $this->ts_antwort,
             'ts_entscheidung' => $this->ts_entscheidung,
             'ts_statusaenderung' => $this->ts_statusaenderung,
-            'statusaenderung_uid' => $this->statusaenderung_uid,
+            'statusaenderung_username' => $this->statusaenderung_userName,
             'bemerkung' => (string)$this->bemerkung,
             'kommentare' => (string)$this->kommentare,
             'fragen_werte' => serialize($this->fragen_werte),
@@ -376,34 +370,23 @@ class Antrag
         return $this->votes;
     }
 
-    /**
-     * Gibt das letzte Votum zu einer User-ID zurück.
-     *
-     * @param int $userId
-     *
-     * @return Vote|null
-     */
-    public function getLatestVoteByUserId($userId)
+    public function getLatestVoteByUserName(string $userName): ?Vote
     {
         if ($this->latestVotes === null) {
             $this->latestVotes = VoteRepository::getInstance()->findLatestByAntrag($this);
         }
-        if (!isset($this->latestVotes[$userId])) {
+        if (!isset($this->latestVotes[$userName])) {
             return null;
         }
-        return $this->latestVotes[$userId];
+        return $this->latestVotes[$userName];
     }
 
     /**
-     * Gibt das letzte Abstimmungsverhalten zu einer User-ID als lesbare Kurzfassung zurück.
-     *
-     * @param int $userId
-     *
-     * @return string
+     * Gibt das letzte Abstimmungsverhalten zu einem Benutzer als lesbare Kurzfassung zurück.
      */
-    public function getLatestVoteReadableByUserId($userId)
+    public function getLatestVoteReadableByUserName(string $userName): string
     {
-        $vote = $this->getLatestVoteByUserId($userId);
+        $vote = $this->getLatestVoteByUserName($userName);
         if ($vote === null) {
             return '--';
         }
@@ -411,15 +394,11 @@ class Antrag
     }
 
     /**
-     * Gibt die CSS-Farbklasse für das letzte Abstimmungsverhalten zu einer User-ID zurück.
-     *
-     * @param int $userId
-     *
-     * @return string
+     * Gibt die CSS-Farbklasse für das letzte Abstimmungsverhalten zu einem Benutzer zurück.
      */
-    public function getLatestVoteColorByUserId($userId)
+    public function getLatestVoteColorByUserName(string $userName): string
     {
-        $vote = $this->getLatestVoteByUserId($userId);
+        $vote = $this->getLatestVoteByUserName($userName);
         if ($vote === null) {
             return 'antrag_bewertung_weiss';
         }
@@ -466,7 +445,7 @@ class Antrag
             'bemerkung' => $this->bemerkung,
             'kommentare' => $this->kommentare,
             'ts_statusaenderung' => $this->ts_statusaenderung,
-            'statusaenderung_uid' => $this->statusaenderung_uid,
+            'statusaenderung_username' => $this->statusaenderung_userName,
             'ts_erinnerung' => $this->ts_erinnerung,
             'fragen_werte' => @serialize($this->fragen_werte),
         ];

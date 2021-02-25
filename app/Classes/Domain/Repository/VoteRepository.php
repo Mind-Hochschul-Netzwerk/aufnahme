@@ -58,7 +58,7 @@ class VoteRepository implements \MHN\Aufnahme\Interfaces\Singleton
      *
      * @param Antrag $antrag
      *
-     * @return Vote[] assoziatives Array [User-Id => Vote-Value, ...]
+     * @return Vote[] assoziatives Array [UserName => Vote-Value, ...]
      */
     public function findLatestByAntrag(Antrag $antrag)
     {
@@ -66,10 +66,10 @@ class VoteRepository implements \MHN\Aufnahme\Interfaces\Singleton
 
         $latestVotes = [];
         foreach ($votes as $vote) {
-            if (isset($latestVotes[$vote->getUserId()])) {
+            if (isset($latestVotes[$vote->getUserName()])) {
                 continue;
             }
-            $latestVotes[$vote->getUserId()] = $vote;
+            $latestVotes[$vote->getUserName()] = $vote;
         }
 
         return $latestVotes;
@@ -86,7 +86,7 @@ class VoteRepository implements \MHN\Aufnahme\Interfaces\Singleton
     {
         $vote = new Vote();
         $vote->setAntragId((int)$row['antrag_id']);
-        $vote->setUserId((int)$row['user_id']);
+        $vote->setUserName((string)$row['username']);
         $vote->setTime(new DateTime('@' . $row['ts']));
         $vote->setValue((int)$row['votum']);
         $vote->setBemerkung($row['bemerkung']);
@@ -106,7 +106,7 @@ class VoteRepository implements \MHN\Aufnahme\Interfaces\Singleton
         $data = [
             'antrag_id' => $vote->getAntragId(),
             'votum' => $vote->getValue(),
-            'user_id' => $vote->getUserId(),
+            'username' => $vote->getUserName(),
             'ts' => $vote->getTime()->getTimestamp(),
             'bemerkung' => $vote->getBemerkung(),
             'nachfrage' => $vote->getNachfrage(),

@@ -81,13 +81,16 @@ class UserRepository implements \MHN\Aufnahme\Interfaces\Singleton
 
     public function findOneByUserName(string $userName, bool $skipRoleCheck = false): ?User
     {
+        if (!$userName) {
+            return new User('unknown', 'unknown', false);
+        }
         try {
             $result = $this->ldap->query(getenv('LDAP_PEOPLE_DN'), '(&(objectclass=inetOrgPerson)(cn=' . $userName . '))')->execute();
         } catch (\Exception $e) {
             error_log($e->getMessage());
             return null;
         }
-        if ($result) {
+        if ($result[0]) {
             $entry = $result[0];
             $userName = $entry->getAttribute('cn')[0];
             $hasRole = $skipRoleCheck ? true : $this->hasAufnahmeRole($userName);

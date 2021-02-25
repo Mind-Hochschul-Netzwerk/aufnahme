@@ -16,8 +16,8 @@ Beim Status "Auf Antwort warten" ist die Farbe grau, egal wie alt er ist.</p>
     {foreach from=$antraege key=index item=a}
         {if $index % 20 === 0}
         <tr><th>Nr.</th><th>Antragssteller</th><th>Antragsdatum</th><th>Status</th><th>Statusdatum</th>
-            {foreach from=$userids_gevotet item=i}
-                <th>{$usernames.$i|escape}</th>
+            {foreach from=$userNames_gevotet item=i}
+                <th>{$realNames.$i|escape}</th>
             {/foreach}
             <th>Bemerkung</th>
         </tr>
@@ -28,8 +28,8 @@ Beim Status "Auf Antwort warten" ist die Farbe grau, egal wie alt er ist.</p>
             <td class="UA{$a->getDringlichkeit()}">{$a->getDatumAntrag()}</td>
             <td{if $a->getGruen()} class="gruen"{/if}>{$a->getStatusReadable()}</td>
             <td>{$a->getDatumStatusaenderung()}</td>
-            {foreach from=$userids_gevotet item=uid}
-                <td class="{$a->getLatestVoteColorByUserId($uid)}">{$a->getLatestVoteReadableByUserId($uid)}</td>
+            {foreach from=$userNames_gevotet item=userName}
+                <td class="{$a->getLatestVoteColorByUserName($userName)}">{$a->getLatestVoteReadableByUserName($userName)}</td>
             {/foreach}
             <td>{$a->getBemerkung()|escape}</td>
         </tr>

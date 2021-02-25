@@ -41,7 +41,7 @@ auf den Seiten dort) automatisch gesetzt.<br /> Ansonsten gibt es keine automati
         <tr><th>Wer</th><th>Votum</th><th>Datum</th><th>Bemerkung</th><th>Nachfrage</th></tr>
         {foreach from=$antrag->getVotes() item=i}
             <tr>
-                <td>{$i->getUsername()|escape}</td>
+                <td>{$i->getRealName()|escape}</td>
                 <td>{$i->getValueReadable()}</td>
                 <td>{$i->getTime()|date_format:"%d.%m.%Y"}</td><td>{$i->getBemerkung()|escape|nl2br}</td>
                 <td>{$i->getNachfrage()|escape|nl2br}</td>

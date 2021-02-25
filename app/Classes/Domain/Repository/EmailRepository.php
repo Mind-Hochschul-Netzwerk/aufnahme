@@ -61,7 +61,7 @@ class EmailRepository implements \MHN\Aufnahme\Interfaces\Singleton
         $email = new Email();
         $email->setAntragId((int)$row['antrag_id']);
         $email->setGrund($row['grund']);
-        $email->setSenderUserName($row['username']);
+        $email->setSenderUserName((string)$row['username']);
         $email->setCreationTime(new DateTime('@' . $row['ts']));
         $email->setSubject($row['mailsubject']);
         $email->setText($row['mailtext']);

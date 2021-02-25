@@ -86,7 +86,7 @@ class Email
         return $this->senderUserName;
     }
 
-    public function setSenderUserName($senderUserName)
+    public function setSenderUserName(string $senderUserName)
     {
         $this->senderUserName = $senderUserName;
     }
