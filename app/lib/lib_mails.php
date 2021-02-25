@@ -25,9 +25,9 @@ function mails__laden($parameter)
     if (!isset($mail)) {
         $smarty->assign('fehler', 'Mail nicht gefunden');
     } else {
-        $user = UserRepository::getInstance()->findOneById($mail->getSenderUserId());
+        $user = UserRepository::getInstance()->findOneByUserName($mail->getSenderUserName());
         $smarty->assign('mail', [
-            'userName' => ($user !== null) ? $user->getUserName() : 'unbekannt',
+            'userName' => ($user !== null) ? $user->getRealName() : 'unbekannt',
             'time' => $mail->getCreationTime()->getTimestamp(),
             'grund' => ucfirst($mail->getGrund()),
             'subject' => $mail->getSubject(),

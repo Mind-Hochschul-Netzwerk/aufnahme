@@ -73,7 +73,7 @@ class LoginGatekeeper implements \MHN\Aufnahme\Interfaces\Singleton
         $this->user = $user;
         // neue Session-ID zuweisen, um Session-Hijacking-Gefahr zu minimieren
         Session::getInstance()->regenerateId();
-        $_SESSION['userid'] = $this->user->getId();
+        $_SESSION['userName'] = $this->user->getUserName();
         $this->updateLoggedInUserBySession();
     }
 
@@ -84,7 +84,7 @@ class LoginGatekeeper implements \MHN\Aufnahme\Interfaces\Singleton
      */
     public function logOut()
     {
-        unset($_SESSION['userid']);
+        unset($_SESSION['userName']);
         $this->updateLoggedInUserBySession();
     }
 
@@ -107,7 +107,7 @@ class LoginGatekeeper implements \MHN\Aufnahme\Interfaces\Singleton
      */
     public function hasCurrentLoginSession(User $user)
     {
-        return $this->isUserLoggedIn() && $this->getLoggedInUser()->getId() === $user->getId();
+        return $this->isUserLoggedIn() && $this->getLoggedInUser()->getUserName() === $user->getUserName();
     }
 
     /**
@@ -194,10 +194,12 @@ class LoginGatekeeper implements \MHN\Aufnahme\Interfaces\Singleton
         $this->smarty->assign('entry_angemeldet', false);
         $this->user = null;
 
-        if (isset($_SESSION['userid'])) {
-            $this->user = UserRepository::getInstance()->findOneById($_SESSION['userid']);
-            if ($this->user === null) {
-                $this->exitToLoginForm('Dein Benutzerkonto wurde gelöscht');
+        
+        if (isset($_SESSION['userName'])) {
+            $this->user = UserRepository::getInstance()->findOneByUserName($_SESSION['userName']);
+            if ($this->user === null || !$this->user->hasAufnahmeRole()) {
+                $this->logOut();
+                $this->exitToLoginForm('Du hast kein Zugriffsrecht mehr.');
             }
             $this->smarty->assign('entry_username', $this->user->getUserName());
             $this->smarty->assign('entry_angemeldet', true);

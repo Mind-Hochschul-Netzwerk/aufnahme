@@ -19,8 +19,8 @@ class Email
     /** @var string */
     private $grund = '';
 
-    /** @var int */
-    private $senderUserId = 0;
+    /** @var string */
+    private $senderUserName = '';
 
     /** @var DateTime */
     private $creationTime = null;
@@ -81,25 +81,14 @@ class Email
         $this->grund = $grund;
     }
 
-    /**
-     * Gibt die User-ID des Absenders zurück.
-     *
-     * @return int
-     */
-    public function getSenderUserId()
+    public function getSenderUserName(): string
     {
-        return $this->senderUserId;
+        return $this->senderUserName;
     }
 
-    /**
-     * Setzt die User-ID des Absenders.
-     *
-     * @param int $senderUserId
-     * @return void
-     */
-    public function setSenderUserId($senderUserId)
+    public function setSenderUserName($senderUserName)
     {
-        $this->senderUserId = $senderUserId;
+        $this->senderUserName = $senderUserName;
     }
 
     /**

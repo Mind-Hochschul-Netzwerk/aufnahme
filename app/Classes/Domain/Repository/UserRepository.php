@@ -7,8 +7,9 @@ namespace MHN\Aufnahme\Domain\Repository;
  */
 
 use MHN\Aufnahme\Domain\Model\User;
-use MHN\Aufnahme\Service\PasswordManager;
-use MHN\Aufnahme\Sql;
+use Symfony\Component\Ldap\Ldap;
+use Symfony\Component\Ldap\Exception\InvalidCredentialsException;
+use Symfony\Component\Ldap\Entry;
 
 /**
  * Verwaltet die Benutzerdatenbank
@@ -17,11 +18,7 @@ class UserRepository implements \MHN\Aufnahme\Interfaces\Singleton
 {
     use \MHN\Aufnahme\Traits\Singleton;
 
-    /** @var string */
-    const TABLE_NAME = 'users';
-
-    /** @var Sql */
-    private $sql = null;
+    private $ldap = null;
 
     /**
      * Instanziiert das Objekt
@@ -30,7 +27,37 @@ class UserRepository implements \MHN\Aufnahme\Interfaces\Singleton
      */
     private function __construct()
     {
-        $this->sql = Sql::getInstance();
+        $this->ldap = Ldap::create('ext_ldap', ['connection_string' => getenv('LDAP_HOST')]);
+        $this->bind();
+    }
+    
+    private function bind()
+    {
+        $this->ldap->bind(getenv('LDAP_BIND_DN'), getenv('LDAP_BIND_PASSWORD'));
+    }
+
+    private function checkPassword(string $userName, string $password): bool
+    {
+        $passwordCorrect = true;
+        try {
+            $this->ldap->bind($this->getDnByUsername($userName), $password);
+        } catch (InvalidCredentialsException $e) {
+            $passwordCorrect = false;
+        }
+        $this->bind();
+        return $passwordCorrect;
+    }
+
+    private function hasAufnahmeRole(string $userName) 
+    {
+        $query = '(&(objectclass=groupOfNames)(cn=aufnahme)(member=' . $this->getDnByUserName($userName) . '))';
+        $entry = $this->ldap->query(getenv('LDAP_ROLES_DN'), $query)->execute()[0];
+        return !empty($entry);
+    }
+
+    private function getDnByUserName(string $userName): string
+    {
+        return 'cn=' . ldap_escape($userName) . ',' . getenv('LDAP_PEOPLE_DN');
     }
 
     /**
@@ -40,59 +67,36 @@ class UserRepository implements \MHN\Aufnahme\Interfaces\Singleton
      * @param string $password im Klartext
      * @return User|null falls gefunden
      */
-    public function findOneByCredentials($userName, $password)
+    public function findOneByCredentials(string $userName, string $password): ?User
     {
-        $user = $this->findOneByName($userName);
+        if (!$this->checkPassword($userName, $password)) {
+            return null;
+        }
+        $user = $this->findOneByUserName($userName);
+        if (!$user->hasAufnahmeRole()) {
+            return null;
+        }
+        return $user;
+    }
 
-        if ($user !== null
-            && PasswordManager::getInstance()->validate($user->getPasswordHash(), $password)
-        ) {
-            return $user;
+    public function findOneByUserName(string $userName, bool $skipRoleCheck = false): ?User
+    {
+        try {
+            $result = $this->ldap->query(getenv('LDAP_PEOPLE_DN'), '(&(objectclass=inetOrgPerson)(cn=' . $userName . '))')->execute();
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            return null;
+        }
+        if ($result) {
+            $entry = $result[0];
+            $userName = $entry->getAttribute('cn')[0];
+            $hasRole = $skipRoleCheck ? true : $this->hasAufnahmeRole($userName);
+            return new User($userName, $entry->getAttribute('givenName')[0] . ' ' . $entry->getAttribute('sn')[0], $hasRole);
         } else {
-            return null;
+            return new User($userName, $userName, false);
         }
     }
-
-    /**
-     * Gibt einen Benutzer zu einem Benutzernamen zurück
-     *
-     * @param string $userName
-     * @return User|null falls gefunden
-     */
-    public function findOneByName($userName)
-    {
-        $where = sprintf('username="%s"', $this->sql->escape($userName));
-        return $this->findOneByWhere($where);
-    }
-
-    /**
-     * Gibt den Benutzer mit der gegebenen ID zurück
-     *
-     * @param int $id
-     * @return User|null
-     */
-    public function findOneById($id)
-    {
-        return $this->findOneByWhere('userid=' . $id);
-    }
-
-    /**
-     * Gibt einen Benutzer zu einer WHERE-Bedingung zurück.
-     *
-     * @param string $where
-     * @return User|null
-     */
-    private function findOneByWhere($where)
-    {
-        $result = $this->sql->select(self::TABLE_NAME, '*', $where);
-
-        if ($result->num_rows === 0) {
-            return null;
-        }
-
-        return $this->createUserObject($result->fetch_assoc());
-    }
-
+    
     /**
      * Gibt ein Array mit allen Benutzern zurück
      *
@@ -100,90 +104,21 @@ class UserRepository implements \MHN\Aufnahme\Interfaces\Singleton
      */
     public function findAll()
     {
-        $result = $this->sql->select(self::TABLE_NAME, '*');
+        $result = $this->ldap->query(getenv('LDAP_ROLES_DN'), '(cn=aufnahme)')->execute();
 
-        $users = [];
-        while (($row = $result->fetch_assoc())) {
-            $users[] = $this->createUserObject($row);
-        }
+        $members = array_map(function ($dn) {
+            if (substr($dn, 0, strlen('cn=')) !== 'cn=') {
+                return null;
+            }
+            if (substr($dn, -strlen(getenv('LDAP_PEOPLE_DN'))) !== getenv('LDAP_PEOPLE_DN')) {
+                return null;
+            }
+            $userName = substr(substr($dn, strlen('cn=')), 0, -1-strlen(getenv('LDAP_PEOPLE_DN')));
+            return $this->findOneByUserName($userName);
+        }, $result[0]->getAttribute('member'));
 
-        return $users;
-    }
-
-    /**
-     * Erstellt ein User-Objekt mit den angegeben Daten
-     *
-     * @param mixed[] $row Datensatz aus der Datenbank
-     * @return User
-     */
-    private function createUserObject(array $row)
-    {
-        $user = new User();
-        $user->setId((int)$row['userid']);
-        $user->setUserName($row['username']);
-        $user->setRealName($row['realname']);
-        $user->setPasswordHash($row['password']);
-        return $user;
-    }
-
-    /**
-     * Speichert einen Benutzer in der Datenbank.
-     *
-     * Falls der Benutzer noch nicht in der Datenbank steht, wird der Datensatz
-     * neu angelegt und die ID gesetzt. Ansonsten wird der Datensatz aktualisiert.
-     *
-     * @param User $user
-     * @return void
-     */
-    public function save(User $user)
-    {
-        if ($user->getId() !== 0) {
-            $this->update($user);
-        } else {
-            $this->create($user);
-        }
-    }
-
-    /**
-     * Legt einen neuen Benutzerdatensatz in der Datenbank an.
-     *
-     * @param User $user
-     * @return void
-     */
-    private function create(User $user)
-    {
-        $data = [
-            'username' => $user->getUserName(),
-            'realname' => $user->getRealName(),
-            'password' => $user->getPasswordHash(),
-        ];
-
-        $id = $this->sql->insert(self::TABLE_NAME, $data);
-        $user->setId($id);
-    }
-
-    /**
-     * Aktualisiert einen Benutzerdatensatz in der Datenbank.
-     *
-     * @param User $user
-     * @return void
-     */
-    private function update(User $user)
-    {
-        $data = [
-            'username' => $user->getUserName(),
-            'realname' => $user->getRealName(),
-            'password' => $user->getPasswordHash(),
-        ];
-
-        $this->sql->update(self::TABLE_NAME, $data, 'userid=' . $user->getId());
-    }
-
-    /**
-     * Löscht einen Benutzer in der Datenbank
-     */
-    public function delete(User $user)
-    {
-        $this->sql->delete(self::TABLE_NAME, 'userid=' . $user->getId());
+        return array_filter($members, function ($entry) {
+            return $entry !== null;
+        });
     }
 }
