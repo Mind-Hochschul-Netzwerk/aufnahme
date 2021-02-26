@@ -2,8 +2,10 @@
 namespace MHN\Aufnahme;
 
 use MHN\Aufnahme\Domain\Model\Vote;
+use MHN\Aufnahme\Daten;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
 use MHN\Aufnahme\Domain\Repository\VoteRepository;
+use MHN\Aufnahme\Domain\Repository\EmailRepository;
 
 class Antrag
 {
@@ -478,7 +480,10 @@ class Antrag
         // abgelehnte Anträge
         Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_ABGELEHNT . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*7*60');
 
-        // Daten löschen
+        // Daten, Mails und Voten löschen
         Sql::getInstance()->delete(Daten::TABLE_NAME, 'WHERE (SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . Daten::TABLE_NAME . '.antrag_id) IS NULL');
+        Sql::getInstance()->delete(EmailRepository::TABLE_NAME, 'WHERE (SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . EmailRepository::TABLE_NAME . '.antrag_id) IS NULL');
+        Sql::getInstance()->delete(VoteRepository::TABLE_NAME, 'WHERE (SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . VoteRepository::TABLE_NAME . '.antrag_id) IS NULL');
+
     }
 }
