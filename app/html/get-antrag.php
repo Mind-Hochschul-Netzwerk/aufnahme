@@ -14,6 +14,12 @@ require_once '../vendor/autoload.php';
 use MHN\Aufnahme\Service\Token;
 use MHN\Aufnahme\Antrag;
 
+// only allow backend calls
+$ip = ip2long($_SERVER['REMOTE_ADDR']);
+if ($ip < ip2long("172.16.0.0") || $ip > ip2long("172.31.255.255")) {
+    die("forbidden");
+}
+
 try {
     $antragId = Token::decode($_REQUEST['token'], null, getenv('TOKEN_KEY'))[0];
 } catch (\Exception $e) {
@@ -22,7 +28,7 @@ try {
 
 $antrag = new Antrag($antragId);
 if ($antrag->getStatus() !== Antrag::STATUS_AUFGENOMMEN) {
-    die("forbidden");
+    die("status invalid");
 }
 
 if ($_REQUEST['action'] === 'data') {
