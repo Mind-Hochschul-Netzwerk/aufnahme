@@ -87,7 +87,7 @@ class Antrag
             throw new \InvalidArgumentException('Antrag-ID ungültig: ' . $id, 1490568194);
         }
 
-        $this->antrag_id = $row['antrag_id'];
+        $this->antrag_id = (int)$row['antrag_id'];
         $this->status = (int)$row['status'];
         $this->ts_antrag = $row['ts_antrag'];
         $this->ts_nachfrage = $row['ts_nachfrage'];
@@ -122,7 +122,7 @@ class Antrag
         return $this->daten->getEMail();
     }
 
-    public function getID()
+    public function getId(): int
     {
         return $this->antrag_id;
     }
@@ -481,9 +481,9 @@ class Antrag
         Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_ABGELEHNT . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*7*60');
 
         // Daten, Mails und Voten löschen
-        Sql::getInstance()->delete(Daten::TABLE_NAME, 'WHERE (SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . Daten::TABLE_NAME . '.antrag_id) IS NULL');
-        Sql::getInstance()->delete(EmailRepository::TABLE_NAME, 'WHERE (SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . EmailRepository::TABLE_NAME . '.antrag_id) IS NULL');
-        Sql::getInstance()->delete(VoteRepository::TABLE_NAME, 'WHERE (SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . VoteRepository::TABLE_NAME . '.antrag_id) IS NULL');
+        Sql::getInstance()->delete(Daten::TABLE_NAME, '(SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . Daten::TABLE_NAME . '.antrag_id) IS NULL');
+        Sql::getInstance()->delete(EmailRepository::TABLE_NAME, '(SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . EmailRepository::TABLE_NAME . '.antrag_id) IS NULL');
+        Sql::getInstance()->delete(VoteRepository::TABLE_NAME, '(SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . VoteRepository::TABLE_NAME . '.antrag_id) IS NULL');
 
     }
 }
