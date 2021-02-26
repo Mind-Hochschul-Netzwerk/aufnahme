@@ -477,5 +477,8 @@ class Antrag
 
         // abgelehnte Anträge
         Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_ABGELEHNT . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*7*60');
+
+        // Daten löschen
+        Sql::getInstance()->delete(Daten::TABLE_NAME, 'WHERE (SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . Daten::TABLE_NAME . '.antrag_id) IS NULL');
     }
 }
