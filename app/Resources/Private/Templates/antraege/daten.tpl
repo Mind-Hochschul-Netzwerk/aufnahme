@@ -1,167 +1,201 @@
-<h1 id="formular">Formular</h1>
-
 <form action="{$self}" method="post">
 
-<table border="0" cellpadding="3" cellspacing="0" class="aufnahme">
-    <tr><td colspan="2"><h2>Basisdaten</h2></td></tr>
+<h3>Basisdaten</h3>
 
-    <tr><td>Name</td><td><input type="text" name="mhn_nachname" size="30" value="{$werte.mhn_nachname|escape}" /></td></tr>
-    <tr><td>Vorname</td><td><input type="text" name="mhn_vorname" size="30" value="{$werte.mhn_vorname|escape}" /></td></tr>
-    <tr><td>E-Mail-Adresse</td><td><input type="text" name="user_email" size="30" value="{$werte.user_email|escape}"/></td></tr>
-    <tr><td>Geburtsdatum (TT.MM.JJJJ)</td><td><input type="text" name="mhn_geburtstag" size="20" value="{$werte.mhn_geburtstag|escape}"/></td></tr>
+<div class="form-group row"'>
+    <label for='input-mhn_vorname' class='col-sm-2 col-form-label'>Vor- und Nachname</label>
+    {include file="antraege/inputElement.tpl" name="mhn_vorname" value=$werte.mhn_vorname width=5}
+    {include file="antraege/inputElement.tpl" name="mhn_nachname" value=$werte.mhn_nachname width=5}
+</div>
 
-    <tr><td>Straße/Hausnummer</td><td>
-        <input type="text" name="mhn_ws_strasse" size="30" value="{$werte.mhn_ws_strasse|escape}"/>
-        <input type="text" name="mhn_ws_hausnr" size="6" value="{$werte.mhn_ws_hausnr|escape}"/>
-    </td></tr>
-    <tr><td>evtl. Adresszusatz</td><td><input type="text" size="30" name="mhn_ws_zusatz" value="{$werte.mhn_ws_zusatz|escape}"/></td></tr>
-    <tr><td>PLZ/Ort</td><td><input type="text" size="5" name="mhn_ws_plz" value="{$werte.mhn_ws_plz|escape}"/>
-        <input type="text" size="30" name="mhn_ws_ort" value="{$werte.mhn_ws_ort|escape}"/>
-    </td></tr>
-    <tr><td>Land</td><td><input type="text" name="mhn_ws_land" size="30" value="{$werte.mhn_ws_land|escape}"/></td></tr>
+{include file='antraege/daten-zeile.tpl' name='user_email' label='E-Mail-Adresse' value=$werte.user_email type="email"}
+{include file='antraege/daten-zeile.tpl' name='mhn_geburtstag' label='Geburtsdatum (TT.MM.JJJJ)' value=$werte.mhn_geburtstag type="date"}
 
-    <tr><td colspan="2"><h2>Zusatzdaten</h2></td></tr>
-    <tr><td colspan="2"><h2>1. Allgemeine Daten</h2></td></tr>
+<div class="form-group row"'>
+    <label for='input-mhn_ws_strasse' class='col-sm-2 col-form-label'>Straße / Hausnummer</label>
+    {include file="antraege/inputElement.tpl" name="mhn_ws_strasse" value=$werte.mhn_ws_strasse width=5}
+    {include file="antraege/inputElement.tpl" name="mhn_ws_hausnr" value=$werte.mhn_ws_hausnr width=5}
+</div>
 
-    <tr><td>Geschlecht</td><td>
-        <select name="mhn_geschlecht">
+{include file='antraege/daten-zeile.tpl' name='mhn_ws_zusatz' label='evtl. Adresszusatz' value=$werte.mhn_ws_zusatz}
+
+<div class="form-group row"'>
+    <label for='input-mhn_ws_plz' class='col-sm-2 col-form-label'>PLZ / Ort</label>
+    {include file="antraege/inputElement.tpl" name="mhn_ws_plz" value=$werte.mhn_ws_plz width=5}
+    {include file="antraege/inputElement.tpl" name="mhn_ws_ort" value=$werte.mhn_ws_ort width=5}
+</div>
+
+{include file='antraege/daten-zeile.tpl' name='mhn_ws_land' label='Land' value=$werte.mhn_ws_land}
+
+<h3>Allgemeine Daten</h3>
+
+<div class="form-group row"'>
+    <label for='input-mhn_geschlecht' class='col-sm-2 col-form-label'>Geschlecht</label>
+    <div class='col-sm-10'><select id='input-mhn_geschlecht' name='mhn_geschlecht' class='form-control'>
             <option value="" {if $werte.mhn_geschlecht eq ''}selected{/if}></option>
             <option value="w" {if $werte.mhn_geschlecht eq 'w'}selected{/if}/>weiblich</option>
             <option value="m" {if $werte.mhn_geschlecht eq 'm'}selected{/if}/>männlich</option>
             <option value="d" {if $werte.mhn_geschlecht eq 'd'}selected{/if}/>divers</option>
-    </td></tr>
-    <tr><td>akad. Titel, falls vorhanden</td><td><input type="text" name="mhn_titel" size="20" value="{$werte.mhn_titel|escape}" /></td></tr>
-    <tr><td>derzeitige Beschäftigung</td><td>
-        <select name="mhn_beschaeftigung" size="1">
+        </select>
+    </div>
+</div>
+
+{include file='antraege/daten-zeile.tpl' name='mhn_titel' label='akad. Titel, falls vorhanden' value=$werte.mhn_titel}
+
+<div class="form-group row"'>
+    <label for='input-mhn_beschaeftigung' class='col-sm-2 col-form-label'>derzeitige Beschäftigung</label>
+    <div class='col-sm-10'><select id='input-mhn_beschaeftigung' name='mhn_beschaeftigung' class='form-control'>
             <option value="Hochschulstudent" selected="selected">Hochschulstudent</option>
             <option value="Schueler" {if $werte.mhn_beschaeftigung eq "Schueler"}selected="selected"{/if}>Schüler</option>
             <option value="Doktorand" {if $werte.mhn_beschaeftigung eq "Doktorand"}selected="selected"{/if}>Doktorand</option>
             <option value="Berufstaetig" {if $werte.mhn_beschaeftigung eq "Berufstaetig"}selected="selected"{/if}>Berufstätig</option>
             <option value="Sonstiges" {if $werte.mhn_beschaeftigung eq "Sonstiges"}selected="selected"{/if}>Sonstiges</option>
         </select>
-    </td></tr>
+    </div>
+</div>
 
-    <tr><td colspan="2"><h2>2. Zweitwohnsitz (z.B. Adresse der Eltern)</h2></td></tr>
-    <tr><td>Straße/Hausnummer</td><td><input type="text" name="mhn_zws_strasse" size="30" value="{$werte.mhn_zws_strasse|escape}" />
-        <input type="text" name="mhn_zws_hausnr" size="6" value="{$werte.mhn_zws_hausnr|escape}" />
-    </td></tr>
-    <tr><td>evtl. Adresszusatz</td><td><input type="text" size="30" name="mhn_zws_zusatz" value="{$werte.mhn_zws_zusatz|escape}"/></td></tr>
-    <tr><td>PLZ/Ort</td><td><input type="text" size="5" name="mhn_zws_plz" value="{$werte.mhn_zws_plz|escape}"/>
-        <input type="text" size="30" name="mhn_zws_ort" value="{$werte.mhn_zws_ort|escape}"/>
-    </td></tr>
-    <tr><td>Land</td><td><input type="text" name="mhn_zws_land" size="30" value="{$werte.mhn_zws_land|escape}"/></td></tr>
+<h3>Zweitwohnsitz (z.B. Adresse der Eltern)</h3>
 
-    <tr><td colspan="2"><h2>3. Kontaktdaten</h2></td></tr>
-    <tr><td>Telefonnummer</td><td><input type="text" name="mhn_telefon" size="30" value="{$werte.mhn_telefon|escape}" /></td></tr>
-    <tr><td>Mobil</td><td><input type="text" name="mhn_mobil" size="30" value="{$werte.mhn_mobil|escape}"/></td></tr>
+<div class="form-group row"'>
+    <label for='input-mhn_zws_strasse' class='col-sm-2 col-form-label'>Straße / Hausnummer</label>
+    {include file="antraege/inputElement.tpl" name="mhn_zws_strasse" value=$werte.mhn_zws_strasse width=5}
+    {include file="antraege/inputElement.tpl" name="mhn_zws_hausnr" value=$werte.mhn_zws_hausnr width=5}
+</div>
 
-    <tr><td colspan="2"><h2>4. Ausbildung und Beruf</h2></td></tr>
-    <tr><td>Studienort</td><td><input type="text" size="50" name="mhn_studienort" value="{$werte.mhn_studienort|escape}"/></td></tr>
-    <tr><td>Studienfach</td><td><input type="text" size="50" name="mhn_studienfach" value="{$werte.mhn_studienfach|escape}"/></td></tr>
-    <tr><td>Hochschule</td><td><input type="text" size="50" name="mhn_unityp" value="{$werte.mhn_unityp|escape}"/></td></tr>
-    <tr><td>Schwerpunktfach</td><td><input type="text" size="50" name="mhn_schwerpunkt" value="{$werte.mhn_schwerpunkt|escape}"/></td></tr>
-    <tr><td>Nebenfach</td><td><input type="text" size="50" name="mhn_nebenfach" value="{$werte.mhn_nebenfach|escape}"/></td></tr>
-    <tr><td>Semester</td><td><input type="text" size="5" name="mhn_semester" value="{$werte.mhn_semester|escape}"/></td></tr>
-    <tr><td>Abschluss</td><td><input type="text" size="50" name="mhn_abschluss" value="{$werte.mhn_abschluss|escape}"/></td></tr>
-    <tr><td>Zweitstudium</td><td><input type="text" size="50" name="mhn_zweitstudium" value="{$werte.mhn_zweitstudium|escape}"/></td></tr>
-    <tr><td>Hochschulaktivitäten (Fachschaftsarbeit etc.)</td><td><input type="text" size="50" name="mhn_hochschulaktivitaet" value="{$werte.mhn_hochschulaktivitaet|escape}"/></td></tr>
-    <tr><td>Stipendien</td><td><input type="text" size="50" name="mhn_stipendien" value="{$werte.mhn_stipendien|escape}"/></td></tr>
-    <tr><td>Auslandsaufenthalte</td><td><input type="text" size="50" name="mhn_ausland" value="{$werte.mhn_ausland|escape}"/></td></tr>
-    <tr><td>Praktika</td><td><input type="text" size="50" name="mhn_praktika" value="{$werte.mhn_praktika|escape}"/></td></tr>
-    <tr><td>Beruf</td><td><input type="text" size="50" name="mhn_beruf" value="{$werte.mhn_beruf|escape}"/></td></tr>
+{include file='antraege/daten-zeile.tpl' name='mhn_zws_zusatz' label='evtl. Adresszusatz' value=$werte.mhn_zws_zusatz}
 
-    <tr><td colspan="2"><h2>5. Ich gebe Auskunft über</h2></td></tr>
-    <tr><td>Studiengang</td><td>
-        <input type="radio" name="mhn_auskunft_studiengang" value="j" {if $werte.mhn_auskunft_studiengang eq 'j'}checked="checked"{/if}/>ja
-        <input type="radio" name="mhn_auskunft_studiengang" value="n" {if $werte.mhn_auskunft_studiengang eq 'n'}checked="checked"{/if} />nein
-    </td></tr>
-    <tr><td>Stipendien</td><td>
-        <input type="radio" name="mhn_auskunft_stipendien" value="j" {if $werte.mhn_auskunft_stipendien eq 'j'}checked="checked"{/if}/>ja
-        <input type="radio" name="mhn_auskunft_stipendien" value="n" {if $werte.mhn_auskunft_stipendien eq 'n'}checked="checked"{/if} />nein
-    </td></tr>
-    <tr><td>Auslandsaufenthalte</td><td>
-        <input type="radio" name="mhn_auskunft_ausland" value="j" {if $werte.mhn_auskunft_ausland eq 'j'}checked="checked"{/if}/>ja
-        <input type="radio" name="mhn_auskunft_ausland" value="n" {if $werte.mhn_auskunft_ausland eq 'n'}checked="checked"{/if} />nein
-    </td></tr>
-    <tr><td>Praktika</td><td>
-        <input type="radio" name="mhn_auskunft_praktika" value="j" {if $werte.mhn_auskunft_praktika eq 'j'}checked="checked"{/if}/>ja
-        <input type="radio" name="mhn_auskunft_praktika" value="n" {if $werte.mhn_auskunft_praktika eq 'n'}checked="checked"{/if} />nein
-    </td></tr>
-    <tr><td>Beruf</td><td>
-        <input type="radio" name="mhn_auskunft_beruf" value="j" {if $werte.mhn_auskunft_beruf eq 'j'}checked="checked"{/if}/>ja
-        <input type="radio" name="mhn_auskunft_beruf" value="n" {if $werte.mhn_auskunft_beruf eq 'n'}checked="checked"{/if} />nein
-    </td></tr>
-    <tr><td>Ich bin prinzipiell bereit zu beruflichem Mentoring</td><td>
-        <input type="radio" name="mhn_mentoring" value="j" {if $werte.mhn_mentoring eq 'j'}checked="checked"{/if}/>ja
-        <input type="radio" name="mhn_mentoring" value="n" {if $werte.mhn_mentoring eq 'n'}checked="checked"{/if} />nein
-    </td></tr>
+<div class="form-group row"'>
+    <label for='input-mhn_zws_plz' class='col-sm-2 col-form-label'>PLZ / Ort</label>
+    {include file="antraege/inputElement.tpl" name="mhn_zws_plz" value=$werte.mhn_zws_plz width=5}
+    {include file="antraege/inputElement.tpl" name="mhn_zws_ort" value=$werte.mhn_zws_ort width=5}
+</div>
 
-    <tr><td colspan="2"><h2>7. Ich könnte bei folgenden Aufgaben helfen</h2></td></tr>
+{include file='antraege/daten-zeile.tpl' name='mhn_zws_land' label='Land' value=$werte.mhn_zws_land}
 
-    <tr><td colspan="2">
-        <input type="checkbox" name="mhn_aufgabe_orte" value="j" {if $werte.mhn_aufgabe_orte eq 'j'}checked="checked"{/if}/>
-        Mithilfe bei der Suche nach Veranstaltungsorte
-    </td></tr>
-    <tr><td colspan="2">
-        <input type="checkbox" name="mhn_aufgabe_vortrag" value="j" {if $werte.mhn_aufgabe_vortrag eq 'j'}checked="checked"{/if}/>
-        einen Vortrag, ein Seminar oder einen Workshop anbieten
-    </td></tr>
-    <tr><td colspan="2">
-        <input type="checkbox" name="mhn_aufgabe_koord" value="j" {if $werte.mhn_aufgabe_koord eq 'j'}checked="checked"{/if}/>
-        eine Koordinations-Aufgabe, die man per Mail/Tel. von zu Hause erledigen kann
-    </td></tr>
-    <tr><td colspan="2">
-        <input type="checkbox" name="mhn_aufgabe_computer" value="j" {if $werte.mhn_aufgabe_computer eq 'j'}checked="checked"{/if}/>
-        eine Aufgabe, in der ich mein Computer-/IT-Wissen einbringen kann
-    </td></tr>
-    <tr><td colspan="2">
-        <input type="checkbox" name="mhn_aufgabe_texte_schreiben" value="j" {if $werte.mhn_aufgabe_texte_schreiben eq 'j'}checked="checked"{/if}/>
-        Texte verfassen (z.B. für die Homepage oder den MHN-Newsletter)
-    </td></tr>
-    <tr><td colspan="2">
-        <input type="checkbox" name="mhn_aufgabe_ansprechpartner" value="j" {if $werte.mhn_aufgabe_ansprechpartner eq 'j'}checked="checked"{/if}/>
-        Ansprechpartner vor Ort (lokale Treffen organisieren, Kontakt zu MHNlern in der Region halten)
-    </td></tr>
-    <tr><td colspan="2">
-        <input type="checkbox" name="mhn_aufgabe_hilfe" value="j" {if $werte.mhn_aufgabe_hilfe eq 'j'}checked="checked"{/if}/>
-        eine kleine, zeitlich begrenzte Aufgabe, wenn ihr dringend Hilfe braucht
-    </td></tr>
+<h3>Kontaktdaten</h3>
 
-    <tr><td colspan="2"><h2>8. MHN</h2></td></tr>
+{include file='antraege/daten-zeile.tpl' name='mhn_telefon' label='Telefonnummer' value=$werte.mhn_telefon type="tel"}
+{include file='antraege/daten-zeile.tpl' name='mhn_mobil' label='Mobil' value=$werte.mhn_mobil type="tel"}
 
-    {foreach from=$fragen item=i key=k}
-        <tr><td>{$i}</td><td><textarea rows="10" cols="40" name="{$k}">{$fragen_werte[$k]|escape}</textarea></td></tr>
-    {/foreach}
+<h3>Ausbildung und Beruf</h3>
 
+{include file='antraege/daten-zeile.tpl' name='mhn_studienort' label='Studienort' value=$werte.mhn_studienort}
+{include file='antraege/daten-zeile.tpl' name='mhn_studienfach' label='Studienfach' value=$werte.mhn_studienfach}
+{include file='antraege/daten-zeile.tpl' name='mhn_unityp' label='Hochschule' value=$werte.mhn_unityp}
+{include file='antraege/daten-zeile.tpl' name='mhn_schwerpunkt' label='Schwerpunktfach' value=$werte.mhn_schwerpunkt}
+{include file='antraege/daten-zeile.tpl' name='mhn_nebenfach' label='Nebenfach' value=$werte.mhn_nebenfach}
+{include file='antraege/daten-zeile.tpl' name='mhn_semester' label='Semester' value=$werte.mhn_semester}
+{include file='antraege/daten-zeile.tpl' name='mhn_abschluss' label='Abschluss' value=$werte.mhn_abschluss}
+{include file='antraege/daten-zeile.tpl' name='mhn_zweitstudium' label='Zweitstudium' value=$werte.mhn_zweitstudium}
+{include file='antraege/daten-zeile.tpl' name='mhn_hochschulaktivitaet' label='Hochschulaktivitäten (Fachschaftsarbeit etc.)' value=$werte.mhn_hochschulaktivitaet}
+{include file='antraege/daten-zeile.tpl' name='mhn_stipendien' label='Stipendien' value=$werte.mhn_stipendien}
+{include file='antraege/daten-zeile.tpl' name='mhn_ausland' label='Auslandsaufenthalte' value=$werte.mhn_ausland}
+{include file='antraege/daten-zeile.tpl' name='mhn_praktika' label='Praktika' value=$werte.mhn_praktika}
+{include file='antraege/daten-zeile.tpl' name='mhn_beruf' label='Beruf' value=$werte.mhn_beruf}
 
-    <tr><td colspan="2"><h2>9. Sonstige Daten</h2></td></tr>
-    <tr><td>Sprachen</td><td><input type="text" size="80" name="mhn_sprachen" value="{$werte.mhn_sprachen|escape}"/></td></tr>
-    <tr><td>Hobbys</td><td><input type="text" size="80" name="mhn_hobbies" value="{$werte.mhn_hobbies|escape}"/></td></tr>
-    <tr><td>Interessen</td><td><input type="text" size="80" name="mhn_interessen" value="{$werte.mhn_interessen|escape}"/></td></tr>
-    <tr><td>ggf. Homepage</td><td><input type="text" size="40" name="mhn_homepage" value="{$werte.mhn_homepage|escape}"/></td></tr>
-    <tr><td>Wie bist du auf MHN aufmerksam geworden?</td>
-    <td><input type="text" size="80" name="mhn_aufmerksam" value="{$werte.mhn_aufmerksam|escape}"/></td></tr>
+<h3>Ich gebe Auskunft über</h3>
 
-    <tr><td>Mensa Mitglied (wenn ja, bitte Mitglied-Nummer angeben)</td>
-        <td>
-            <input type="radio" value="j" name="mhn_mensa" {if $werte.mhn_mensa eq 'j'} checked="checked"{/if}/>ja
-            <input type="text" name="mhn_mensa_nr" size="24" maxlength="5" value="{$werte.mhn_mensa_nr|escape}"/><br />
-            <input type="radio" value="n" name="mhn_mensa" {if $werte.mhn_mensa eq 'n'}checked="checked"{/if}/>nein
-        </td>
-    </tr>
+<div class="form-group row"'>
+    <div class='col-sm-2 col-form-label'>Studiengang</div>
+    <div class='col-sm-10'>
+        <label><input type="radio" name="mhn_auskunft_studiengang" value="j" {if $werte.mhn_auskunft_studiengang eq 'j'}checked="checked"{/if}/> ja</label>
+        <label><input type="radio" name="mhn_auskunft_studiengang" value="n" {if $werte.mhn_auskunft_studiengang eq 'n'}checked="checked"{/if} /> nein</label>
+    </div>
+</div>
 
-    <tr><td>Kommentare, Anregungen</td><td><textarea rows="5" cols="30" name="mhn_bemerkungen">{$werte.mhn_bemerkungen|escape}</textarea></td></tr>
+<div class="form-group row"'>
+    <div class='col-sm-2 col-form-label'>Stipendien</div>
+    <div class='col-sm-10'>
+        <label><input type="radio" name="mhn_auskunft_stipendien" value="j" {if $werte.mhn_auskunft_stipendien eq 'j'}checked="checked"{/if}/> ja</label>
+        <label><input type="radio" name="mhn_auskunft_stipendien" value="n" {if $werte.mhn_auskunft_stipendien eq 'n'}checked="checked"{/if} /> nein</label>
+    </div>
+</div>
 
-    <tr><td colspan="2"><h2>10. Datenschutz</h2></td></tr>
+<div class="form-group row"'>
+    <div class='col-sm-2 col-form-label'>Auslandsaufenthalte</div>
+    <div class='col-sm-10'>
+        <label><input type="radio" name="mhn_auskunft_ausland" value="j" {if $werte.mhn_auskunft_ausland eq 'j'}checked="checked"{/if}/> ja</label>
+        <label><input type="radio" name="mhn_auskunft_ausland" value="n" {if $werte.mhn_auskunft_ausland eq 'n'}checked="checked"{/if} /> nein</label>
+    </div>
+</div>
 
-    <tr><td>kenntnisnahme_datenverarbeitung</td><td>{$werte.kenntnisnahme_datenverarbeitung|escape}</td></tr>
-    <tr><td>kenntnisnahme_datenverarbeitung_text</td><td>{$werte.kenntnisnahme_datenverarbeitung_text|escape}</td></tr>
-    <tr><td>einwilligung_datenverarbeitung</td><td>{$werte.einwilligung_datenverarbeitung|escape}</td></tr>
-    <tr><td>einwilligung_datenverarbeitung_text</td><td>{$werte.einwilligung_datenverarbeitung_text|escape}</td></tr>
+<div class="form-group row"'>
+    <div class='col-sm-2 col-form-label'>Praktika</div>
+    <div class='col-sm-10'>
+        <label><input type="radio" name="mhn_auskunft_praktika" value="j" {if $werte.mhn_auskunft_praktika eq 'j'}checked="checked"{/if}/> ja</label>
+        <label><input type="radio" name="mhn_auskunft_praktika" value="n" {if $werte.mhn_auskunft_praktika eq 'n'}checked="checked"{/if} /> nein</label>
+    </div>
+</div>
 
-</table>
+<div class="form-group row"'>
+    <div class='col-sm-2 col-form-label'>Beruf</div>
+    <div class='col-sm-10'>
+        <label><input type="radio" name="mhn_auskunft_beruf" value="j" {if $werte.mhn_auskunft_beruf eq 'j'}checked="checked"{/if}/> ja</label>
+        <label><input type="radio" name="mhn_auskunft_beruf" value="n" {if $werte.mhn_auskunft_beruf eq 'n'}checked="checked"{/if} /> nein</label>
+    </div>
+</div>
+
+<div class="form-group row"'>
+    <div class='col-sm-2 col-form-label'>Ich bin prinzipiell bereit zu beruflichem Mentoring</div>
+    <div class='col-sm-10'>
+        <label><input type="radio" name="mhn_mentoring" value="j" {if $werte.mhn_mentoring eq 'j'}checked="checked"{/if}/> ja</label>
+        <label><input type="radio" name="mhn_mentoring" value="n" {if $werte.mhn_mentoring eq 'n'}checked="checked"{/if} /> nein</label>
+    </div>
+</div>
+
+<h3>Ich könnte bei folgenden Aufgaben helfen</h3>
+
+<div class="checkbox"><label><input type="checkbox" name="mhn_aufgabe_orte" value="j" {if $werte.mhn_aufgabe_orte eq 'j'}checked="checked"{/if}/>
+        Mithilfe bei der Suche nach Veranstaltungsorte</label></div>
+<div class="checkbox"><label><input type="checkbox" name="mhn_aufgabe_vortrag" value="j" {if $werte.mhn_aufgabe_vortrag eq 'j'}checked="checked"{/if}/>
+        einen Vortrag, ein Seminar oder einen Workshop anbieten</label></div>
+<div class="checkbox"><label><input type="checkbox" name="mhn_aufgabe_koord" value="j" {if $werte.mhn_aufgabe_koord eq 'j'}checked="checked"{/if}/>
+        eine Koordinations-Aufgabe, die man per Mail/Tel. von zu Hause erledigen kann</label></div>
+<div class="checkbox"><label><input type="checkbox" name="mhn_aufgabe_computer" value="j" {if $werte.mhn_aufgabe_computer eq 'j'}checked="checked"{/if}/>
+        eine Aufgabe, in der ich mein Computer-/IT-Wissen einbringen kann</label></div>
+<div class="checkbox"><label><input type="checkbox" name="mhn_aufgabe_texte_schreiben" value="j" {if $werte.mhn_aufgabe_texte_schreiben eq 'j'}checked="checked"{/if}/>
+        Texte verfassen (z.B. für die Homepage oder den MHN-Newsletter)</label></div>
+<div class="checkbox"><label><input type="checkbox" name="mhn_aufgabe_ansprechpartner" value="j" {if $werte.mhn_aufgabe_ansprechpartner eq 'j'}checked="checked"{/if}/>
+        Ansprechpartner vor Ort (lokale Treffen organisieren, Kontakt zu MHNlern in der Region halten)</label></div>
+<div class="checkbox"><label><input type="checkbox" name="mhn_aufgabe_hilfe" value="j" {if $werte.mhn_aufgabe_hilfe eq 'j'}checked="checked"{/if}/>
+        eine kleine, zeitlich begrenzte Aufgabe, wenn ihr dringend Hilfe braucht</label></div>
+
+<h3>MHN</h3>
+
+{foreach from=$fragen item=i key=k}
+    <div class="form-group row"'>
+        <label for='input-{$k}' class='col-sm-2 col-form-label'>{$i}</label>
+        <div class='col-sm-10'><textarea id='input-{$k}' name='{$k}' class='form-control'>{$fragen_werte[$k]|escape}</textarea></div>
+    </div>
+{/foreach}
+
+<h3>Sonstige Daten</h3>
+
+{include file='antraege/daten-zeile.tpl' name='mhn_sprachen' label='Sprachen' value=$werte.mhn_sprachen}
+{include file='antraege/daten-zeile.tpl' name='mhn_hobbies' label='Hobbys' value=$werte.mhn_hobbies}
+{include file='antraege/daten-zeile.tpl' name='mhn_interessen' label='Interessen' value=$werte.mhn_interessen}
+{include file='antraege/daten-zeile.tpl' name='mhn_homepage' label='ggf. Homepage' value=$werte.mhn_homepage}
+{include file='antraege/daten-zeile.tpl' name='mhn_aufmerksam' label='Wie bist du auf MHN aufmerksam geworden?' value=$werte.mhn_aufmerksam}
+
+<div class="form-group row"'>
+    <label for='input-mhn_mensa' class='col-sm-2 col-form-label'>Mensa-Mitglied (wenn ja, bitte Mitglied-Nummer angeben)</label>
+    <div class="col-sm-10">
+            <label><input type="radio" value="j" name="mhn_mensa" {if $werte.mhn_mensa eq 'j'} checked="checked"{/if}/> ja, </label>
+            <label for="input-mhn_mensa_nr">Mitgliedsnummer: </label>
+            <input type="text" id="input-mhn_mensa_nr" name="mhn_mensa_nr" size="24" maxlength="5" value="{$werte.mhn_mensa_nr|escape}" class="form-control" style="width: 100px; display: inline-block;" />
+            <label><input type="radio" value="n" name="mhn_mensa" {if $werte.mhn_mensa eq 'n'}checked="checked"{/if}/> nein</label>
+    </div>
+</div>
+
+<div class="form-group row"'>
+    <label for='input-mhn_bemerkungen' class='col-sm-2 col-form-label'>Kommentare, Anregungen</label>
+    <div class='col-sm-10'><textarea id='input-mhn_bemerkungen' name='mhn_bemerkungen' class='form-control'>{$werte.mhn_bemerkungen|escape}</textarea></div>
+</div>
 
 <input type="hidden" name="formular" value="speichern_antrag_daten" />
-<input type="submit" value="Daten speichern" />
+
+<p><input class="btn btn-success" type="submit" value="Daten speichern" /></p>
+
+
 
 </form>

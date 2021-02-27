@@ -1,6 +1,3 @@
-hilfe:
-  title: Hilfe
-  template: hilfe.tpl
 antraege:
   title: Zu bearbeitende Anträge
   ladenfunktion: antraege__laden

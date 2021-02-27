@@ -1,0 +1,229 @@
+/************ Allgemeines ****************/
+
+label {
+    font-weight: normal;
+}
+
+.row {
+    margin-left: -15px !important;
+    margin-right: -15px !important;
+}
+.row > * {
+    margin-bottom: 0.5em;
+}
+
+.glyphicon-at:before {
+  content: "@";
+}
+
+.glyphicon-at {
+    top: -0.1em;
+}
+
+.glyphicon-paragraph:before {
+  content: "§";
+}
+
+.glyphicon-paragraph {
+    top: -0.5em;
+    left: -0.08em;
+    font-size: 150%;
+}
+
+.toggle.btn {min-width:20px;min-height:32px}
+
+h3 a[href] {
+    color: black;
+}
+
+h3 a[href]:hover {
+    color: gray;
+    text-decoration: underline;
+}
+
+.table.vertical-center td {
+    vertical-align: middle;
+}
+
+.has-danger label {
+    color: red;
+}
+
+.form-control-danger {
+    border-color: red;
+    background-color: #fee;
+}
+
+small {
+    white-space: nowrap;
+}
+
+button.link, button.link:active, button.link:focus {
+    border: none;
+    display: block;
+    background: inherit;
+    padding: none;
+    margin: 0em;
+    color: #337ab7; /* Link */
+}
+
+button.link:hover {
+    color: black;
+}
+
+/************* Navigation *****************/
+
+.navbar-mhn {
+    background-color: white;
+    border: none;
+    margin-bottom: 0px;
+}
+.navbar-mhn .navbar-nav > .active > a {
+    background-color: white;
+    color: orange;
+}
+.navbar-mhn a:hover {
+    background-color: #8caae6 !important;
+    color: white !important;
+}
+.navbar-mhn .navbar-toggle {
+    margin-top: 1.2em;
+    border-color: #205080 !important;
+}
+.navbar-mhn .navbar-toggle:hover, .navbar-mhn .navbar-toggle:focus {
+    background-color: #aabbff;
+}
+
+.navbar-mhn .navbar-toggle * {
+    background-color: #205080 !important;
+}
+#mhn-logo {
+    width: 2.3em;
+    height: 2.3em;
+    vertical-align: middle;
+    margin-right: 0.1em;
+    display: inline-block;
+}
+.navbar-brand {
+    height: 3.9em;
+}
+.nav .glyphicon {
+    margin-top: 0.4em;
+}
+
+/************* klein (Mobil) ****************/
+
+@media (max-width: 767px) {
+    .logo-text {
+        color: #205080;
+    }
+    .navbar-brand:hover .logo-text {
+        color: white;
+    }
+    .navbar-mhn .navbar-header {
+        background-color: #8caae6 !important;
+    }
+    #mhn-icon {
+        display: none;
+    }
+
+}
+
+/*************** mittel (Fenster) ***************/
+
+@media (min-width: 768px) and  (max-width: 1329px) {
+    .logo-text {
+        display: none;
+    }
+    #mhn-icon {
+        width: 1.5em;
+        height: 1.5em;
+        position: relative;
+        top: 0.4em;
+        left: 0.5em;
+        display: inline-block;
+    }
+    .navbar-mhn:hover #mhn-icon {
+        display: none;
+    }
+}
+
+/*************** groß (maximiert)  ***************/
+
+@media (min-width: 1330px) {
+    #mhn-icon {
+        display: none;
+    }
+}
+
+
+
+/************** Profil bearbeiten ***************/
+
+
+div.checkbox {
+    margin-left: 4em;
+}
+
+div.checkbox label {
+    margin-left: -4em;
+    display: block;
+}
+
+div.checkbox input.form-control {
+    width: 80%;
+    display: inline-block;
+}
+
+textarea {
+    font-family: monospace;
+}
+
+/* Dringlichkeiten */
+.UAmittel{
+  background: #ff0;
+}
+
+.UAhoch{
+  background: #f00;
+}
+
+.UAwarten{
+   background: #888;
+}
+
+.gruen{
+  background: #0b0;
+}
+
+.antrag_bewertung_rot{
+  background: #FCC;
+}
+
+.antrag_bewertung_gelb{
+  background: #FFC;
+}
+
+.antrag_bewertung_gruen{
+  background: #CFC;
+}
+
+.antrag_bewertung_weiss{
+  background: #FFF;
+}
+
+
+.formwarnung{color:red; font-weight:bold;}
+.formmeldung{
+  color:#000;
+  font-weight:bold;
+  border:2px solid #990;
+  padding:3px;
+  background:#ee0;
+}
+
+
+.doNotDisplay {
+  display: none;
+}
+

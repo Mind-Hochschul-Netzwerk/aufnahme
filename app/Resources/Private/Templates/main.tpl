@@ -1,43 +1,44 @@
 <!DOCTYPE html>
-<!-- {include file="VERSION.tpl"} -->
 <html lang="de">
   <head>
-    <meta http-equiv="content-type" content="application/html; charset=utf-8" />
-    <meta name="author" content="Jochen Ott" />
-    <meta name="generator" content="author" />
-    <link rel="stylesheet" type="text/css" href="/screen.css" media="screen" title="Standard" />
-    <link rel="stylesheet" type="text/css" href="/print.css" media="print" />
-    <link rel="shortcut icon" href="/img/tut.ico" />
-    <title>AK-Tool {$html_title|default}</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>MHN-Aufnahmetool: {$html_title|default}</title>
+
+    <!-- META -->
+
+    <link rel="icon" href="./favicon.png">
+
+    <!-- CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <link href="/css/sidebar.css" rel="stylesheet">
+    <link href="/css/MHN.css?<?=md5((string)filemtime('/var/www/html/css/MHN.css'))?>" rel="stylesheet">
+
+    <?=$htmlHead?>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->
   </head>
   <body>
-    <div id="top"><a href="#main-copy" class="doNotDisplay doNotPrint">Direkt zum Inhalt</a></div>
-    <div id="header">
-      <div class="superHeader">&nbsp;</div>
-      <div class="midHeader">
-        <h1 class="headerTitle">{$titel|default}</h1>
-      </div>
-      <div class="subHeader">&nbsp;</div>
-    </div>
-    
-    <div id="side-bar">
-     <div class="lighterBackground">
-       <div class="doNotDisplay"><hr /><h2>Hauptmenü</h2></div>
-       {include file="menue.tpl"}
-       {include file="logout.tpl"}
-     </div>
-    </div>
-    
-    <div class="doNotDisplay"><hr /></div>
-    <div id="main-copy">{include file=$innentemplate}</div>
-    
-    <div class="doNotDisplay"><hr /></div>
-    <div id="footer">
-    <div class="left">
-        <a href="https://www.mind-hochschul-netzwerk.de/index.php/impressum/">Impressum</a>
-    </div>
-    <div class="right">
-    </div>
-   </div>
-</body>
+    {include file="menue.tpl"}
+    <div class="main"><div class="container-fluid">
+        <h1>{$titel|default}</h1>
+
+        {include file=$innentemplate}
+
+        <hr />
+    </div></div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script src="js/bootstrap-toggle.min.js"></script>
+    <script src="js/MHN.js"></script>
+  </body>
 </html>

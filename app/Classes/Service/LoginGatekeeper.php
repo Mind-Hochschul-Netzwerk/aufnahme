@@ -151,12 +151,13 @@ class LoginGatekeeper implements \MHN\Aufnahme\Interfaces\Singleton
      */
     private function tryLogoutWithRequest()
     {
-        if (!isset($_POST['ausloggen']) || $_POST['ausloggen'] !== 'ja') {
+        if (!isset($_GET['logout']) || $_GET['logout'] !== '1') {
             return;
         }
 
         $this->logOut();
-        $this->exitToLoginForm('Abmeldevorgang erfolgreich.');
+        header('Location: /');
+        exit;
     }
 
     /**

@@ -1,22 +1,35 @@
+<nav class="navbar navbar-mhn sidebar" role="navigation">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">
+                <span class="sr-only">Navigation aufklappen</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/"><img src="/img/mhn-logo-small.png" id="mhn-logo"><span class="logo-text"> Aufnahme
+            </span>
+                <span class='pull-right showopacity glyphicon'><img src="/img/mhn-logo-small.png" id="mhn-icon"></span>
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+
 {if $menue_vorhanden}
-<ul>
-{strip}
-{section name=i loop=$Menue}
-  {if $Menue[i].name =='--'}
-     </ul>
-     </div><div class="lighterBackground">
-     <ul>
-  {else}
-     {if $Menue[i].name != '' && $Menue[i].nichtimmenue eq false} {*nur Menueeintrage mit Namen und die, die ins Menue sollen*}
-     <li> 
-       <a href="{$Menue[i].link}" title="{$Menue[i].title|escape}" {if $Menue[i].offen}class="offen"{/if}>
-          {if $Menue[i].aktiv}<strong>{$Menue[i].name|escape}</strong>
-          {else}{$Menue[i].name|escape}{/if}
-       </a>
-     </li>
-     {/if}
-   {/if}
-{/section}
-{/strip}
-</ul>
+    <li><a href='/antraege/'>Offene Anträge<span class='pull-right showopacity glyphicon glyphicon-book'></span></a></li>
+    <li><a href='/entschiedeneAntraege/'>Entschiedene Anträge<span class='pull-right showopacity glyphicon glyphicon-book'></span></a></li>
+    <li><a href='/benutzer/'>Aufnahmekommission<span class='pull-right showopacity glyphicon glyphicon-users'></span></a></li>
+    <li><a href='/?logout=1'>Logout<span class='pull-right showopacity glyphicon glyphicon-log-out'></span></a></li>
+{else}
+    <li><a href='/'>Login<span class='pull-right showopacity glyphicon glyphicon-log-in'></span></a></li>
+    <li><a href='/antrag.php'>Mitglied werden<span class='pull-right showopacity glyphicon glyphicon-plus'></span></a></li>
+    <li><a href='https://www.mind-hochschul-netzwerk.de/index.php/datenschutz/'>Datenschutz<span class='pull-right showopacity glyphicon glyphicon-paragraph'></span></a></li>
+    <li><a href='https://www.mind-hochschul-netzwerk.de/index.php/impressum/'>Impressum<span class='pull-right showopacity glyphicon glyphicon-globe'></span></a></li>
 {/if}
+
+
+            </ul>
+        </div>
+    </div>
+</nav>

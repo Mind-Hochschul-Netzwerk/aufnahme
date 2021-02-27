@@ -12,7 +12,7 @@
 Der Status wird grün eingefärbt, falls es 3 oder mehr "Ja"- bei keinen "Nein"- und "Nachfragen"-Voten gibt.<br/>
 Beim Status "Auf Antwort warten" ist die Farbe grau, egal wie alt er ist.</p>
 
-<table border="1" cellpadding="3" cellspacing="0">
+<div class="table-responsive"><table class="table">
     {foreach from=$antraege key=index item=a}
         {if $index % 20 === 0}
         <tr><th>Nr.</th><th>Antragssteller</th><th>Antragsdatum</th><th>Status</th><th>Statusdatum</th>
@@ -34,4 +34,4 @@ Beim Status "Auf Antwort warten" ist die Farbe grau, egal wie alt er ist.</p>
             <td>{$a->getBemerkung()|escape}</td>
         </tr>
     {/foreach}
-</table>
+</table></div>
