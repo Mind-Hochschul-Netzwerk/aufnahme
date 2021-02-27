@@ -120,4 +120,8 @@ auf den Seiten dort) automatisch gesetzt. Ansonsten gibt es keine automatischen 
 
 <h2>5. Daten aus dem Antrag einsehen</h2>
 
-{include file="antraege/daten.tpl"}
+<form action="{$self}" method="post">
+    {include file="antraege/daten.tpl"}
+    <input type="hidden" name="formular" value="speichern_antrag_daten" />
+    <p><input class="btn btn-success" type="submit" value="Daten speichern" /></p>
+</form>

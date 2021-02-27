@@ -19,11 +19,11 @@
 {if $menue_vorhanden}
     <li><a href='/antraege/'>Offene Anträge<span class='pull-right showopacity glyphicon glyphicon-book'></span></a></li>
     <li><a href='/entschiedeneAntraege/'>Entschiedene Anträge<span class='pull-right showopacity glyphicon glyphicon-book'></span></a></li>
-    <li><a href='/benutzer/'>Aufnahmekommission<span class='pull-right showopacity glyphicon glyphicon-users'></span></a></li>
+    <li><a href='/benutzer/'>Aufnahmekommission<span class='pull-right showopacity glyphicon glyphicon-user'></span></a></li>
     <li><a href='/?logout=1'>Logout<span class='pull-right showopacity glyphicon glyphicon-log-out'></span></a></li>
 {else}
     <li><a href='/'>Login<span class='pull-right showopacity glyphicon glyphicon-log-in'></span></a></li>
-    <li><a href='/antrag.php'>Mitglied werden<span class='pull-right showopacity glyphicon glyphicon-plus'></span></a></li>
+    <li><a href='/antrag/'>Mitglied werden<span class='pull-right showopacity glyphicon glyphicon-plus'></span></a></li>
     <li><a href='https://www.mind-hochschul-netzwerk.de/index.php/datenschutz/'>Datenschutz<span class='pull-right showopacity glyphicon glyphicon-paragraph'></span></a></li>
     <li><a href='https://www.mind-hochschul-netzwerk.de/index.php/impressum/'>Impressum<span class='pull-right showopacity glyphicon glyphicon-globe'></span></a></li>
 {/if}

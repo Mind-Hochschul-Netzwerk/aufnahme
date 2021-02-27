@@ -9,20 +9,20 @@
 
     <!-- META -->
 
-    <link rel="icon" href="./favicon.png">
+    <link rel="icon" href="/favicon.png">
 
     <!-- CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-toggle.min.css" rel="stylesheet">
     <link href="/css/sidebar.css" rel="stylesheet">
-    <link href="/css/MHN.css?<?=md5((string)filemtime('/var/www/html/css/MHN.css'))?>" rel="stylesheet">
+    <link href="/css/MHN.css?v1" rel="stylesheet">
 
     <?=$htmlHead?>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="js/html5shiv.min.js"></script>
-      <script src="js/respond.min.js"></script>
+      <script src="/js/html5shiv.min.js"></script>
+      <script src="/js/respond.min.js"></script>
     <![endif]-->
   </head>
   <body>
@@ -35,10 +35,9 @@
         <hr />
     </div></div>
 
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/sidebar.js"></script>
-    <script src="js/bootstrap-toggle.min.js"></script>
-    <script src="js/MHN.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/sidebar.js"></script>
+    <script src="/js/bootstrap-toggle.min.js"></script>
   </body>
 </html>

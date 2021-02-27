@@ -77,14 +77,13 @@ class lib_antraege
             return;
         }
         $daten = Daten::datenByAntragId($this->antrag->getId());
-        global $daten__keys, $daten__keys_checkbox;
 
         // leere Checkboxen werden nicht gesendet
-        foreach ($daten__keys_checkbox as $key) {
+        foreach (Daten::KEYS_CHECKBOX as $key) {
             $_POST[$key] = isset($_POST[$key]) ? 'j' : 'n';
         }
 
-        foreach ($daten__keys as $key) {
+        foreach (Daten::KEYS as $key) {
             // nicht im Formular änderbar:
             if (in_array($key, ['kenntnisnahme_datenverarbeitung', 'kenntnisnahme_datenverarbeitung_text', 'einwilligung_datenverarbeitung', 'einwilligung_datenverarbeitung_text'], true)) {
                 continue;

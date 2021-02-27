@@ -19,3 +19,8 @@ benutzer:
   template: benutzer.tpl
   ladenfunktion: benutzer__laden
   lib: UserController.php
+antrag:
+  title: Aufnahmeantrag
+  ladenfunktion: NeuController__handleRequest
+  lib: NeuController.php
+  public: true

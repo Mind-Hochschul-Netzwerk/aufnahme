@@ -1,3 +1,7 @@
+location ~* \.(ttf|woff|woff2)$ {
+    expires 5d;
+}
+
 location ~ . {
     rewrite ^(/.*)$ /index.php?$1&$args;
 }

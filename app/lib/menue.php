@@ -67,7 +67,7 @@ function menue_entry()
     $smarty->assign('Menue', $menu);
     $smarty->assign('menue_vorhanden', count($menu) > 0);
     $smarty->assign('NVleiste', [$activeEntry]);
-    $smarty->assign('html_title', $activeEntry['title']);
+    $smarty->assign('html_title', $activeEntry['title'] ?? '');
 
     if ($activeEntry === null) {
         @header('HTTP/1.1 404 File Not Found');
