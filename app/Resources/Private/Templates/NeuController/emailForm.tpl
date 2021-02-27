@@ -2,7 +2,7 @@
     <p class="formmeldung">Der verwendete Link ist ungültig (geworden).</p>
 {/if}
 
-<h1>Aufnahmeantrag</h1>
+<h1>Mitgliedsantrag</h1>
 
 <p>Wir freuen uns über dein Interesse, dich aktiv im Mind-Hochschul-Netzwerk (MHN) einzubringen. Das MHN lebt vom ehrenamtlichen Einsatz und der Beteiligung jedes Einzelnen. Aus diesem Grund möchten wir uns vor deiner Aufnahme ein erstes Bild von dir machen und bitten dich, das folgende Formular vollständig und umfassend auszufüllen. Die erhobenen Daten sind nur für MHN-interne Zwecke bestimmt, werden vertraulich behandelt und nicht an Dritte weitergegeben.</p>
 
@@ -14,7 +14,7 @@
 
 <h2>Start</h2>
 
-<p>Bitte gib die E-Mail-Adresse an, unter wir dich erreichen können. Wir schicken dir eine automatische E-Mail, um die E-Mail-Adresse zu bestätigen und mit dem Antrag fortfahren zu können. Die E-Mail-Adresse wird noch nicht auf dem Server gespeichert, sondern erst, wenn du den Antrag abschickst.</p>
+<p>Bitte gib die E-Mail-Adresse an, unter der wir dich erreichen können. Wir schicken dir eine automatische E-Mail, um die E-Mail-Adresse zu bestätigen und mit dem Antrag fortfahren zu können. Die E-Mail-Adresse wird noch nicht auf dem Server gespeichert, sondern erst, wenn du den Antrag abschickst.</p>
 
 {if !empty($emailUsed)}
     <p class="formmeldung">Fehler: Ein Antrag mit dieser E-Mail-Adresse wurde bereits gestellt.</p>
