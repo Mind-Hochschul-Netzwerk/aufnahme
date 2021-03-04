@@ -6,7 +6,7 @@ namespace MHN\Aufnahme;
 
 use MHN\Aufnahme\Service\Configuration;
 use MHN\Aufnahme\Antrag;
-use PHPMailer;
+use MHN\Aufnahme\Service\EmailService;
 
 //sendet eine Erinnerung mit einer Liste von Anträgen an die Aufnahmekommission
 // (die BCC-Adressen ...), die folgende Kriterien erfüllen:
@@ -37,23 +37,15 @@ function wartung_sende_erinnerung()
         $a->setTsErinnerung(time());
         $a->save();
     }
-    $mail = new PHPMailer();
 
-    $mailConfiguration = Configuration::getInstance()->get('mail');
-    $mail->From = $mailConfiguration['from'];
-    foreach ($mailConfiguration['bcc'] as $email) {
-        $mail->AddAddress($email);
-    }
-
-    $mail->Encoding = 'quoted-printable';
-    $mail->CharSet = 'utf-8';
-    $mail->Subject = 'Erinnerung an Kandidaten-Bewertung';
-    $mail->Body = "Folgende Kandidaten haben den Status 'Bewerten' und warten schon\r\n" .
+    $text = "Folgende Kandidaten haben den Status 'Bewerten' und warten schon\r\n" .
         "länger als eine Woche:\r\n\r\n";
     foreach ($zu_erinnernde as $a) {
         $mail->Body .= $a->getName() . "\r\n";
     }
-    $mail->Send();
+
+    $mailConfiguration = Configuration::getInstance()->get('mail');
+    EmailService::getInstance()->send($mailConfiguration['to'], 'Erinnerung an Kandidaten-Bewertung', $text);
 }
 
 wartung_sende_erinnerung();

@@ -29,6 +29,12 @@ services:
       - LDAP_PEOPLE_DN=ou=people,dc=mind-hochschul-netzwerk,dc=de
       - LDAP_BIND_DN=cn=admin,dc=mind-hochschul-netzwerk,dc=de
       - LDAP_BIND_PASSWORD
+      - SMTP_HOST
+      - SMTP_SECURE
+      - SMTP_PORT
+      - SMTP_USER
+      - SMTP_PASSWORD
+      - FROM_ADDRESS
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik

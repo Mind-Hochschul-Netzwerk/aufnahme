@@ -4,7 +4,7 @@ namespace MHN\Aufnahme;
 use MHN\Aufnahme\Daten;
 use MHN\Aufnahme\Service\Token;
 use MHN\Aufnahme\Service\Configuration;
-use PHPMailer;
+use MHN\Aufnahme\Service\EmailService;
 
 class NeuController
 {
@@ -68,9 +68,10 @@ class NeuController
         }
 
         $token = Token::encode([$email, time()], '', getenv('TOKEN_KEY'));
-        $link = 'https://aufnahme.' . getenv('DOMAINNAME') . '/antrag/?token=' . $token;
+        $this->smarty->assign('url', 'https://aufnahme.' . getenv('DOMAINNAME') . '/antrag/?token=' . $token);
+        $text = $this->smarty->fetch('mails/emailToken.tpl');
 
-        // TODO: Mail senden
+        EmailService::getInstance()->send($email, 'Dein MHN-Mitgliedsantrag', $text);
 
         $this->smarty->assign('innentemplate', 'NeuController/initEmailAuth.tpl');
         return true;
@@ -133,7 +134,9 @@ class NeuController
         if (!$a->addThisAntrag()) {
             throw new \RuntimeException('failed to save', 1614464427);
         }
-        // TODO: Aufnahmekommission informieren
+        
+        $mailConfiguration = Configuration::getInstance()->get('mail');
+        EmailService::getInstance()->send($mailConfiguration['to'], 'Neuer Antrag', 'Im MHN-Aufnahmetool ist ein neuer Mitgliedsantrag eingegangen.');
 
         $this->smarty->assign('innentemplate', 'NeuController/success.tpl');
 

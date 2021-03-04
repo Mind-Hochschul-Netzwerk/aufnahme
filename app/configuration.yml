@@ -1,7 +1,5 @@
 mail:
-  from: aufnahmekommission@mind-hochschul-netzwerk.de
-  bcc:
-  - aufnahmekommission@mind-hochschul-netzwerk.de
+  to: henrik.gebauer@gmail.com
 mysql:
   host: $MYSQL_HOST
   user: $MYSQL_USER

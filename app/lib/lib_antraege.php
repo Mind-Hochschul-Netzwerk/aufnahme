@@ -11,6 +11,7 @@ use PHPMailer;
 use Smarty;
 use MHN\Aufnahme\Antrag;
 use MHN\Aufnahme\Service\Token;
+use MHN\Aufnahme\Service\EmailService;
 
 class lib_antraege
 {
@@ -292,8 +293,7 @@ class lib_antraege
             $aktion = trim($aktion, '/');
 
             $mailConfiguration = Configuration::getInstance()->get('mail');
-            $this->smarty->assign('absende_email_kand', $mailConfiguration['from']);
-            $this->smarty->assign('bcc_email_kand', $mailConfiguration['bcc']);
+            $this->smarty->assign('absende_email_kand', getenv('FROM_ADDRESS'));
 
             $email = $this->antrag->getEMail();
             if (!Util::emailIsValid($email)) {
@@ -326,19 +326,12 @@ class lib_antraege
      * @param string $inhalt
      * @param string $inhalt_alt Mailinhalt für's Archiv (ohn das Benutzerpasswort), falls leer, wird $inhalt verwendet.
      * @param string $grund muss 'aufnahme', 'nachfrage' oder 'ablehnung' sein
-     * @throws \PHPMailerException wenn ein Fehler auftritt
      * @return void
      */
     private function sende_email_kand(string $betreff, string $inhalt, string $grund, string $inhalt_alt = '')
     {
         $mailConfiguration = Configuration::getInstance()->get('mail');
 
-        $mail = new PHPMailer(true);
-        $mail->From = $mailConfiguration['from'];
-        $mail->FromName = 'MHN-Aufnahmekommission';
-        $mail->Encoding = 'quoted-printable';
-        $mail->CharSet = 'utf-8';
-        $mail->Subject = $betreff;
         $db_mail = new Email();
         $db_mail->setAntragId($this->antrag->getID());
         $db_mail->setGrund($grund);
@@ -349,26 +342,8 @@ class lib_antraege
         } else {
             $db_mail->setText($inhalt_alt);
         }
-        if ($inhalt_alt == '') {//gleichen Inhalt senden:
-            $mail->AddAddress($this->antrag->getEMail());
-            foreach ($mailConfiguration['bcc'] as $email) {
-                $mail->AddBCC($email);
-            }
-            $mail->Body = $inhalt;
-            $mail->Send();
-        } else {
-            //an den Kand.:
-            $mail->AddAddress($this->antrag->getEMail());
-            $mail->Body = $inhalt;
-            $mail->Send();
-            //an die AK:
-            $mail->ClearAddresses();
-            foreach ($mailConfiguration['bcc'] as $email) {
-                $mail->AddAddress($email);
-            }
-            $mail->Body = $inhalt_alt;
-            $mail->Send();
-        }
+        EmailService::getInstance()->send($this->antrag->getEMail(), $betreff, $inhalt);
+        EmailService::getInstance()->send($mailConfiguration['to'], $betreff, $inhalt_alt ? $inhalt_alt : $inhalt);
         EmailRepository::getInstance()->add($db_mail);
     }
 
