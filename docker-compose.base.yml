@@ -35,6 +35,7 @@ services:
       - SMTP_USER
       - SMTP_PASSWORD
       - FROM_ADDRESS
+      - TEAM_ADDRESS
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik

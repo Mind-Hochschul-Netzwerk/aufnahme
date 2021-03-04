@@ -1,5 +1,5 @@
 mail:
-  to: henrik.gebauer@gmail.com
+  to: $TEAM_ADDRESS
 mysql:
   host: $MYSQL_HOST
   user: $MYSQL_USER
