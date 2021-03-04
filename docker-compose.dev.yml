@@ -15,7 +15,7 @@ services:
       - traefik.http.routers.aufnahme-adminer.rule=Host(`aufnahme-adminer.${DOMAINNAME}`)
       - traefik.http.routers.aufnahme-adminer.tls=true
       - traefik.http.routers.aufnahme-adminer.tls.certresolver=myresolver
-      - traefik.http.routers.aufnahme-adminer.middlewares=secheader
+      - traefik.http.routers.aufnahme-adminer.middlewares=secheader@file
     depends_on:
       - aufnahme-database
     networks:
