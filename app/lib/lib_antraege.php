@@ -86,7 +86,13 @@ class lib_antraege
 
         foreach (Daten::KEYS as $key) {
             // nicht im Formular änderbar:
-            if (in_array($key, ['kenntnisnahme_datenverarbeitung', 'kenntnisnahme_datenverarbeitung_text', 'einwilligung_datenverarbeitung', 'einwilligung_datenverarbeitung_text'], true)) {
+            if (in_array($key, [
+                'user_email',
+                'kenntnisnahme_datenverarbeitung',
+                'kenntnisnahme_datenverarbeitung_text',
+                'einwilligung_datenverarbeitung',
+                'einwilligung_datenverarbeitung_text'
+            ], true)) {
                 continue;
             }
             if (!property_exists($daten, $key)) {
