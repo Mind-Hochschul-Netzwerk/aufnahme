@@ -4,7 +4,6 @@ namespace MHN\Aufnahme;
 //diese Datei wird von globals.php ca. alle zwei Stunden eingebunden.
 //ein Cron-Job könnte die Hauptseite einmal am Tag aufrufen ...
 
-use MHN\Aufnahme\Service\Configuration;
 use MHN\Aufnahme\Antrag;
 use MHN\Aufnahme\Service\EmailService;
 
@@ -44,8 +43,7 @@ function wartung_sende_erinnerung()
         $mail->Body .= $a->getName() . "\r\n";
     }
 
-    $mailConfiguration = Configuration::getInstance()->get('mail');
-    EmailService::getInstance()->send($mailConfiguration['to'], 'Erinnerung an Kandidaten-Bewertung', $text);
+    EmailService::getInstance()->send(getenv('TEAM_ADDRESS'), 'Erinnerung an Kandidaten-Bewertung', $text);
 }
 
 wartung_sende_erinnerung();

@@ -1,8 +1,6 @@
 <?php
 namespace MHN\Aufnahme;
 
-use MHN\Aufnahme\Service\Configuration;
-
 /**
  * Klasse für Datenbankoperationen.
  */
@@ -71,15 +69,12 @@ class Sql implements Interfaces\Singleton
      */
     private function connect()
     {
-        /** @var string[] $mySqlConfiguration Zugangsdaten */
-        $mySqlConfiguration = Configuration::getInstance()->get('mysql');
-
         try {
             $this->mysqli = new \mysqli(
-                $mySqlConfiguration['host'],
-                $mySqlConfiguration['user'],
-                $mySqlConfiguration['password'],
-                $mySqlConfiguration['database']
+                getenv('MYSQL_HOST'),
+                getenv('MYSQL_USER'),
+                getenv('MYSQL_PASSWORD'),
+                getenv('MYSQL_DATABASE'),
             );
         } catch (\mysqli_sql_exception $e) {
             throw new \RuntimeException('Could not connect to database: ' . $e->getMessage(), 1490990178);

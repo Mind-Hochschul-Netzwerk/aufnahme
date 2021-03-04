@@ -19,7 +19,7 @@ class SmartyContainer implements \MHN\Aufnahme\Interfaces\Singleton
     private $smarty = null;
 
     /**
-     * Instanziierung nur über Configuration::getInstance() (aus Interfaces\Singleton)
+     * Instanziierung nur über SmartyContainer::getInstance() (aus Interfaces\Singleton)
      */
     private function __construct()
     {

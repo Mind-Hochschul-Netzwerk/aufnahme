@@ -6,7 +6,6 @@ use MHN\Aufnahme\Domain\Model\Vote;
 use MHN\Aufnahme\Domain\Repository\EmailRepository;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
 use MHN\Aufnahme\Domain\Repository\VoteRepository;
-use MHN\Aufnahme\Service\Configuration;
 use PHPMailer;
 use Smarty;
 use MHN\Aufnahme\Antrag;
@@ -298,7 +297,6 @@ class lib_antraege
             $this->smarty->assign('heute', Util::tsToDatum(time()));
             $aktion = trim($aktion, '/');
 
-            $mailConfiguration = Configuration::getInstance()->get('mail');
             $this->smarty->assign('absende_email_kand', getenv('FROM_ADDRESS'));
 
             $email = $this->antrag->getEMail();
@@ -326,7 +324,7 @@ class lib_antraege
     }
 
     /**
-     * Sendet eine E-Mail an den Kandidaten, mit den Einstellungen aus configuration.yml (Absender und bcc).
+     * Sendet eine E-Mail an den Kandidaten
      *
      * @param string $betreff
      * @param string $inhalt
@@ -336,8 +334,6 @@ class lib_antraege
      */
     private function sende_email_kand(string $betreff, string $inhalt, string $grund, string $inhalt_alt = '')
     {
-        $mailConfiguration = Configuration::getInstance()->get('mail');
-
         $db_mail = new Email();
         $db_mail->setAntragId($this->antrag->getID());
         $db_mail->setGrund($grund);
@@ -349,7 +345,7 @@ class lib_antraege
             $db_mail->setText($inhalt_alt);
         }
         EmailService::getInstance()->send($this->antrag->getEMail(), $betreff, $inhalt);
-        EmailService::getInstance()->send($mailConfiguration['to'], $betreff, $inhalt_alt ? $inhalt_alt : $inhalt);
+        EmailService::getInstance()->send(getenv('TEAM_ADDRESS'), $betreff, $inhalt_alt ? $inhalt_alt : $inhalt);
         EmailRepository::getInstance()->add($db_mail);
     }
 

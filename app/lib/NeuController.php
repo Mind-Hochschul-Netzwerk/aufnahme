@@ -3,7 +3,6 @@ namespace MHN\Aufnahme;
 
 use MHN\Aufnahme\Daten;
 use MHN\Aufnahme\Service\Token;
-use MHN\Aufnahme\Service\Configuration;
 use MHN\Aufnahme\Service\EmailService;
 
 class NeuController
@@ -48,7 +47,7 @@ class NeuController
                 return;
             }
         }
-        
+
         $this->smarty->assign('werte', $this->werte);
         $this->smarty->assign('fragen_werte', $this->fragenWerte);
 
@@ -101,7 +100,7 @@ class NeuController
         if (empty($_REQUEST['kenntnisnahme_datenverarbeitung']) || empty($_REQUEST['einwilligung_datenverarbeitung'])) {
             $this->smarty->assign('datenschutzInfo', true);
             return false;
-        } 
+        }
 
         foreach ($this->werte as $k=>$v) {
             if ($k === 'user_email') {
@@ -134,9 +133,8 @@ class NeuController
         if (!$a->addThisAntrag()) {
             throw new \RuntimeException('failed to save', 1614464427);
         }
-        
-        $mailConfiguration = Configuration::getInstance()->get('mail');
-        EmailService::getInstance()->send($mailConfiguration['to'], 'Neuer Antrag', 'Im MHN-Aufnahmetool ist ein neuer Mitgliedsantrag eingegangen.');
+
+        EmailService::getInstance()->send(getenv('TEAM_ADDRESS'), 'Neuer Antrag', 'Im MHN-Aufnahmetool ist ein neuer Mitgliedsantrag eingegangen.');
 
         $this->smarty->assign('innentemplate', 'NeuController/success.tpl');
 
