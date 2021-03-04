@@ -16,7 +16,10 @@ use MHN\Aufnahme\Antrag;
 
 // only allow backend calls
 $ip = ip2long($_SERVER['REMOTE_ADDR']);
-if ($ip < ip2long("172.16.0.0") || $ip > ip2long("172.31.255.255")) {
+if (!(
+        (ip2long("172.16.0.0") <= $ip && $ip <= ip2long("172.31.255.255"))
+     || (ip2long("192.168.0.0") <= $ip && $ip <= ip2long("192.168.255.255"))
+    )) {
     die("forbidden");
 }
 
