@@ -1,2 +1,4 @@
 # composer
 /app/vendor/
+.env
+/volumes/

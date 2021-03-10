@@ -1,4 +1,4 @@
-version: '3.5'
+version: "3.5"
 services:
   aufnahme-database:
     image: mariadb
@@ -43,7 +43,7 @@ services:
       - traefik.http.routers.aufnahme.rule=Host(`aufnahme.${DOMAINNAME}`)
       - traefik.http.routers.aufnahme.tls=true
       - traefik.http.routers.aufnahme.tls.certresolver=myresolver
-      - traefik.http.routers.aufnahme.middlewares=secheader
+      - traefik.http.routers.aufnahme.middlewares=secheader@file
     depends_on:
       - aufnahme-database
     networks:
