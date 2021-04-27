@@ -4,13 +4,20 @@ Dies ist das Tool der Aufnahmekommission des MHN.
 
 ## Container lokal bauen und starten
 
-    $ make image
+### Target "dev" (Entwicklung)
+
+    $ composer install -d app
+    $ make quick-image
     $ make dev
 
 Der Login ist dann im Browser unter [https://aufnahme.docker.localhost/](https://aufnahme.docker.localhost/) erreichbar. Die Sicherheitswarnung wegen des Zertifikates kann weggeklickt werden.
 
 * Benutzername: `webteam`
 * Passwort: `webteam1`
+
+### Target "prod" (Production)
+
+    $ make prod
 
 ## Automatische Updates
 
