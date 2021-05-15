@@ -13,5 +13,3 @@
 </p>
 </form>
 
-<p><i>Hinweis</i>: <i>Session-Cookies</i> müssen eingeschaltet sein, um sich anzumelden.</p>
-

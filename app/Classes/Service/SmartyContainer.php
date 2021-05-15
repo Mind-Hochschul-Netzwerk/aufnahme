@@ -28,6 +28,9 @@ class SmartyContainer implements \MHN\Aufnahme\Interfaces\Singleton
         $this->smarty->setCompileDir('/tmp/templates_c/');
         $this->smarty->setCacheDir('/tmp/cache/');
         $this->smarty->compile_check = true;
+
+        $this->smarty->assign('DOMAINNAME', getenv('DOMAINNAME'));
+        $this->smarty->assign('self', $_SERVER['REQUEST_URI']);
     }
 
     /**

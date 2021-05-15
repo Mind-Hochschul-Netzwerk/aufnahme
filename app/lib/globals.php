@@ -17,8 +17,6 @@ assert_options(ASSERT_BAIL, 1);
 
 $smarty = Service\SmartyContainer::getInstance()->getSmarty();
 
-$smarty->assign('self', $_SERVER['REQUEST_URI']);
-
 // Beachte: der Unterschied zwischen 'offen' und 'entschieden' wird in antrag.php in alleOffenenAntraege und
 // alleEntschiedenenAntraege festgelegt!
 $global_status = [
