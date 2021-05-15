@@ -21,7 +21,7 @@ class Antrag
     const STATUS_AUFGENOMMEN = 5;
     const STATUS_ABGELEHNT = 6;
     const STATUS_AKTIVIERT = 7;
-    
+
     /** @var Sql */
     private $sql = null;
 
@@ -465,14 +465,14 @@ class Antrag
 
     /**
      * Löscht alle alten Anträge
-     *   - angenommene Anträge, die in die Mitgliederdatenbank übernommen wurden, 14 Tage nach der Entscheidung
-     *   - angenommene Anträge, die nicht in die Mitgliederdatenbank übernommen wurden, nach 365 Tagen
+     *   - angenommene Anträge, die in die Mitgliederdatenbank übernommen wurden, 8 Wochen nach der Entscheidung
+     *   - angenommene Anträge, die nicht in die Mitgliederdatenbank übernommen wurden, nach 366 Tagen
      *   - abgelehnte Anträge nach 60 Wochen (Einspruchsmöglichkeit bis zur Mitgliederversammlung)
      */
     public function deleteOld()
     {
         // aktivierte Benutzerkonten
-        Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_AKTIVIERT . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*14');
+        Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_AKTIVIERT . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*7*8');
 
         // nicht aktivierte Benutzerkonten
         Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_AUFGENOMMEN . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*365');

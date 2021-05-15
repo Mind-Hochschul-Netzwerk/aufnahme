@@ -3,7 +3,7 @@
 <p>Aus Datenschutzgründen werden die Anträge gelöscht, wenn Sie nicht mehr benötigt werden.</p>
 
 <ul>
-    <li>Angenommene Anträge werden zwei Wochen lang aufbewahrt, damit ggf. Fehler festgestellt werden können.</li>
+    <li>Angenommene Anträge werden acht Wochen lang aufbewahrt, damit ggf. Fehler festgestellt werden können.</li>
     <li>Sie bleiben allerdings bis zu einem Jahr im System, solange das Mitglied seinen Zugang nicht aktiviert hat.</li>
     <li>Abgelehnte Anträge werden wegen der Einspruchsmöglichkeit bei der Mitgliederversammlung 60 Wochen lang aufbewahrt</li>
 </ul>
