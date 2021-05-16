@@ -25,8 +25,8 @@
     <li><a href='https://www.{$DOMAINNAME}'>Startseite <span class='pull-right showopacity glyphicon glyphicon-globe'></span></a></li>
     <li><a href='/'>Login<span class='pull-right showopacity glyphicon glyphicon-log-in'></span></a></li>
     <li><a href='/antrag/'>Mitglied werden<span class='pull-right showopacity glyphicon glyphicon-plus'></span></a></li>
-    <li><a href='https://www.{$DOMAINNAME}/mod/page/view.php?id=12'>Datenschutz<span class='pull-right showopacity glyphicon glyphicon-paragraph'></span></a></li>
-    <li><a href='https://www.{$DOMAINNAME}/mod/page/view.php?id=5'>Impressum<span class='pull-right showopacity glyphicon glyphicon-globe'></span></a></li>
+    <li><a href='https://www.{$DOMAINNAME}/mod/book/view.php?id=253&chapterid=4'>Datenschutz<span class='pull-right showopacity glyphicon glyphicon-paragraph'></span></a></li>
+    <li><a href='https://www.{$DOMAINNAME}/mod/book/view.php?id=253&chapterid=5'>Impressum<span class='pull-right showopacity glyphicon glyphicon-globe'></span></a></li>
 {/if}
 
 
