@@ -4,8 +4,6 @@ LABEL Maintainer="Henrik Gebauer <code@henrik-gebauer.de>" \
       Description="mind-hochschul-netzwerk.de"
 
 COPY config/nginx/ /etc/nginx/
-COPY entry.d/ /entry.d/
-COPY update.d/ /update.d/
 COPY app/ /var/www/
 
 RUN set -ex \
