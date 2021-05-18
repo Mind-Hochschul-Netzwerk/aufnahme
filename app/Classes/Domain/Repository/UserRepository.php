@@ -7,6 +7,7 @@ namespace MHN\Aufnahme\Domain\Repository;
  */
 
 use MHN\Aufnahme\Domain\Model\User;
+use MHN\Aufnahme\Service\EmailService;
 use Symfony\Component\Ldap\Ldap;
 use Symfony\Component\Ldap\Exception\InvalidCredentialsException;
 use Symfony\Component\Ldap\Entry;
@@ -30,7 +31,7 @@ class UserRepository implements \MHN\Aufnahme\Interfaces\Singleton
         $this->ldap = Ldap::create('ext_ldap', ['connection_string' => getenv('LDAP_HOST')]);
         $this->bind();
     }
-    
+
     private function bind()
     {
         $this->ldap->bind(getenv('LDAP_BIND_DN'), getenv('LDAP_BIND_PASSWORD'));
@@ -48,7 +49,7 @@ class UserRepository implements \MHN\Aufnahme\Interfaces\Singleton
         return $passwordCorrect;
     }
 
-    private function hasAufnahmeRole(string $userName) 
+    private function hasAufnahmeRole(string $userName)
     {
         $query = '(&(objectclass=groupOfNames)(cn=aufnahme)(member=' . $this->getDnByUserName($userName) . '))';
         $entry = $this->ldap->query(getenv('LDAP_ROLES_DN'), $query)->execute()[0];
@@ -79,13 +80,17 @@ class UserRepository implements \MHN\Aufnahme\Interfaces\Singleton
         return $user;
     }
 
+    /**
+     * @param bool $skipRoleCheck: skip the check if the user has the "aufnahme" role because it is already known that the user has the role
+     */
     public function findOneByUserName(string $userName, bool $skipRoleCheck = false): ?User
     {
         if (!$userName) {
             return new User('unknown', 'unknown', false);
         }
         try {
-            $result = $this->ldap->query(getenv('LDAP_PEOPLE_DN'), '(&(objectclass=inetOrgPerson)(cn=' . $userName . '))')->execute();
+            // employeeType == 1 <=> Benutzerkonto gesperrt
+            $result = $this->ldap->query(getenv('LDAP_PEOPLE_DN'), '(&(objectclass=inetOrgPerson)(cn=' . $userName . ')(employeeType=0))')->execute();
         } catch (\Exception $e) {
             error_log($e->getMessage());
             return null;
@@ -93,13 +98,14 @@ class UserRepository implements \MHN\Aufnahme\Interfaces\Singleton
         if ($result[0]) {
             $entry = $result[0];
             $userName = $entry->getAttribute('cn')[0];
+            $email = $entry->getAttribute('mail')[0];
             $hasRole = $skipRoleCheck ? true : $this->hasAufnahmeRole($userName);
-            return new User($userName, $entry->getAttribute('givenName')[0] . ' ' . $entry->getAttribute('sn')[0], $hasRole);
+            return new User($userName, $entry->getAttribute('givenName')[0] . ' ' . $entry->getAttribute('sn')[0], $email, $hasRole);
         } else {
-            return new User($userName, $userName, false);
+            return new User($userName, $userName, '', false);
         }
     }
-    
+
     /**
      * Gibt ein Array mit allen Benutzern zurück
      *
@@ -123,5 +129,21 @@ class UserRepository implements \MHN\Aufnahme\Interfaces\Singleton
         return array_filter($members, function ($entry) {
             return $entry !== null;
         });
+    }
+
+    public function sendEmailToAll(string $subject, string $body): void
+    {
+        $emailService = EmailService::getInstance();
+
+        $users = $this->findAll();
+        foreach ($users as $user) {
+
+            $emailAddress = $user->getEmailAddress();
+            error_log("\n\n\nsend mail: $emailAddress\n\n\n");
+            if (!$emailAddress) {
+                continue;
+            }
+            $emailService->send($emailAddress, $subject, $body);
+        }
     }
 }

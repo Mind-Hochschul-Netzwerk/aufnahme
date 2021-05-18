@@ -19,10 +19,14 @@ class User
     /** @var bool */
     private $hasRole = true;
 
-    public function __construct(string $userName, string $realName, bool $hasAufnahmeRole)
+    /** @var string */
+    private $emailAddress = '';
+
+    public function __construct(string $userName, string $realName, string $emailAddress, bool $hasAufnahmeRole)
     {
         $this->userName = $userName;
         $this->realName = $realName;
+        $this->emailAddress = $emailAddress;
         $this->hasRole = $hasAufnahmeRole;
     }
 
@@ -34,6 +38,11 @@ class User
     public function getRealName(): string
     {
         return $this->realName;
+    }
+
+    public function getEmailAddress(): string
+    {
+        return $this->emailAddress;
     }
 
     public function hasAufnahmeRole(): bool

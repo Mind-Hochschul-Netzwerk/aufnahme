@@ -4,6 +4,7 @@ namespace MHN\Aufnahme;
 use MHN\Aufnahme\Daten;
 use MHN\Aufnahme\Service\Token;
 use MHN\Aufnahme\Service\EmailService;
+use MHN\Aufnahme\Domain\Repository\UserRepository;
 
 class NeuController
 {
@@ -134,7 +135,7 @@ class NeuController
             throw new \RuntimeException('failed to save', 1614464427);
         }
 
-        EmailService::getInstance()->send(getenv('TEAM_ADDRESS'), 'Neuer Antrag', 'Im MHN-Aufnahmetool ist ein neuer Mitgliedsantrag eingegangen.');
+        UserRepository::getInstance()->sendEmailToAll('Neuer Antrag', 'Im MHN-Aufnahmetool ist ein neuer Mitgliedsantrag eingegangen.');
 
         $this->smarty->assign('innentemplate', 'NeuController/success.tpl');
 

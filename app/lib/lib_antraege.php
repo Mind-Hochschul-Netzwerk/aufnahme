@@ -221,7 +221,7 @@ class lib_antraege
                 $this->smarty->assign('nichtvonmirgevotet', true);
             }
             // die Voten extrahieren:
-            $names_gevotet = [];
+            $userNames_gevotet = [];
             foreach ($antraege as $antrag) {
                 $votes = $antrag->getVotes();
                 foreach ($votes as $vote) {
@@ -345,7 +345,7 @@ class lib_antraege
             $db_mail->setText($inhalt_alt);
         }
         EmailService::getInstance()->send($this->antrag->getEMail(), $betreff, $inhalt);
-        EmailService::getInstance()->send(getenv('TEAM_ADDRESS'), $betreff, $inhalt_alt ? $inhalt_alt : $inhalt);
+        UserRepository::getInstance()->sendEmailToAll($betreff, $inhalt_alt ? $inhalt_alt : $inhalt);
         EmailRepository::getInstance()->add($db_mail);
     }
 

@@ -25,13 +25,6 @@
         <div class="col-sm-10">{$antrag->getEMail()|escape}</div>
     </div>
 
-    {foreach from=$bcc_email_kand item=i}
-    <div class="row">
-        <div class="col-sm-2">BCC</div>
-        <div class="col-sm-10">{$i|escape}</div>
-    </div>
-    {/foreach}
-
     <div class='form-group row '>
         <label for='input-betreff' class='col-sm-2 col-form-label'>Betreff</label>
         <div class='col-sm-10'><input id='input-betreff' name='betreff' class='form-control' value="Nachfrage zum MHN-Aufnahmeantrag"></div>

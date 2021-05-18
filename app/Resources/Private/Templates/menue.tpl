@@ -16,7 +16,7 @@
         <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
             <ul class="nav navbar-nav">
 
-{if $menue_vorhanden}
+{if !empty($menue_vorhanden)}
     <li><a href='/antraege/'>Offene Anträge<span class='pull-right showopacity glyphicon glyphicon-book'></span></a></li>
     <li><a href='/entschiedeneAntraege/'>Entschiedene Anträge<span class='pull-right showopacity glyphicon glyphicon-book'></span></a></li>
     <li><a href='/benutzer/'>Aufnahmekommission<span class='pull-right showopacity glyphicon glyphicon-user'></span></a></li>

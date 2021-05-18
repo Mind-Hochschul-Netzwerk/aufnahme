@@ -5,13 +5,15 @@ namespace MHN\Aufnahme;
 //ein Cron-Job könnte die Hauptseite einmal am Tag aufrufen ...
 
 use MHN\Aufnahme\Antrag;
-use MHN\Aufnahme\Service\EmailService;
+use MHN\Aufnahme\Domain\Repository\UserRepository;
 
-//sendet eine Erinnerung mit einer Liste von Anträgen an die Aufnahmekommission
-// (die BCC-Adressen ...), die folgende Kriterien erfüllen:
-// - status ist auf "Bewerten"
-// - Antrag ist älter als eine Woche.
-function wartung_sende_erinnerung()
+/**
+ * sendet an alle Mitglieder der Aufnahmekommission eine Erinnerung mit einer Liste von Anträgen,
+ * die folgende Kriterien erfüllen:
+ * - status ist auf "Bewerten"
+ * - Antrag ist älter als eine Woche.
+ */
+function wartung_sende_erinnerung(): void
 {
     $antraege = Antrag::alleOffenenAntraege();
     $zu_erinnernde = [];     //die über 9 Tage
@@ -43,7 +45,7 @@ function wartung_sende_erinnerung()
         $mail->Body .= $a->getName() . "\r\n";
     }
 
-    EmailService::getInstance()->send(getenv('TEAM_ADDRESS'), 'Erinnerung an Kandidaten-Bewertung', $text);
+    UserRepository::getInstance()->sendEmailToAll('MHN-Mitgliedsanträge warten auf Bewertung', $text);
 }
 
 wartung_sende_erinnerung();
