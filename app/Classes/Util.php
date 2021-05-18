@@ -7,20 +7,6 @@ namespace MHN\Aufnahme;
 class Util
 {
     /**
-     * @param string $email
-     *
-     * @return bool
-     */
-    public static function emailIsValid($email)
-    {
-        $matcher = "/^[a-z0-9_\+-\.]+@[a-z0-9-]+(\.[a-z0-9-]+)*\.([a-z]{2,4})$/i";
-        if (!preg_match($matcher, $email)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * @param int $ts
      *
      * @return string

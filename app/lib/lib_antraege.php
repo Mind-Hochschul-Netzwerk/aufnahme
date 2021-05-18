@@ -300,11 +300,6 @@ class lib_antraege
             $this->smarty->assign('absende_email_kand', getenv('FROM_ADDRESS'));
 
             $email = $this->antrag->getEMail();
-            if (!Util::emailIsValid($email)) {
-                $this->smarty->append('meldungen_laden',
-                    'Warnung: E-Mail-Adresse des Kandidaten ("' . $email . '") scheint ungültig zu sein.'
-                );
-            }
             if ($aktion == 'aufnehmen') {
                 $this->aktion_aufnehmen_speichern();
                 $this->aktion_aufnehmen_laden();
