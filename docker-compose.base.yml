@@ -40,8 +40,6 @@ services:
       - traefik.docker.network=traefik
       - traefik.http.routers.aufnahme.entrypoints=websecure
       - traefik.http.routers.aufnahme.rule=Host(`aufnahme.${DOMAINNAME}`)
-      - traefik.http.routers.aufnahme.tls=true
-      - traefik.http.routers.aufnahme.tls.certresolver=myresolver
       - traefik.http.routers.aufnahme.middlewares=secheader@file
     depends_on:
       - aufnahme-database
