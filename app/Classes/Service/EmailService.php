@@ -46,6 +46,7 @@ class EmailService implements \MHN\Aufnahme\Interfaces\Singleton
         }
         $this->mailer->Port = getenv('SMTP_PORT');
         $this->mailer->setFrom(getenv('FROM_ADDRESS'), 'MHN-Aufnahmetool');
+        $this->mailer->addReplyTo('aufnahmekommission@' . getenv('DOMAINNAME'), 'MHN-Aufnahmekommission');
         $this->mailer->CharSet = 'utf-8';
     }
 
