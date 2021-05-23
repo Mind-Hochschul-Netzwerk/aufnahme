@@ -47,51 +47,47 @@ dieser E-Mail wichtige Informationen zu den unterschiedlichen
 Möglichkeiten, mit anderen MHNlern in Kontakt zu treten - wenn etwas
 nicht wie unten beschrieben funktioniert, bitte noch einmal bei uns melden.
 
-Klicke bitte auf den folgenden Link, um deinen Zugang zu aktivieren:
+Klicke bitte auf den folgenden Link, um deine Aufnahme abzuschließen und
+deinen Zugang zu aktivieren:
 %aktivierungslink%
 
-Damit bekommst du Zugriff auf die Datenbank, in der du deine eigenen
-Daten verwalten und nach anderen Mitgliedern suchen kannst. Bitte
+Damit bekommst du Zugriff auf das Mitgliederverzeichnis, in der du
+deine eigenen Daten verwalten und nach anderen Mitgliedern suchen kannst. Bitte
 aktualisiere deine Angaben, wenn sich etwas ändert. Deine Daten
 sind nur für MHN-Mitglieder sichtbar und können von Externen nicht
 eingesehen werden.
 
-Für die Kommunikation im MHN gibt es Mailinglisten zu unterschiedlichen
-Themen und ein Wiki. Die Zugangsdaten für das Wiki sind die gleichen wie
-für die Mitgliederverwaltung. Zur Anmeldeseite für das Wiki kommst du
-über den Knopf "login" oben rechts auf
+Für die Kommunikation im MHN gibt es im Mitgliederbereich Diskussionlisten
+und Wikis zu unterschiedlichen Themen. Die Zugangsdaten sind die gleichen wie
+für die Mitgliederverwaltung.
 
-https://wiki.mind-hochschul-netzwerk.de/wiki/Hauptseite
+https://www.mind-hochschul-netzwerk.de
 
 Damit du einen guten Überblick bekommst, was im MHN so los ist und wie
 die Leute hier "ticken", würden wir dir empfehlen, dass du dich auf die
-folgenden Mailinglisten einträgst:
+folgenden Diskussionslisten einträgst:
 
 Aktive -- Liste für alle, die aktiv am MHN teilnehmen wollen
-wer-weiß-was --- Liste für Fragen aller Art
-Ortverteiler -- Verteiler für Leute aus deiner Region
+Wer weiß was? --- Liste für Fragen aller Art
+Regionalverteiler -- Verteiler für Leute aus deiner Region
 
-Eintragen kannst du dich in der Mitgliederverwaltung unter:
-https://mitglieder.mind-hochschul-netzwerk.de/mailinglisten.php
-
-Die einzige Liste, auf der du automatisch bist, ist die, auf der alle
+Die einzigen Listen, auf denen du automatisch bist, sind die, auf der alle
 Mitglieder eingetragen sind. Dort werden die wichtigsten Informationen
 vom Vorstand und der Newsletter verteilt.
 
 Um andere MHNler auch live kennenzulernen, besuche die regionalen
 Treffen, fahre zu den Seminaren, die dich interessieren, und komme
-unbedingt zum jährlichen absoluten Höhepunkt des MHN - der MinD-Akademie
-(http://MinD-Akademie.de)!
+unbedingt zum jährlichen absoluten Höhepunkt des MHN - der Mind-Akademie
+(http://Mind-Akademie.de)!
 
 Eigeninitiative ist im MHN der Schlüssel zum Glück. Also: Wenn dir ein
-Angebot fehlt, biete es einfach selbst an! Mitmacher(innen) findest du
+Angebot fehlt, biete es einfach selbst an! Mitmacher*innen findest du
 garantiert.
 
 Wir wünschen dir viel Spaß im MHN und freuen uns darauf, dich bei einem
 der nächsten Treffen persönlich kennenzulernen! Wenn du inhaltliche
-Fragen hast, melde dich bei
-Mitgliederbetreuung@MinD-Hochschul-Netzwerk.de, für technische Fragen
-beim Webteam@MinD-Hochschul-Netzwerk.de.
+Fragen hast, melde dich bei der Mitgliederbetreuung und für technische Fragen
+bei IT@mind-hochschul-netzwerk.de.
 
 Viele Grüße,
 Die MHN-Aufnahmekommission

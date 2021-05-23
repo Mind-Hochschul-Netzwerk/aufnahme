@@ -10,5 +10,5 @@ Im Falle einer Ablehung werden deine Daten nach Ablauf der Einspruchsfrist volls
 </p>
 
 <p>
-Du hast das Recht, Auskunft über die über dich gespeicherten Daten zu erhalten, sie zu berichtigen und zu löschen, ihre Verarbeitung einzuschränken oder ihr zu widersprechen sowie Beschwerde bei einer Aufsichtsbehörde einzulegen. Zudem hast du jederzeit das Recht, dieser Einwilligung zu widersprechen. Bitte wende dich dazu an das zuständige Vorstandsmitglied unter vorstand@mind-hochschul-netzwerk.de. Weiterführende Informationen zur Datenverarbeitung bei MHN findest du in der <a href="{$root_url_seite}datenschutz/">Datenschutzerklärung</a>.
+Du hast das Recht, Auskunft über die über dich gespeicherten Daten zu erhalten, sie zu berichtigen und zu löschen, ihre Verarbeitung einzuschränken oder ihr zu widersprechen sowie Beschwerde bei einer Aufsichtsbehörde einzulegen. Zudem hast du jederzeit das Recht, dieser Einwilligung zu widersprechen. Bitte wende dich dazu an das zuständige Vorstandsmitglied unter vorstand@mind-hochschul-netzwerk.de. Weiterführende Informationen zur Datenverarbeitung bei MHN findest du in der <a href="https://www.{$DOMAINNAME}/mod/book/view.php?id=253&chapterid=4">Datenschutzerklärung</a>.
 </p>

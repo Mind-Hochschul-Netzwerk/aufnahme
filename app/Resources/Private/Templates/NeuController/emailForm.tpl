@@ -10,7 +10,7 @@
 
 <p>Nach deiner Aufnahme wirst du durch die zuständige Ansprechperson begrüßt und für die internen Bereiche freigeschaltet. Dadurch ermöglichen wir dir, gut in unserem Kreis anzukommen, dich über Angebote anderer zu informieren und dich, deine Ideen und Erfahrungen mit einzubringen.</p>
 
-<p>Noch Fragen? <a href="https://www.mind-hochschul-netzwerk.de/kontakt/">Nimm Kontakt mit uns auf.</a></p>
+<p>Noch Fragen? <a href="https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&chapterid=3">Nimm Kontakt mit uns auf.</a></p>
 
 <h2>Start</h2>
 
@@ -36,5 +36,6 @@
 <div style="position: absolute; width:100%; height:100%; z-index: 2; background-color: #ccc; opacity: 0.2;"></div>
 <div style="padding: 0em 1em;">
     {include file="antraege/daten.tpl"}
+    {include file="datenschutz/form.tpl"}
 </div>
 </div>
