@@ -67,7 +67,7 @@ auf den Seiten dort) automatisch gesetzt. Ansonsten gibt es keine automatischen 
             </tr>
         {/foreach}
         <tr>
-            <td>{$entry_username|escape}</td>
+            <td>{$user->getRealName()|escape}</td>
             <td>
                 <select class="form-control" name="votum">
                     <option value="0">Nein</option>

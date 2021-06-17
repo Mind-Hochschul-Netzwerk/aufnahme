@@ -191,10 +191,7 @@ class LoginGatekeeper implements \MHN\Aufnahme\Interfaces\Singleton
      */
     public function updateLoggedInUserBySession()
     {
-        $this->smarty->assign('entry_username', null);
-        $this->smarty->assign('entry_angemeldet', false);
         $this->user = null;
-
 
         if (isset($_SESSION['userName'])) {
             $this->user = UserRepository::getInstance()->findOneByUserName($_SESSION['userName']);
@@ -202,8 +199,6 @@ class LoginGatekeeper implements \MHN\Aufnahme\Interfaces\Singleton
                 $this->logOut();
                 $this->exitToLoginForm('Du hast kein Zugriffsrecht mehr.');
             }
-            $this->smarty->assign('entry_username', $this->user->getUserName());
-            $this->smarty->assign('entry_angemeldet', true);
             $this->smarty->assign('user', $this->user);
         }
     }
