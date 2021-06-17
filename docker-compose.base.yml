@@ -3,6 +3,7 @@ services:
   aufnahme-database:
     image: mariadb
     restart: unless-stopped
+    container_name: aufnahme-database
     environment:
       - MYSQL_USER=user
       - MYSQL_PASSWORD
@@ -16,6 +17,7 @@ services:
 
   aufnahme:
     image: mindhochschulnetzwerk/aufnahme
+    container_name: aufnahme
     restart: unless-stopped
     environment:
       - DOMAINNAME
