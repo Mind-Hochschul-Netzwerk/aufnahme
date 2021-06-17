@@ -2,7 +2,9 @@
 
 Dies ist das Tool der Aufnahmekommission des MHN.
 
-## Container lokal bauen und starten
+## Starten
+
+[php-base](https://github.com/Mind-Hochschul-Netzwerk/php-base) muss bereits gebaut sein.
 
 ### Target "dev" (Entwicklung)
 
