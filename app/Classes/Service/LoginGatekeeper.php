@@ -195,7 +195,7 @@ class LoginGatekeeper implements \MHN\Aufnahme\Interfaces\Singleton
         $this->smarty->assign('entry_angemeldet', false);
         $this->user = null;
 
-        
+
         if (isset($_SESSION['userName'])) {
             $this->user = UserRepository::getInstance()->findOneByUserName($_SESSION['userName']);
             if ($this->user === null || !$this->user->hasAufnahmeRole()) {
@@ -204,6 +204,7 @@ class LoginGatekeeper implements \MHN\Aufnahme\Interfaces\Singleton
             }
             $this->smarty->assign('entry_username', $this->user->getUserName());
             $this->smarty->assign('entry_angemeldet', true);
+            $this->smarty->assign('user', $this->user);
         }
     }
 
