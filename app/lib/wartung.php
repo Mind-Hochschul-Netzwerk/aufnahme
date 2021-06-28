@@ -39,7 +39,7 @@ function wartung_sende_erinnerung(): void
         $a->save();
     }
 
-    $text = "Folgende Kandidaten haben den Status 'Bewerten' und warten schon\r\n" .
+    $text = "Folgende Kandidat:innen haben den Status 'Bewerten' und warten schon\r\n" .
         "länger als eine Woche:\r\n\r\n";
     foreach ($zu_erinnernde as $a) {
         $mail->Body .= $a->getName() . "\r\n";
