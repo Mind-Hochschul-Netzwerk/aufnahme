@@ -3,20 +3,3 @@ services:
   aufnahme:
     volumes:
       - "./app:/var/www"
-      - "./update.d:/update.d"
-
-  aufnahme-adminer:
-    image: adminer
-    container_name: aufnahme-adminer
-    restart: unless-stopped
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik
-      - traefik.http.routers.aufnahme-adminer.entrypoints=websecure
-      - traefik.http.routers.aufnahme-adminer.rule=Host(`aufnahme-adminer.${DOMAINNAME}`)
-      - traefik.http.routers.aufnahme-adminer.middlewares=secheader@file
-    depends_on:
-      - aufnahme-database
-    networks:
-      - traefik
-      - aufnahme
