@@ -131,8 +131,10 @@ class NeuController
         $a->setFragenWerte($this->fragenWerte);
         $a->setTsAntrag(time());
 
-        if (!$a->addThisAntrag()) {
-            throw new \RuntimeException('failed to save', 1614464427);
+        try {
+            $a->addThisAntrag();
+        } catch (\RuntimeException $e) {
+            throw new \RuntimeException('failed to save. Error message: ' . $e->getMessage(), 1614464427);
         }
 
         UserRepository::getInstance()->sendEmailToAll('Neuer Antrag', 'Im MHN-Aufnahmetool ist ein neuer Mitgliedsantrag eingegangen.');

@@ -316,9 +316,9 @@ class Antrag
     /**
      * Speichert einen neuen Antrag.
      *
-     * @return bool Erfolg
+     * @throws \RuntimeException
      */
-    public function addThisAntrag()
+    public function addThisAntrag(): void
     {
         $this->sql->startTransaction();
 
@@ -342,12 +342,10 @@ class Antrag
             $this->antrag_id = $id;
         } catch (\RuntimeException $e) {
             $this->sql->rollback();
-            return false;
+            throw $e;
         }
 
         $this->sql->commit();
-
-        return true;
     }
 
     /**
