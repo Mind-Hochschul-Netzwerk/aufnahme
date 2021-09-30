@@ -78,7 +78,7 @@ CREATE TABLE `daten` (
   `mhn_email_newsletter_cb` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
   `mhn_email_newsletter` varchar(255) COLLATE utf8mb4_unicode_ci,
   `mhn_homepage` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_bemerkungen` varchar(255) COLLATE utf8mb4_unicode_ci,
+  `mhn_bemerkungen` text COLLATE utf8mb4_unicode_ci,
   `mhn_aufmerksam` varchar(255) COLLATE utf8mb4_unicode_ci,
   kenntnisnahme_datenverarbeitung datetime DEFAULT NULL,
   kenntnisnahme_datenverarbeitung_text text NOT NULL,
