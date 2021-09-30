@@ -205,7 +205,7 @@ class Sql implements Interfaces\Singleton
             $result = $this->mysqli->query($query);
         } catch (\mysqli_sql_exception $e) {
             throw new \RuntimeException(
-                "Error executing SQL Query.\nQuery: $query\nMySQL said:\n" . $e->getMessage(),
+                "Error executing SQL query.\nMySQL said:\n" . $e->getMessage() . "\nQuery was: $query\n",
                 1490990602
             );
         }
