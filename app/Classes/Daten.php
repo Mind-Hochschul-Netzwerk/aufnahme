@@ -110,7 +110,7 @@ class Daten
     public $mhn_zws_land = '';
     public $mhn_geburtstag = '';
     public $mhn_telefon = '';
-    public $mhn_mobil = ''; 
+    public $mhn_mobil = '';
     public $mhn_mensa = '';
     public $mhn_mensa_nr = '';
     public $mhn_beschaeftigung = '';
@@ -217,8 +217,6 @@ class Daten
         }
         foreach (self::KEYS as $k) {
             if (!isset($array[$k])) {
-                var_dump($array);
-                exit;
                 throw new \LogicException('missing key: ' . $k, 1614465092);
             }
             $d->$k = $array[$k];
