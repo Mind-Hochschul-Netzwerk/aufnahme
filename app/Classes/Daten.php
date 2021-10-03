@@ -108,7 +108,7 @@ class Daten
     public $mhn_zws_plz = '';
     public $mhn_zws_ort = '';
     public $mhn_zws_land = '';
-    public $mhn_geburtstag = '';
+    public $mhn_geburtstag = '0000-00-00';
     public $mhn_telefon = '';
     public $mhn_mobil = '';
     public $mhn_mensa = '';
@@ -262,5 +262,43 @@ class Daten
             $array[$k] = $this->$k;
         }
         return $array;
+    }
+
+    /**
+     * parse and validate user input for parseBirthdayInput
+     * If only two digits of the year are given 1900 or 2000 will be added, assuming the person is at least 18 years old.
+     *
+     * @return string "YYYY-MM-DD" or null if date is invalid
+     */
+    public static function parseBirthdayInput(string $input): ?string {
+        $input = str_replace(' ', '', $input);
+        // DD.MM.YYYY, DD.MM.YY, D.M.YY, ...
+        if (preg_match('/^(\d\d?)\.(\d\d?)\.(\d{2}|\d{4})$/', $input, $matches)) {
+            $day = $matches[1];
+            $month = $matches[2];
+            $year = $matches[3];
+            if ($year < (date('Y') % 100) - 18) {
+                $year += 2000;
+            } elseif ($year < 100) {
+                $year += 1900;
+            }
+        // YYYY-MM-DD
+        } elseif (preg_match('/^(\d{4})-(\d\d)-(\d\d)$/', $input, $matches)) {
+            $year = $matches[1];
+            $month = $matches[2];
+            $day = $matches[3];
+        } else {
+            return null;
+        }
+        try {
+            $date = new \DateTime(sprintf("%04d-%02d-%02d", $year, $month, $day));
+        } catch (\Exception $e) {
+            return null;
+        }
+        $age = (int) $date->diff(new \DateTime())->format('%R%y');
+        if ($age < 10 || $age > 120) {
+            return null;
+        }
+        return $date->format('Y-m-d');
     }
 }

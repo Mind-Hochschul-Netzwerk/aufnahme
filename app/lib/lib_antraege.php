@@ -100,6 +100,10 @@ class lib_antraege
             if (!isset($_POST[$key])) {
                 die('nicht vom Formular gesetzt: ' . $key);
             }
+            if ($key === 'mhn_geburtstag') {
+                $daten->$key = Daten::parseBirthdayInput($_POST[$key]) ?? '0000-00-00';
+                continue;
+            }
             $daten->$key = $_POST[$key];
         }
         $daten->save();

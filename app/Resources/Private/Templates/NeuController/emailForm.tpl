@@ -22,7 +22,7 @@
 
 <form action="{$self}" method="post">
     {include file="antraege/daten-zeile.tpl" name="email" label="E-Mail-Adresse" type="email" required=1}
-    
+
     <input type="hidden" name="actionEmail" value="1" />
 
     <div class="form-group row"'>

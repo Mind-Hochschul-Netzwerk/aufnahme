@@ -98,16 +98,28 @@ class NeuController
 
     private function handleActionAntrag(): bool
     {
+        $dataIsValid = true;
+
         if (empty($_REQUEST['kenntnisnahme_datenverarbeitung']) || empty($_REQUEST['einwilligung_datenverarbeitung'])) {
             $this->smarty->assign('datenschutzInfo', true);
-            return false;
+            $dataIsValid = false;
+        }
+
+        if (!$this->werte['user_email']) {
+            throw new \RuntimeException('user_email is not set, should be set by NeuController::decodeEmailToken()');
         }
 
         foreach ($this->werte as $k=>$v) {
             if ($k === 'user_email') {
                 continue;
             }
-            if (isset($_REQUEST[$k])) {
+            if ($k === 'mhn_geburtstag' && isset($_REQUEST[$k])) {
+                $this->werte[$k] = Daten::parseBirthdayInput($_REQUEST[$k]);
+                if (!$this->werte[$k]) {
+                    $this->smarty->assign('invalidBirthday', true);
+                    $dataIsValid = false;
+                }
+            } elseif (isset($_REQUEST[$k])) {
                 $this->werte[$k] = $_REQUEST[$k];
             }
         }
@@ -122,6 +134,10 @@ class NeuController
         $this->werte['kenntnisnahme_datenverarbeitung_text'] = $this->smarty->fetch('datenschutz/kenntnisnahme_text.tpl');
         $this->werte['einwilligung_datenverarbeitung'] = date('Y-m-d H:i:s');
         $this->werte['einwilligung_datenverarbeitung_text'] = $this->smarty->fetch('datenschutz/einwilligung_text.tpl');
+
+        if (!$dataIsValid) {
+            return false;
+        }
 
         $d = Daten::datenFromDbArray($this->werte);
 
