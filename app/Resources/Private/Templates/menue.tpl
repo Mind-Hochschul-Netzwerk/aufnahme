@@ -17,9 +17,9 @@
             <ul class="nav navbar-nav">
 
 {if !empty($menue_vorhanden)}
-    <li><a href='/antraege/'>Offene Anträge<span class='pull-right showopacity glyphicon glyphicon-book'></span></a></li>
-    <li><a href='/entschiedeneAntraege/'>Entschiedene Anträge<span class='pull-right showopacity glyphicon glyphicon-book'></span></a></li>
-    <li><a href='/benutzer/'>Aufnahmekommission<span class='pull-right showopacity glyphicon glyphicon-user'></span></a></li>
+    {foreach from=$Menue item=entry}
+        <li><a href='{$entry['link']}'>{$entry['name']}<span class='pull-right showopacity glyphicon glyphicon-{$entry['icon']}'></span></a></li>
+    {/foreach}
     <li><a href='/?logout=1'>Logout<span class='pull-right showopacity glyphicon glyphicon-log-out'></span></a></li>
 {else}
     <li><a href='https://www.{$DOMAINNAME}'>Startseite <span class='pull-right showopacity glyphicon glyphicon-globe'></span></a></li>

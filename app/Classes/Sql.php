@@ -213,29 +213,6 @@ class Sql implements Interfaces\Singleton
     }
 
     /**
-     * Lädt die Datei $file und führt die SQL-Queries darin aus.
-     *
-     * @return void
-     * @throws \RuntimeException wenn ein Query fehlschlägt.
-     */
-    public function read(string $file)
-    {
-        $queries = file_get_contents($file);
-        try {
-            $result = $this->mysqli->multi_query($queries);
-            while ($this->mysqli->more_results()) {
-                $this->mysqli->next_result();
-                $result = $this->mysqli->use_result();
-                if ($result !== false) {
-                    $result->close();
-                }
-            }
-        } catch (\mysqli_sql_exception $e) {
-            throw new \RuntimeException('Datenbank-Fehler: ' . $e->getMessage() . ' (Query: ' . $queries . ')', 1494792465);
-        }
-    }
-
-    /**
      * String-Escaping
      *
      * @param string $string

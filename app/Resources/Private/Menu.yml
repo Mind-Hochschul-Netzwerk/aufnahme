@@ -1,3 +1,9 @@
-antraege: Offene Anträge
-entschiedeneAntraege: Entschiedene Anträge
-benutzer: Aufnahmekommission
+antraege:
+  label: Offene Anträge
+  icon: book
+entschiedeneAntraege:
+  label: Entschiedene Anträge
+  icon: book
+benutzer:
+  label: Aufnahmekommission
+  icon: user

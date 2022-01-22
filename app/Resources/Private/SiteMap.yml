@@ -7,7 +7,6 @@ mails:
   template: mails.tpl
   ladenfunktion: mails__laden
   lib: lib_mails.php
-  nichtimmenue: true
 entschiedeneAntraege:
   title: Bereits bearbeitete (aufgenommene, abgelehnte) Anträge
   ladenfunktion: antraege__laden

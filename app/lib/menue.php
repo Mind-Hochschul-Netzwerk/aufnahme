@@ -39,7 +39,7 @@ function menue_entry()
     $isUserLoggedIn = $loginGatekeeper->isUserLoggedIn();
 
     $menu = [];
-    foreach ($menuResource as $uri => $label) {
+    foreach ($menuResource as $uri => $item) {
         $siteMapEntry = $siteMap[$uri];
 
         if (!$isUserLoggedIn && empty($siteMapEntry['public'])) {
@@ -48,16 +48,14 @@ function menue_entry()
 
         $entry = [
             'link' => '/' . $uri . '/',
-            'name' => $label,
-            'nichtimmenue' => false,
+            'name' => $item['label'],
+            'icon' => $item['icon'],
             'lib' => empty($siteMapEntry['lib']) ? null : $siteMapEntry['lib'],
             'title' => $siteMapEntry['title'],
-            'offen' => false,
             'aktiv' => false,
         ];
 
         if ($page === $uri) {
-            $entry['offen'] = true;
             $entry['aktiv'] = true;
         }
 
