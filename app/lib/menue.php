@@ -27,10 +27,12 @@ function menue_entry()
     $siteMap = Yaml::parse(file_get_contents(SITEMAP_FILENAME));
 
     $activeEntry = null;
-    $matcher = '/^\\/(?P<page>[^\\/]*)(\\/(?P<parameters>.*))?$/';
-    if (preg_match($matcher, $_SERVER['REQUEST_URI'], $matches)) {
+    $parameters = '';
+    if (preg_match('/^\/(?P<page>[^\/]*)(\/(?P<parameters>.*))?$/', $_SERVER['REQUEST_URI'], $matches)) {
         $page = $matches['page'];
-        $parameters = empty($matches['parameters']) ? '' : $matches['parameters'];
+        if (!empty($matches['parameters'])) {
+            $parameters = $matches['parameters'];
+        }
         if (isset($siteMap[$page])) {
             $activeEntry = $siteMap[$page];
         }

@@ -13,6 +13,10 @@ entschiedeneAntraege:
   ladenparameter:
     archiv: true
   lib: lib_antraege.php
+templates:
+  title: Vorlagen bearbeiten
+  ladenfunktion: templateController__handleRequest
+  lib: TemplateController.php
 benutzer:
   title: Benutzer dieses Web-Systems einsehen und verwalten
   template: benutzer.tpl

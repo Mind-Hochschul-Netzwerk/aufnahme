@@ -4,6 +4,9 @@ antraege:
 entschiedeneAntraege:
   label: Entschiedene Anträge
   icon: book
+templates:
+  label: Vorlagen
+  icon: pencil
 benutzer:
   label: Aufnahmekommission
   icon: user
