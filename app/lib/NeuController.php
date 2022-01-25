@@ -69,14 +69,16 @@ class NeuController
         }
 
         $token = Token::encode([$email, time()], '', getenv('TOKEN_KEY'));
-        $text = TemplateRepository::getInstance()->getOneByName('emailToken')->getFinalText([
+        $mailTemplate = TemplateRepository::getInstance()->getOneByName('emailToken');
+        $text = $mailTemplate->getFinalText([
             'url' => 'https://aufnahme.' . getenv('DOMAINNAME') . '/antrag/?token=' . $token,
         ]);
-        EmailService::getInstance()->send($email, 'Dein MHN-Mitgliedsantrag', $text);
+        EmailService::getInstance()->send($email, $mailTemplate->getSubject(), $text);
 
         $this->smarty->assign('innentemplate', 'NeuController/initEmailAuth.tpl');
         return true;
     }
+
 
     private function decodeEmailToken(string $token): void
     {
