@@ -4,6 +4,7 @@ namespace MHN\Aufnahme;
 use MHN\Aufnahme\Domain\Model\Email;
 use MHN\Aufnahme\Domain\Model\Vote;
 use MHN\Aufnahme\Domain\Repository\EmailRepository;
+use MHN\Aufnahme\Domain\Repository\TemplateRepository;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
 use MHN\Aufnahme\Domain\Repository\VoteRepository;
 use PHPMailer;
@@ -196,6 +197,10 @@ class lib_antraege
         $id = isset($matches[1]) ? (int)$matches[1] : 0;
         $aktion = isset($matches[2]) ? $matches[2] : null;
 
+        if ($aktion && !in_array($aktion, ['aufnehmen', 'nachfragen', 'ablehnen'])) {
+            die("invalid request");
+        }
+
         // keine ID angegeben => Übersicht der Anträge anzeigen
         if ($id === 0) {
             // Übersicht laden
@@ -259,7 +264,7 @@ class lib_antraege
         }
 
         // Keine Aktion angegeben => Antrag anzeigen
-        if ($aktion === '') {
+        if (!$aktion) {
             //speichern:
             $this->speichern_antrag1();
             $this->speichern_antrag_votes();
@@ -295,31 +300,35 @@ class lib_antraege
                 ];
             }
             $this->smarty->assign('mails', $emailData);
-        // Aktion (aufnehmen, nachfragen, ablehnen) zu einem Antrag ausführen
-        } else {
-            $this->smarty->assign('antrag', $this->antrag);
-            $this->smarty->assign('heute', Util::tsToDatum(time()));
-            $aktion = trim($aktion, '/');
+            return;
 
-            $this->smarty->assign('absende_email_kand', getenv('FROM_ADDRESS'));
-
-            $email = $this->antrag->getEMail();
-            if ($aktion == 'aufnehmen') {
-                $this->aktion_aufnehmen_speichern();
-                $this->aktion_aufnehmen_laden();
-                $this->smarty->assign('innentemplate', 'antraege/aktion/aufnehmen.tpl');
-            } elseif ($aktion == 'nachfragen') {
-                $this->aktion_nachfragen_speichern();
-                $this->aktion_nachfragen_laden();
-                $this->smarty->assign('innentemplate', 'antraege/aktion/nachfragen.tpl');
-            } elseif ($aktion == 'ablehnen') {
-                $this->aktion_ablehnen_speichern();
-                $this->aktion_ablehnen_laden();
-                $this->smarty->assign('innentemplate', 'antraege/aktion/ablehnen.tpl');
-            } else {
-                $this->smarty->assign('innentemplate', 'antraege/aktion/unbekannt.tpl');
-            }
         }
+
+        // Aktion (aufnehmen, nachfragen, ablehnen) zu einem Antrag ausführen
+        $this->smarty->assign('antrag', $this->antrag);
+        $this->smarty->assign('heute', Util::tsToDatum(time()));
+        $aktion = trim($aktion, '/');
+
+        $this->smarty->assign('absende_email_kand', getenv('FROM_ADDRESS'));
+
+        $this->{'aktion_' . $aktion . '_speichern'}();
+        $this->{'aktion_' . $aktion . '_laden'}();
+        $this->smarty->assign('innentemplate', 'antraege/aktion/' . $aktion . '.tpl');
+        $this->smarty->assign('aktion', $aktion);
+
+        $template = TemplateRepository::getInstance()->getOneByName($aktion);
+        $this->smarty->assign('mailSubject', $template->getSubject());
+        $replacements = [
+            'vorname' => $this->antrag->getVorname(),
+            'autor' => $this->loggedInUser->getRealName(),
+        ];
+        if ($aktion === 'nachfragen') {
+            $fragen = array_filter(array_map(function ($vote) {
+                return trim($vote->getNachfrage());
+            }, $this->antrag->getVotes()));
+            $replacements['fragen'] = implode("\n\n", $fragen);
+        }
+        $this->smarty->assign('mailText', $template->getFinalText($replacements));
     }
 
     /**
@@ -355,7 +364,7 @@ class lib_antraege
      */
     private function aktion_aufnehmen_speichern()
     {
-        if ($_POST['formular'] != 'aufnahme') {
+        if ($_POST['formular'] != 'aufnehmen') {
             return;
         }
 
@@ -364,7 +373,7 @@ class lib_antraege
         // Aktivierungslink ersetzen:
         $token = Token::encode([$this->antrag->getId()], '', getenv('TOKEN_KEY'));
         $link = 'https://mitglieder.' . getenv('DOMAINNAME') . '/aufnahme.php?token=' . $token;
-        $mailtext = str_replace('%aktivierungslink%', $link, $mailtext_orig);
+        $mailtext = str_replace('{$url}', $link, $mailtext_orig);
 
         try {
             $this->sende_email_kand($_POST['betreff'], $mailtext, 'aufnahme', $mailtext_orig);
@@ -399,7 +408,7 @@ class lib_antraege
      */
     private function aktion_nachfragen_speichern()
     {
-        if ($_POST['formular'] != 'nachfrage') {
+        if ($_POST['formular'] != 'nachfragen') {
             return;
         }
 

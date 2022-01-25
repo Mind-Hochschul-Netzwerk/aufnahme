@@ -5,6 +5,7 @@ use MHN\Aufnahme\Daten;
 use MHN\Aufnahme\Service\Token;
 use MHN\Aufnahme\Service\EmailService;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
+use MHN\Aufnahme\Domain\Repository\TemplateRepository;
 
 class NeuController
 {
@@ -68,9 +69,9 @@ class NeuController
         }
 
         $token = Token::encode([$email, time()], '', getenv('TOKEN_KEY'));
-        $this->smarty->assign('url', 'https://aufnahme.' . getenv('DOMAINNAME') . '/antrag/?token=' . $token);
-        $text = $this->smarty->fetch('mails/emailToken.tpl');
-
+        $text = TemplateRepository::getInstance()->getOneByName('emailToken')->getFinalText([
+            'url' => 'https://aufnahme.' . getenv('DOMAINNAME') . '/antrag/?token=' . $token,
+        ]);
         EmailService::getInstance()->send($email, 'Dein MHN-Mitgliedsantrag', $text);
 
         $this->smarty->assign('innentemplate', 'NeuController/initEmailAuth.tpl');

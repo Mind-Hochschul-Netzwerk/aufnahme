@@ -1,5 +1,7 @@
 <h2>Vorlage bearbeiten: {$template->getLabel()|escape}</h2>
 
+<p><a class="btn btn-default" href="/templates/">zurück zur Übersicht</a></p>
+
 <form action="/templates/" method="post">
     <input type="hidden" name="templateName" value="{$template->getName()|escape}">
 

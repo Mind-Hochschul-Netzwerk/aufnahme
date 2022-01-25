@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace MHN\Aufnahme\Domain\Model;
 
 /**
@@ -11,11 +13,11 @@ namespace MHN\Aufnahme\Domain\Model;
  */
 class Template
 {
-    private $name;
-    private $label;
-    private $subject;
-    private $text;
-    private $hints;
+    private string $name;
+    private string $label;
+    private string $subject;
+    private string $text;
+    private string $hints;
 
     public function __construct(string $name, string $label, string $subject, string $text, string $hints)
     {
@@ -67,8 +69,8 @@ class Template
     public function getFinalText(array $replacementMap): string
     {
         $text = $this->getText();
-        foreach ($values as $key=>$replacement) {
-            $text = str_replace('{$' . $k . '}', $v, $text);
+        foreach ($replacementMap as $key=>$replacement) {
+            $text = str_replace('{$' . $key . '}', $replacement, $text);
         }
         return $text;
     }
