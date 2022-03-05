@@ -33,15 +33,7 @@ class Daten
         'mhn_mobil',
         'mhn_mensa',
         'mhn_mensa_nr',
-        'mhn_beschaeftigung',
-        'mhn_studienort',
         'mhn_studienfach',
-        'mhn_unityp',
-        'mhn_schwerpunkt',
-        'mhn_nebenfach',
-        'mhn_semester',
-        'mhn_abschluss',
-        'mhn_zweitstudium',
         'mhn_hochschulaktivitaet',
         'mhn_stipendien',
         'mhn_ausland',
@@ -72,10 +64,13 @@ class Daten
         'einwilligung_datenverarbeitung_text',
     ];
 
-    // Leider kann man offenbar den Fall "checkbox vorhanden, aber nicht gecheckt"
-    // und "checkbox nicht vorhanden" nicht unterscheiden.
-    // Um interne Konsistenzpruefungen zu erlauben, daher hier die Checkboxes ... alles richtig dreckig ...
     const KEYS_CHECKBOX = [
+        'mhn_auskunft_studiengang',
+        'mhn_auskunft_stipendien',
+        'mhn_auskunft_ausland',
+        'mhn_auskunft_praktika',
+        'mhn_auskunft_beruf',
+        'mhn_mentoring',
         'mhn_aufgabe_orte',
         'mhn_aufgabe_vortrag',
         'mhn_aufgabe_koord',

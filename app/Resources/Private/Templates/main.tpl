@@ -23,7 +23,7 @@
       <script src="/js/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body>
+  <body id="mhn">
     {include file="menue.tpl"}
     <div class="main"><div class="container-fluid">
         <h1>{$titel|default}</h1>

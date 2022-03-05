@@ -244,3 +244,17 @@ textarea {
     margin-left: 0px;
     margin-top: 1em;
 }
+
+summary {
+    display: list-item;
+    margin-bottom: 0.5em;
+    cursor: pointer;
+}
+
+summary:hover {
+    color: #666;
+}
+
+details {
+    margin-bottom: 0.5em;
+}
