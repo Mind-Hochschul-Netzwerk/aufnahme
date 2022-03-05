@@ -9,9 +9,7 @@
 
 <ul>
     <li>Das Mitglied in die Wiki-Datenbank übernommen.</li>
-    <li>Eine Aufnahme-E-Mail versandt (siehe unten). Dabei wird %aktivierungslink% durch einen Link
-        ersetzt, mit dem das neue Mitglied, seinen Benutzeraccount initialisieren kann.
-    </li>
+    <li>Eine Aufnahme-E-Mail versandt (siehe unten).</li>
     <li>Der Antrags-Status auf "Aufgenommen" und das Entscheidungsdatum auf heute, den {$heute} gesetzt.</li>
 </ul>
 

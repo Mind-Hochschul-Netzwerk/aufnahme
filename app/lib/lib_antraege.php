@@ -373,7 +373,7 @@ class lib_antraege
         $mailtext_orig = $_POST['mailtext'];
 
         // Aktivierungslink ersetzen:
-        $mailtext = str_replace('{$url}', $a->getActivationUrl(), $mailtext_orig);
+        $mailtext = str_replace('{$url}', $this->antrag->getActivationUrl(), $mailtext_orig);
 
         try {
             $this->sende_email_kand($_POST['betreff'], $mailtext, 'aufnahme', $mailtext_orig);
