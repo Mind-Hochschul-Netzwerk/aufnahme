@@ -6,6 +6,7 @@ namespace MHN\Aufnahme;
 
 use MHN\Aufnahme\Antrag;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
+use MHN\Aufnahme\Domain\Repository\TemplateRepository;
 
 /**
  * sendet an alle Mitglieder der Aufnahmekommission eine Erinnerung mit einer Liste von Anträgen,
@@ -33,19 +34,19 @@ function wartung_sende_erinnerung(): void
     if (count($zu_erinnernde) == 0) {
         return;
     }
-    $zu_erinnernde = array_merge($zu_erinnernde, $ggf_zu_erinnernde);
-    foreach ($zu_erinnernde as $a) {
+
+    $names = [];
+    foreach (array_merge($zu_erinnernde, $ggf_zu_erinnernde) as $a) {
         $a->setTsErinnerung(time());
         $a->save();
+        $names[] = $a->getName();
     }
 
-    $text = "Folgende Kandidat:innen haben den Status 'Bewerten' und warten schon\r\n" .
-        "länger als eine Woche:\r\n\r\n";
-    foreach ($zu_erinnernde as $a) {
-        $mail->Body .= $a->getName() . "\r\n";
-    }
-
-    UserRepository::getInstance()->sendEmailToAll('MHN-Mitgliedsanträge warten auf Bewertung', $text);
+    $mailTemplate = TemplateRepository::getInstance()->getOneByName('teamReminder');
+    $text = $mailTemplate->getFinalText([
+        'namen' => implode("\n", $names),
+    ]);
+    UserRepository::getInstance()->sendEmailToAll($mailTemplate->getSubject(), $text);
 }
 
 wartung_sende_erinnerung();
