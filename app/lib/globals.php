@@ -47,18 +47,4 @@ if (!(is_writable($temp_dir) and is_dir($temp_dir))) {
 //Es gibt einige Wartungsarbeiten, für die ein cronjob overkill wäre. Daher
 // werden diese ggf. hier erledigt.
 
-$letztewartung = filemtime($temp_dir . 'letztewartung');
-if ($letztewartung === false) {
-    $letztewartung = 0;
-}
-
-//Wie lange liegt das letzte Mal zurück? Falls länger als 2 Stunden: Wartung durchführen:
-if (time() - date('U', $letztewartung) > 60 * 60 * 2) {
-    //Nun Wartungsarbeiten durchführen:
-    require_once('wartung.php');
-
-    //Modifikationszeit setzen:
-    $fh = fopen($temp_dir . 'letztewartung', 'w');
-    fwrite($fh, date('YmdHis'));
-    fclose($fh);
-}
+require_once 'wartung.php';

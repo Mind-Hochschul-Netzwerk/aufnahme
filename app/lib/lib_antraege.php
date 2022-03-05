@@ -10,7 +10,6 @@ use MHN\Aufnahme\Domain\Repository\VoteRepository;
 use PHPMailer;
 use Smarty;
 use MHN\Aufnahme\Antrag;
-use MHN\Aufnahme\Service\Token;
 use MHN\Aufnahme\Service\EmailService;
 
 class lib_antraege
@@ -368,12 +367,13 @@ class lib_antraege
             return;
         }
 
+        $this->antrag->setStatus(Antrag::STATUS_AUFGENOMMEN, $this->loggedInUser->getUserName());
+        $this->antrag->setTsEntscheidung(time());
+
         $mailtext_orig = $_POST['mailtext'];
 
         // Aktivierungslink ersetzen:
-        $token = Token::encode([$this->antrag->getId()], '', getenv('TOKEN_KEY'));
-        $link = 'https://mitglieder.' . getenv('DOMAINNAME') . '/aufnahme.php?token=' . $token;
-        $mailtext = str_replace('{$url}', $link, $mailtext_orig);
+        $mailtext = str_replace('{$url}', $a->getActivationUrl(), $mailtext_orig);
 
         try {
             $this->sende_email_kand($_POST['betreff'], $mailtext, 'aufnahme', $mailtext_orig);
@@ -381,9 +381,6 @@ class lib_antraege
             $this->smarty->assign('meldung_speichern', 'Fehler beim E-Mail versenden der E-Mail: ' . $e->errorMessage());
             return;
         }
-
-        $this->antrag->setStatus(Antrag::STATUS_AUFGENOMMEN, $this->loggedInUser->getUserName());
-        $this->antrag->setTsEntscheidung(time());
 
         if (!$this->antrag->save()) {
             $this->smarty->assign('meldung_speichern', 'Fehler beim Ändern des Status. Die E-Mail wurde aber versandt.');

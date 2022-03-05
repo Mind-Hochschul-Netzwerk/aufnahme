@@ -6,6 +6,7 @@ use MHN\Aufnahme\Daten;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
 use MHN\Aufnahme\Domain\Repository\VoteRepository;
 use MHN\Aufnahme\Domain\Repository\EmailRepository;
+use MHN\Aufnahme\Service\Token;
 
 class Antrag
 {
@@ -189,6 +190,11 @@ class Antrag
     public function getTsAntrag()
     {
         return $this->ts_antrag;
+    }
+
+    public function getTsEntscheidung()
+    {
+        return $this->ts_entscheidung;
     }
 
     //als Text ...
@@ -411,11 +417,10 @@ class Antrag
         return $vote->getValueColor();
     }
 
-    //alle, die nicht den Status aufgenommen oder abgelehnt haben.
-    public static function alleOffenenAntraege()
+    public static function getAllByStatus(int $status): array
     {
         $antraege = Sql::queryToArray(Sql::getInstance()->select(self::TABLE_NAME, 'antrag_id',
-            'status NOT IN ( ' . implode(',', [self::STATUS_AUFGENOMMEN, self::STATUS_ABGELEHNT, self::STATUS_AKTIVIERT]) . ') ORDER BY ts_antrag'
+            "status = $status ORDER BY ts_entscheidung, ts_antrag"
         ));
         $result = [];
         foreach ($antraege as $a) {
@@ -424,17 +429,25 @@ class Antrag
         return $result;
     }
 
+    public static function alleOffenenAntraege()
+    {
+        return array_merge(
+            self::getAllByStatus(self::STATUS_NEU_BEWERTEN),
+            self::getAllByStatus(self::STATUS_BEWERTEN),
+            self::getAllByStatus(self::STATUS_NACHFRAGEN),
+            self::getAllByStatus(self::STATUS_AUFNEHMEN),
+            self::getAllByStatus(self::STATUS_ABLEHNEN),
+            self::getAllByStatus(self::STATUS_AUF_ANTWORT_WARTEN),
+        );
+    }
+
     public static function alleEntschiedenenAntraege()
     {
-        $antraege = Sql::queryToArray(Sql::getInstance()->select(self::TABLE_NAME, 'antrag_id',
-            'status IN ( ' . implode(',', [self::STATUS_AUFGENOMMEN, self::STATUS_ABGELEHNT, self::STATUS_AKTIVIERT]) . ') ORDER BY ts_entscheidung'
-        )
+        return array_merge(
+            self::getAllByStatus(self::STATUS_AUFGENOMMEN),
+            self::getAllByStatus(self::STATUS_ABGELEHNT),
+            self::getAllByStatus(self::STATUS_AKTIVIERT),
         );
-        $result = [];
-        foreach ($antraege as $a) {
-            array_push($result, new Antrag($a['antrag_id']));
-        }
-        return $result;
     }
 
     //speichert den akt. Status
@@ -473,7 +486,7 @@ class Antrag
         Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_AKTIVIERT . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*7*8');
 
         // nicht aktivierte Benutzerkonten
-        Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_AUFGENOMMEN . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*365');
+        Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_AUFGENOMMEN . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*7*12');
 
         // abgelehnte Anträge
         Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_ABGELEHNT . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*7*60');
@@ -482,6 +495,17 @@ class Antrag
         Sql::getInstance()->delete(Daten::TABLE_NAME, '(SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . Daten::TABLE_NAME . '.antrag_id) IS NULL');
         Sql::getInstance()->delete(EmailRepository::TABLE_NAME, '(SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . EmailRepository::TABLE_NAME . '.antrag_id) IS NULL');
         Sql::getInstance()->delete(VoteRepository::TABLE_NAME, '(SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . VoteRepository::TABLE_NAME . '.antrag_id) IS NULL');
+    }
 
+    /**
+     * @throws LogicException wenn Status nicht aufgenommen ist
+     */
+    public function getActivationUrl(): string
+    {
+        if ($this->getStatus() !== self::STATUS_AUFGENOMMEN) {
+            throw new \LogicException('status muss aufgenommen sein');
+        }
+        $token = Token::encode([$this->getId()], '', getenv('TOKEN_KEY'));
+        return 'https://mitglieder.' . getenv('DOMAINNAME') . '/aufnahme.php?token=' . $token;
     }
 }

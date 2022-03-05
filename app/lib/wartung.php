@@ -7,6 +7,7 @@ namespace MHN\Aufnahme;
 use MHN\Aufnahme\Antrag;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
 use MHN\Aufnahme\Domain\Repository\TemplateRepository;
+use MHN\Aufnahme\Service\EmailService;
 
 /**
  * sendet an alle Mitglieder der Aufnahmekommission eine Erinnerung mit einer Liste von Anträgen,
@@ -16,39 +17,68 @@ use MHN\Aufnahme\Domain\Repository\TemplateRepository;
  */
 function wartung_sende_erinnerung(): void
 {
-    $antraege = Antrag::alleOffenenAntraege();
-    $zu_erinnernde = [];     //die über 9 Tage
-    $ggf_zu_erinnernde = []; // die über 7 Tage. Werden nur verschickt, falls es auch einen über 9 gibt ...
-    foreach ($antraege as $antrag) {
-        if ($antrag->getStatus() != Antrag::STATUS_BEWERTEN) {
-            continue;
-        }
+    $zu_erinnernde = [];
+    foreach (Antrag::getAllByStatus(Antrag::STATUS_BEWERTEN) as $antrag) {
         $t_diff = time() - $antrag->getTsAntrag();
         $t_diff_erinnerung = time() - $antrag->getTsErinnerung();
         if ($t_diff_erinnerung > 9 * 60 * 60 * 24 && $t_diff > 9 * 60 * 60 * 24) {
-            array_push($zu_erinnernde, $antrag);
-        } elseif ($t_diff > 7 * 60 * 60 * 24 && $t_diff_erinnerung > 7 * 60 * 60 * 24) {
-            array_push($ggf_zu_erinnernde, $antrag);
+            $zu_erinnernde[] = $antrag;
         }
     }
-    if (count($zu_erinnernde) == 0) {
+    if (!$zu_erinnernde) {
         return;
     }
 
     $names = [];
-    foreach (array_merge($zu_erinnernde, $ggf_zu_erinnernde) as $a) {
-        $a->setTsErinnerung(time());
-        $a->save();
-        $names[] = $a->getName();
+    foreach ($zu_erinnernde as $antrag) {
+        $antrag->setTsErinnerung(time());
+        $antrag->save();
+        $names[] = $antrag->getName();
     }
 
     $mailTemplate = TemplateRepository::getInstance()->getOneByName('teamReminder');
-    $text = $mailTemplate->getFinalText([
+    UserRepository::getInstance()->sendEmailToAll($mailTemplate->getSubject(), $mailTemplate->getFinalText([
         'namen' => implode("\n", $names),
-    ]);
-    UserRepository::getInstance()->sendEmailToAll($mailTemplate->getSubject(), $text);
+    ]));
 }
 
-wartung_sende_erinnerung();
+function sendActivationReminders(): void
+{
+    $userMailTemplate = TemplateRepository::getInstance()->getOneByName('userActivationReminder');
+    $teamMailTemplate = TemplateRepository::getInstance()->getOneByName('teamActivationReminder');
 
-Antrag::deleteOld();
+    foreach (Antrag::getAllByStatus(Antrag::STATUS_AUFGENOMMEN) as $antrag) {
+        $t_diff = time() - $antrag->getTsEntscheidung();
+        $t_diff_erinnerung = time() - $antrag->getTsErinnerung();
+
+        if ($t_diff_erinnerung < 9 * 60 * 60 * 24 || $t_diff < 9 * 60 * 60 * 24) {
+           continue;
+        }
+
+        $ablaufDatum = Util::tsToDatum($antrag->getTsEntscheidung() + 3600*24*7*12);
+        EmailService::getInstance()->send($antrag->getEmail(), $userMailTemplate->getSubject(), $userMailTemplate->getFinalText([
+            'vorname' => $antrag->getVorname(),
+            'mailDatum' => $antrag->getDatumEntscheidung(),
+            'ablaufDatum' => $ablaufDatum,
+            'url' => $antrag->getActivationUrl(),
+        ]));
+        UserRepository::getInstance()->sendEmailToAll($teamMailTemplate->getSubject(), $teamMailTemplate->getFinalText([
+            'name' => $antrag->getName(),
+            'antragsnummer' => $antrag->getId(),
+            'ablaufDatum' => $ablaufDatum,
+        ]));
+        $antrag->setTsErinnerung(time());
+        $antrag->save();
+    }
+
+}
+
+// Wie lange liegt das letzte Mal zurück? Falls länger als 2 Stunden: Wartung durchführen:
+if (time() - date('U', filemtime($temp_dir . 'letztewartung')) > 60 * 60 * 2) {
+    Antrag::deleteOld();
+    wartung_sende_erinnerung();
+    sendActivationReminders();
+
+    touch($temp_dir . 'letztewartung');
+}
+
