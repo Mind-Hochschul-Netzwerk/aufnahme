@@ -139,7 +139,6 @@ class UserRepository implements \MHN\Aufnahme\Interfaces\Singleton
         foreach ($users as $user) {
 
             $emailAddress = $user->getEmailAddress();
-            error_log("\n\n\nsend mail: $emailAddress\n\n\n");
             if (!$emailAddress) {
                 continue;
             }
