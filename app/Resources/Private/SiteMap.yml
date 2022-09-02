@@ -27,3 +27,8 @@ antrag:
   ladenfunktion: NeuController__handleRequest
   lib: NeuController.php
   public: true
+edit:
+  title: Aufnahmeantrag bearbeiten
+  ladenfunktion: EditController__handleRequest
+  lib: EditController.php
+  public: true

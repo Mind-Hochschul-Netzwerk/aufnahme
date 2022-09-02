@@ -498,14 +498,39 @@ class Antrag
     }
 
     /**
-     * @throws LogicException wenn Status nicht aufgenommen ist
+     * @throws LogicException wenn Status nicht self::STATUS_AUFEGNOMMEN ist
      */
     public function getActivationUrl(): string
     {
         if ($this->getStatus() !== self::STATUS_AUFGENOMMEN) {
-            throw new \LogicException('status muss aufgenommen sein');
+            throw new \LogicException('status muss STATUS_AUFGENOMMEN sein');
         }
         $token = Token::encode([$this->getId()], '', getenv('TOKEN_KEY'));
         return 'https://mitglieder.' . getenv('DOMAINNAME') . '/aufnahme.php?token=' . $token;
+    }
+
+    /**
+     * @throws LogicException wenn Status nicht self::STATUS_AUF_ANTWORT_WARTEN ist
+     */
+    public function getEditUrl(): string
+    {
+        if ($this->getStatus() !== self::STATUS_AUF_ANTWORT_WARTEN) {
+            throw new \LogicException('status muss STATUS_AUF_ANTWORT_WARTEN sein');
+        }
+        $token = Token::encode(['edit'], $this->getId() . $this->getTsStatusaenderung(), getenv('TOKEN_KEY'));
+        return 'https://aufnahme.' . getenv('DOMAINNAME') . '/edit/' . $this->getId() . '/?token=' . $token;
+    }
+
+    /**
+     * @throws RuntimeException if $token is not a valid edit token
+     */
+    public function assertEditTokenValid(string $token): void
+    {
+        Token::decode($token, $this->getId() . $this->getTsStatusaenderung(), getenv('TOKEN_KEY')) === ['edit'];
+    }
+
+    public function getUrl(): string
+    {
+        return 'https://aufnahme.' . getenv('DOMAINNAME') . '/antraege/' . $this->getId() . '/';
     }
 }

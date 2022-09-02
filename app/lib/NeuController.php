@@ -142,11 +142,9 @@ class NeuController
             return false;
         }
 
-        $d = Daten::datenFromDbArray($this->werte);
-
         $a = new Antrag();
         $a->setStatus(Antrag::STATUS_BEWERTEN, 0);
-        $a->setDaten($d);
+        $a->setDaten(Daten::datenFromDbArray($this->werte));
         $a->setFragenWerte($this->fragenWerte);
         $a->setTsAntrag(time());
 

@@ -12,7 +12,7 @@ namespace MHN\Aufnahme\Service;
  */
 class Token
 {
-    private function __construct() 
+    private function __construct()
     {
     }
 
@@ -27,18 +27,19 @@ class Token
     }
 
     /**
-     * @param $callback shall generate the exact $info that the token was created with if the token is valid
-     *           it can also perform checks on the payload and throw an exception if it has become invalid
+     * @param $info shall be the exact $info that the token was created with if the token is valid
+     *           $info can also be a callback function (fn($payload)) that generates the info-string
+     *           and can also perform checks on the payload and throw an exception if it has become invalid
      * @throws \RuntimeException if the token is invalid
      */
-    public static function decode(string $token, ?callable $callback = null, string $key): array
+    public static function decode(string $token, $info = '', string $key): array
     {
         try {
             list($str, $sig) = explode(':', strtr($token, '-_', '+/'));
             $payload = (array)json_decode(base64_decode($str));
-            $info = ($callback === null) ? '' : $callback($payload);
+            $info = is_callable($info) ? $info($payload) : $info;
             if ($sig !== self::generateSignature($str, $info, $key)) {
-                throw new \Exception('signature wrong');    
+                throw new \Exception('signature wrong');
             }
             return $payload;
         } catch (\Exception $e) {

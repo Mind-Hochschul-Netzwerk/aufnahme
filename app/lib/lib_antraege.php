@@ -367,6 +367,7 @@ class lib_antraege
             return;
         }
 
+        // Status muss geändert werden, bevor der Aktivierungslink generiert wird
         $this->antrag->setStatus(Antrag::STATUS_AUFGENOMMEN, $this->loggedInUser->getUserName());
         $this->antrag->setTsEntscheidung(time());
 
@@ -409,15 +410,22 @@ class lib_antraege
             return;
         }
 
+        // Status und Zeit müssen geändert werden, bevor der Bearbeitungslink generiert wird
+        $this->antrag->setStatus(Antrag::STATUS_AUF_ANTWORT_WARTEN, $this->loggedInUser->getUserName());
+        $this->antrag->setTsNachfrage(time());
+
+        $mailtext_orig = $_POST['mailtext'];
+
+        // Bearbeitungslink ersetzen:
+        $mailtext = str_replace('{$url}', $this->antrag->getEditUrl(), $mailtext_orig);
+
         try {
-            $this->sende_email_kand($_POST['betreff'], $_POST['mailtext'], 'nachfrage');
+            $this->sende_email_kand($_POST['betreff'], $mailtext, 'nachfrage', $mailtext_orig);
         } catch (\PHPMailerException $e) {
             $this->smarty->assign('meldung_speichern', 'Fehler beim E-Mail versenden der E-Mail: ' . $e->errorMessage());
             return;
         }
 
-        $this->antrag->setStatus(Antrag::STATUS_AUF_ANTWORT_WARTEN, $this->loggedInUser->getUserName());
-        $this->antrag->setTsNachfrage(time());
         if (!$this->antrag->save()) {
             $this->smarty->assign('meldung_speichern', 'Fehler beim Ändern des Status. Die E-Mail wurde aber versandt.');
         } else {
