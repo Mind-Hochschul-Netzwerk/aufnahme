@@ -76,14 +76,16 @@ class lib_antraege
         if ($_POST['formular'] != 'speichern_antrag_daten') {
             return;
         }
-        $daten = Daten::datenByAntragId($this->antrag->getId());
+        $daten = $this->antrag->getDaten();
 
         // leere Checkboxen werden nicht gesendet
-        foreach (Daten::KEYS_CHECKBOX as $key) {
-            $_POST[$key] = isset($_POST[$key]) ? 'j' : 'n';
+        foreach (formData::getSchema() as $key=>$type) {
+            if ($type === 'bool') {
+                $_POST[$key] = isset($_POST[$key]);
+            }
         }
 
-        foreach (Daten::KEYS as $key) {
+        foreach ($daten->getSchema() as $key=>$type) {
             // nicht im Formular änderbar:
             if (in_array($key, [
                 'user_email',
@@ -94,28 +96,17 @@ class lib_antraege
             ], true)) {
                 continue;
             }
-            if (!property_exists($daten, $key)) {
-                die('Unbekannte Property in daten: ' . $key);
-            }
+
             if (!isset($_POST[$key])) {
                 die('nicht vom Formular gesetzt: ' . $key);
             }
+
             if ($key === 'mhn_geburtstag') {
-                $daten->$key = Daten::parseBirthdayInput($_POST[$key]) ?? '0000-00-00';
+                $daten->set($key, formData::parseBirthdayInput($_POST[$key]));
                 continue;
             }
-            $daten->$key = $_POST[$key];
+            $daten->set($key, $_POST[$key]);
         }
-        $daten->save();
-        //Fragen muessen extra gespeichert werden, und zwar im Antrag:
-        global $global_fragen;
-        $fragenWerte = $this->antrag->getFragenWerte();
-        foreach ($global_fragen as $key => $frage) {
-            assert(array_key_exists($key, $fragenWerte));
-            assert(array_key_exists($key, $_POST));
-            $fragenWerte[$key] = $_POST[$key];
-        }
-        $this->antrag->setFragenWerte($fragenWerte);
         $this->antrag->save();
     }
 
@@ -273,11 +264,8 @@ class lib_antraege
             // was gespeichert wurde ...):
             $this->antrag = new Antrag($id);
             $this->smarty->assign('antrag', $this->antrag);
-            $this->smarty->assign('daten', $this->antrag->daten);
-            $this->smarty->assign('werte', $werte = $this->antrag->daten->toArray());
-            global $global_fragen;
-            $this->smarty->assign('fragen', $global_fragen);
-            $this->smarty->assign('fragen_werte', $this->antrag->getFragenWerte());
+            $this->smarty->assign('daten', $this->antrag->getDaten()->toArray());
+            $this->smarty->assign('werte', $werte = $this->antrag->getDaten()->toArray());
             $this->smarty->assign('innentemplate', 'antraege/einzelansicht.tpl');
             if (isset($_POST['formular']) && $_POST['formular'] == 'speichern_antrag_kommentare'
                 && $_POST['k_edit'] != ''

@@ -31,13 +31,6 @@ $global_status = [
     Antrag::STATUS_ABGELEHNT => 'Abgelehnt',
 ];
 
-$global_fragen = [ //vom Aufnahmeformular auf der Homepage
-    'MHN_Beitragen' => 'Was möchtest du zu MHN beitragen?',
-    'MHN_Interesse' => 'Was hat Dein Interesse an MHN geweckt?',
-    'MHN_Vorstellung' => 'Welche Vorstellung und welche Erwartungen hast Du bislang von MHN?',
-    'MHN_Kennen' => 'Welche MHN-Mitglieder kennst du persönlich?',
-];
-
 //============== 5. Sanity-Checks =========================
 if (!(is_writable($temp_dir) and is_dir($temp_dir))) {
     die('Kann nicht in Tempverzeichnis schreiben. Bitte Einstellungen in config.php und Schreibberechtigung prüfen.');

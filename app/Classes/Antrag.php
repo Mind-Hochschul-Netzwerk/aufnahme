@@ -2,7 +2,7 @@
 namespace MHN\Aufnahme;
 
 use MHN\Aufnahme\Domain\Model\Vote;
-use MHN\Aufnahme\Daten;
+use MHN\Aufnahme\formData;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
 use MHN\Aufnahme\Domain\Repository\VoteRepository;
 use MHN\Aufnahme\Domain\Repository\EmailRepository;
@@ -48,15 +48,13 @@ class Antrag
 
     private $kommentare;
 
-    private $fragen_werte;
-
     /** @var Vote[] */
     private $votes = [];
 
     /** @var Vote[]|null */
     private $latestVotes = null;
 
-    public $daten;
+    private $daten;
 
     /**
      * Lädt einen Antrag bzw. erzeugt einen neuen
@@ -99,12 +97,18 @@ class Antrag
         $this->statusaenderung_userName = (string)$row['statusaenderung_username'];
         $this->bemerkung = $row['bemerkung'];
         $this->kommentare = $row['kommentare'];
-        $this->fragen_werte = @unserialize($row['fragen_werte']);
-        $this->daten = Daten::datenByAntragId($this->antrag_id);
-        if ($this->daten === null) {
-            die('Konnte Daten nicht laden zu Antrag Nr. ' . $this->antrag_id);
-        }
+        $this->daten = new formData($row['formData']);
         $this->votes = VoteRepository::getInstance()->findByAntrag($this);
+    }
+
+    public static function findOneByEmail(string $email): ?self
+    {
+        $sql = Sql::getInstance();
+        $row = Sql::queryToArraySingle($sql->select(self::TABLE_NAME, 'antrag_id', 'mail="' . $sql->escape($email) . '"'));
+        if (!$row) {
+            return null;
+        }
+        return new self($row['antrag_id']);
     }
 
     //aus den Daten.
@@ -141,16 +145,6 @@ class Antrag
     public function setKommentare($k)
     {
         $this->kommentare = trim($k);
-    }
-
-    public function getFragenWerte()
-    {
-        return $this->fragen_werte;
-    }
-
-    public function setFragenWerte($f)
-    {
-        $this->fragen_werte = $f;
     }
 
     public function addKommentar($username, $kommentar)
@@ -306,15 +300,15 @@ class Antrag
     /**
      * setzt die inhaltlichen Daten zum Antrag
      *
-     * @param Daten $daten
+     * @param formData $daten
      * @return void
      */
-    public function setDaten(Daten $daten)
+    public function setDaten(formData $daten)
     {
         $this->daten = $daten;
     }
 
-    public function getDaten(): Daten
+    public function getDaten(): formData
     {
         return $this->daten;
     }
@@ -338,13 +332,13 @@ class Antrag
             'statusaenderung_username' => $this->statusaenderung_userName,
             'bemerkung' => (string)$this->bemerkung,
             'kommentare' => (string)$this->kommentare,
-            'fragen_werte' => serialize($this->fragen_werte),
+            'formData' => (string)($this->daten),
+            'mail' => $this->daten->getEmail(),
             'ts_erinnerung' => 0,
         ];
 
         try {
             $id = $this->sql->insert(self::TABLE_NAME, $antrag);
-            $this->daten->addThisDaten($id);
             $this->antrag_id = $id;
         } catch (\RuntimeException $e) {
             $this->sql->rollback();
@@ -465,7 +459,8 @@ class Antrag
             'ts_statusaenderung' => $this->ts_statusaenderung,
             'statusaenderung_username' => $this->statusaenderung_userName,
             'ts_erinnerung' => $this->ts_erinnerung,
-            'fragen_werte' => @serialize($this->fragen_werte),
+            'formData' => (string)($this->daten),
+            'mail' => $this->daten->getEmail(),
         ];
         if ($this->sql->update(self::TABLE_NAME, $antrag_neu, 'antrag_id=' . $this->antrag_id)) {
             return true;
@@ -492,7 +487,6 @@ class Antrag
         Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_ABGELEHNT . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*7*60');
 
         // Daten, Mails und Voten löschen
-        Sql::getInstance()->delete(Daten::TABLE_NAME, '(SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . Daten::TABLE_NAME . '.antrag_id) IS NULL');
         Sql::getInstance()->delete(EmailRepository::TABLE_NAME, '(SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . EmailRepository::TABLE_NAME . '.antrag_id) IS NULL');
         Sql::getInstance()->delete(VoteRepository::TABLE_NAME, '(SELECT a.antrag_id FROM ' . self::TABLE_NAME . ' a WHERE a.antrag_id = ' . VoteRepository::TABLE_NAME . '.antrag_id) IS NULL');
     }

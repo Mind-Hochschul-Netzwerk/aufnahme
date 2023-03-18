@@ -1,7 +1,7 @@
 <?php
 namespace MHN\Aufnahme;
 
-use MHN\Aufnahme\Daten;
+use MHN\Aufnahme\formData;
 use MHN\Aufnahme\Service\Token;
 use MHN\Aufnahme\Service\EmailService;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
@@ -11,23 +11,15 @@ class NeuController
 {
     private $smarty = null;
 
-    private $fragen = [];
-    private $fragenWerte = [];
     private $werte = null;
     private $token = '';
 
     public function handleRequest(): void
     {
         $this->smarty = Service\SmartyContainer::getInstance()->getSmarty();
-        $this->werte = (new Daten())->toArray();
-        $this->fragen = $GLOBALS['global_fragen'];
-        foreach ($this->fragen as $k=>$v) {
-            $this->fragenWerte[$k] = '';
-        }
+        $this->werte = new formData();
 
-        $this->smarty->assign('werte', $this->werte);
-        $this->smarty->assign('fragen', $this->fragen);
-        $this->smarty->assign('fragen_werte', $this->fragenWerte);
+        $this->smarty->assign('werte', $this->werte->toArray());
 
         if (!empty($_REQUEST['actionEmail'])) {
             if ($this->initEmailAuth()) {
@@ -39,7 +31,7 @@ class NeuController
             $this->decodeEmailToken((string) $_GET['token']);
         }
 
-        if (!($this->werte['user_email'])) {
+        if (!($this->werte->getEmail())) {
             $this->smarty->assign('innentemplate', 'NeuController/emailForm.tpl');
             return;
         }
@@ -50,8 +42,7 @@ class NeuController
             }
         }
 
-        $this->smarty->assign('werte', $this->werte);
-        $this->smarty->assign('fragen_werte', $this->fragenWerte);
+        $this->smarty->assign('werte', $this->werte->toArray());
 
         $this->smarty->assign('innentemplate', 'NeuController/form.tpl');
     }
@@ -63,7 +54,7 @@ class NeuController
             return false;
         }
 
-        if (Daten::findDatenByEmail($email)) {
+        if (Antrag::findOneByEmail($email)) {
             $this->smarty->assign('emailUsed', true);
             return false;
         }
@@ -71,7 +62,7 @@ class NeuController
         $token = Token::encode([$email, time()], '', getenv('TOKEN_KEY'));
         $mailTemplate = TemplateRepository::getInstance()->getOneByName('emailToken');
         $text = $mailTemplate->getFinalText([
-            'url' => getenv(MOODLE_AUFNAHME_URL) . "&token=$token",
+            'url' => getenv('MOODLE_AUFNAHME_URL') . "&token=$token",
         ]);
         EmailService::getInstance()->send($email, $mailTemplate->getSubject(), $text);
 
@@ -83,17 +74,18 @@ class NeuController
     private function decodeEmailToken(string $token): void
     {
         try {
-            $this->werte['user_email'] = Token::decode($token, function ($data) {
+            $mail = Token::decode($token, function ($data) {
                 list($email, $time) = $data;
                 if (time() - $time > 3600*24*7) {
                     throw new \RuntimeException("token expired");
                 }
-                if (Daten::findDatenByEmail($email)) {
+                if (Antrag::findOneByEmail($email)) {
                     $this->smarty->assign('emailUsed', true);
                     throw new \RuntimeException("email used");
                 }
                 return '';
             }, getenv('TOKEN_KEY'))[0];
+            $this->werte->set('user_email', $mail);
         } catch (\Exception $e) {
             $this->smarty->assign('tokenInvalid', true);
         }
@@ -108,35 +100,30 @@ class NeuController
             $dataIsValid = false;
         }
 
-        if (!$this->werte['user_email']) {
+        if (!$this->werte->getEmail()) {
             throw new \RuntimeException('user_email is not set, should be set by NeuController::decodeEmailToken()');
         }
 
-        foreach ($this->werte as $k=>$v) {
+        foreach (formData::getSchema() as $k=>$type) {
             if ($k === 'user_email') {
                 continue;
             }
             if ($k === 'mhn_geburtstag' && isset($_REQUEST[$k])) {
-                $this->werte[$k] = Daten::parseBirthdayInput($_REQUEST[$k]);
-                if (!$this->werte[$k]) {
+                $birthday = formData::parseBirthdayInput($_REQUEST[$k]);
+                $this->werte->set($k, $birthday);
+                if (!$birthday) {
                     $this->smarty->assign('invalidBirthday', true);
                     $dataIsValid = false;
                 }
             } elseif (isset($_REQUEST[$k])) {
-                $this->werte[$k] = $_REQUEST[$k];
+                $this->werte->set($k, $_REQUEST[$k]);
             }
         }
 
-        foreach ($this->fragenWerte as $k=>$v) {
-            if (isset($_REQUEST[$k])) {
-                $this->fragenWerte[$k] = $_REQUEST[$k];
-            }
-        }
-
-        $this->werte['kenntnisnahme_datenverarbeitung'] = date('Y-m-d H:i:s');
-        $this->werte['kenntnisnahme_datenverarbeitung_text'] = $this->smarty->fetch('datenschutz/kenntnisnahme_text.tpl');
-        $this->werte['einwilligung_datenverarbeitung'] = date('Y-m-d H:i:s');
-        $this->werte['einwilligung_datenverarbeitung_text'] = $this->smarty->fetch('datenschutz/einwilligung_text.tpl');
+        $this->werte->set('kenntnisnahme_datenverarbeitung', new \DateTime());
+        $this->werte->set('kenntnisnahme_datenverarbeitung_text', $this->smarty->fetch('datenschutz/kenntnisnahme_text.tpl'));
+        $this->werte->set('einwilligung_datenverarbeitung', new \DateTime());
+        $this->werte->set('einwilligung_datenverarbeitung_text',  $this->smarty->fetch('datenschutz/einwilligung_text.tpl'));
 
         if (!$dataIsValid) {
             return false;
@@ -144,8 +131,7 @@ class NeuController
 
         $a = new Antrag();
         $a->setStatus(Antrag::STATUS_BEWERTEN, 0);
-        $a->setDaten(Daten::datenFromDbArray($this->werte));
-        $a->setFragenWerte($this->fragenWerte);
+        $a->setDaten($this->werte);
         $a->setTsAntrag(time());
 
         try {

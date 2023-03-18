@@ -36,7 +36,7 @@ if ($antrag->getStatus() !== Antrag::STATUS_AUFGENOMMEN) {
 
 if ($_REQUEST['action'] === 'data') {
     header('Content-Type: application/json');
-    echo json_encode($antrag->getDaten()->toArray());
+    echo (string) $antrag->getDaten();
 } elseif ($_REQUEST['action'] === 'finish') {
     $antrag->setStatus(Antrag::STATUS_AKTIVIERT, "");
     $antrag->save();

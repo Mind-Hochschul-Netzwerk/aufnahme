@@ -6,7 +6,11 @@
 {include file='antraege/daten-zeile.tpl' name='mhn_vorname' label='Vorname*' value=$werte.mhn_vorname required=1}
 {include file='antraege/daten-zeile.tpl' name='mhn_nachname' label='Nachname*' value=$werte.mhn_nachname required=1}
 
-{include file='antraege/daten-zeile.tpl' name='mhn_geburtstag' label='Geburtstag (TT.MM.JJJJ)*' value=$werte.mhn_geburtstag type="date" required=1}
+{if empty($werte.mhn_geburtstag)}
+    {include file='antraege/daten-zeile.tpl' name='mhn_geburtstag' label='Geburtstag (TT.MM.JJJJ)*' value='' type="date" required=1}
+{else}
+    {include file='antraege/daten-zeile.tpl' name='mhn_geburtstag' label='Geburtstag (TT.MM.JJJJ)*' value=$werte.mhn_geburtstag->format('Y-m-d') type="date" required=1}
+{/if}
 
 <div class="form-group row"'>
     <label for='input-mhn_mensa' class='col-sm-4 col-form-label'>Mitglied bei <a href="https://www.mensa.de">Mensa</a></label>
@@ -107,12 +111,22 @@
     <div class='col-sm-8'><textarea id='input-mhn_aufmerksam' name='mhn_aufmerksam' class='form-control'>{$werte.mhn_aufmerksam|escape}</textarea></div>
 </div>
 
-{foreach from=$fragen item=i key=k}
-    <div class="form-group row"'>
-        <label for='input-{$k}' class='col-sm-4 col-form-label'>{$i}</label>
-        <div class='col-sm-8'><textarea id='input-{$k}' name='{$k}' class='form-control'>{$fragen_werte[$k]|escape}</textarea></div>
-    </div>
-{/foreach}
+<div class="form-group row"'>
+    <label for='input-mhn_beitragen' class='col-sm-4 col-form-label'>Was möchtest du zu MHN beitragen?</label>
+    <div class='col-sm-8'><textarea id='input-mhn_beitragen' name='mhn_beitragen' class='form-control'>{$werte.mhn_beitragen|escape}</textarea></div>
+</div>
+<div class="form-group row"'>
+    <label for='input-mhn_interesse' class='col-sm-4 col-form-label'>Was hat Dein Interesse an MHN geweckt?</label>
+    <div class='col-sm-8'><textarea id='input-mhn_interesse' name='mhn_interesse' class='form-control'>{$werte.mhn_interesse|escape}</textarea></div>
+</div>
+<div class="form-group row"'>
+    <label for='input-mhn_vorstellung' class='col-sm-4 col-form-label'>Welche Vorstellung und welche Erwartungen hast Du bislang von MHN?</label>
+    <div class='col-sm-8'><textarea id='input-mhn_vorstellung' name='mhn_vorstellung' class='form-control'>{$werte.mhn_vorstellung|escape}</textarea></div>
+</div>
+<div class="form-group row"'>
+    <label for='input-mhn_kennen' class='col-sm-4 col-form-label'>Welche MHN-Mitglieder kennst du persönlich?</label>
+    <div class='col-sm-8'><textarea id='input-mhn_kennen' name='mhn_kennen' class='form-control'>{$werte.mhn_kennen|escape}</textarea></div>
+</div>
 
 <div class="form-group row"'>
     <label for='input-mhn_bemerkungen' class='col-sm-4 col-form-label'>Was möchtest du uns sonst noch mitteilen?</label>

@@ -1,7 +1,6 @@
 <?php
 namespace MHN\Aufnahme;
 
-use MHN\Aufnahme\Daten;
 use MHN\Aufnahme\Antrag;
 use MHN\Aufnahme\Service\Token;
 use MHN\Aufnahme\Service\EmailService;
@@ -26,9 +25,7 @@ class EditController
             return;
         }
 
-        $this->smarty->assign('werte', $this->antrag->daten->toArray());
-        $this->smarty->assign('fragen', $GLOBALS['global_fragen']);
-        $this->smarty->assign('fragen_werte', $this->antrag->getFragenWerte());
+        $this->smarty->assign('werte', $this->antrag->getDaten()->toArray());
 
         $action = $_POST['action'] ?? 'show form';
 
@@ -50,14 +47,16 @@ class EditController
 
         $dataIsValid = true;
 
-        $daten = Daten::datenByAntragId($this->antrag->getId());
+        $daten = $this->antrag->getDaten();
 
         // leere Checkboxen werden nicht gesendet
-        foreach (Daten::KEYS_CHECKBOX as $key) {
-            $_POST[$key] = isset($_POST[$key]) ? 'j' : 'n';
+        foreach (formData::getSchema() as $key=>$type) {
+            if ($type === 'bool') {
+                $_POST[$key] = isset($_POST[$key]);
+            }
         }
 
-        foreach (Daten::KEYS as $key) {
+        foreach ($daten->getSchema() as $key=>$type) {
             // nicht im Formular änderbar:
             if (in_array($key, [
                 'user_email',
@@ -68,38 +67,29 @@ class EditController
             ], true)) {
                 continue;
             }
-            if (!property_exists($daten, $key)) {
-                throw new \LogicException('Unbekannte Property in daten: ' . $key);
-            }
+
             if (!isset($_POST[$key])) {
-                throw new \RuntimeException('nicht vom Formular gesetzt: ' . $key);
+                die('nicht vom Formular gesetzt: ' . $key);
             }
+
             if ($key === 'mhn_geburtstag') {
-                $daten->$key = Daten::parseBirthdayInput($_POST[$key]);
-                if (!($daten->$key)) {
+                $birthday = formData::parseBirthdayInput($_POST[$key]);
+                $daten->set($key, $birthday);
+                if (!$birthday) {
                     $this->smarty->assign('invalidBirthday', true);
                     $dataIsValid = false;
                 }
                 continue;
             }
-            $daten->$key = $_POST[$key];
-        }
 
-        $fragenWerte = $this->antrag->getFragenWerte();
-        foreach ($fragenWerte as $k=>$v) {
-            if (isset($_POST[$k])) {
-                $fragenWerte[$k] = $_POST[$k];
-            }
+            $daten->set($key, $_POST[$key]);
         }
 
         if (!$dataIsValid) {
             $this->smarty->assign('werte', $daten->toArray());
-            $this->smarty->assign('fragen_werte', $fragenWerte);
             return false;
         }
 
-        $daten->save();
-        $this->antrag->setFragenWerte($fragenWerte);
         $this->antrag->setStatus(Antrag::STATUS_NEU_BEWERTEN, 0);
         $this->antrag->save();
 
