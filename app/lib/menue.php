@@ -69,10 +69,26 @@ function menue_entry()
     $smarty->assign('NVleiste', [$activeEntry]);
     $smarty->assign('html_title', $activeEntry['title'] ?? '');
 
+    $isEmbedded = !empty($_GET['embed']);
+    $mainTemplate = $isEmbedded ? 'embed.tpl' : 'main.tpl';
+    if ($isEmbedded) {
+        $smarty->assign('isEmbedded', true);
+        $parentUrl = empty($_GET['parentUrl']) ? '' : filter_var($_GET['parentUrl'], FILTER_VALIDATE_URL);
+        $urlComponents = $parentUrl ? parse_url($parentUrl) : [];
+        if (!empty($urlComponents['query'])) {
+            parse_str($urlComponents['query'], $parentQuery);
+            foreach ($parentQuery as $k=>$v) {
+                if (!isset($_GET[$k])) {
+                    $_GET[$k] = $v;
+                }
+            }
+        }
+    }
+
     if ($activeEntry === null) {
         @header('HTTP/1.1 404 File Not Found');
         $smarty->assign('innentemplate', '404.tpl');
-        $smarty->display('main.tpl', '404.tpl');
+        $smarty->display($mainTemplate, '404.tpl');
         return;
     }
 
@@ -103,9 +119,9 @@ function menue_entry()
         //HTTP1.0:
         @header('Pragma: no-cache');
 
-        $smarty->display('main.tpl');
+        $smarty->display($mainTemplate);
     } else {
         //als ID das innentemplate verwenden; die Seite ist damit eindeutig bestimmt
-        $smarty->display('main.tpl', $activeEntry['template']);
+        $smarty->display($mainTemplate, $activeEntry['template']);
     }
 }

@@ -258,3 +258,7 @@ summary:hover {
 details {
     margin-bottom: 0.5em;
 }
+
+body.embedded .container-fluid {
+    margin: 0;
+}
