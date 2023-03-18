@@ -6,17 +6,6 @@
 {include file='antraege/daten-zeile.tpl' name='mhn_vorname' label='Vorname*' value=$werte.mhn_vorname required=1}
 {include file='antraege/daten-zeile.tpl' name='mhn_nachname' label='Nachname*' value=$werte.mhn_nachname required=1}
 
-<div class="form-group row"'>
-    <label for='input-mhn_geschlecht' class='col-sm-4 col-form-label'>Geschlecht*</label>
-    <div class='col-sm-8'><select id='input-mhn_geschlecht' name='mhn_geschlecht' class='form-control' required>
-            <option disabled value="" {if $werte.mhn_geschlecht eq ''}selected{/if}>Bitte wählen</option>
-            <option value="w" {if $werte.mhn_geschlecht eq 'w'}selected{/if}/>weiblich</option>
-            <option value="m" {if $werte.mhn_geschlecht eq 'm'}selected{/if}/>männlich</option>
-            <option value="d" {if $werte.mhn_geschlecht eq 'd'}selected{/if}/>divers</option>
-        </select>
-    </div>
-</div>
-
 {include file='antraege/daten-zeile.tpl' name='mhn_geburtstag' label='Geburtstag (TT.MM.JJJJ)*' value=$werte.mhn_geburtstag type="date" required=1}
 
 <div class="form-group row"'>

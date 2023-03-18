@@ -20,7 +20,6 @@ CREATE TABLE `daten` (
   `mhn_nachname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_email` varchar(255) COLLATE utf8mb4_unicode_ci,
   `mhn_titel` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_geschlecht` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'u',
   `mhn_ws_strasse` varchar(255) COLLATE utf8mb4_unicode_ci,
   `mhn_ws_hausnr` varchar(255) COLLATE utf8mb4_unicode_ci,
   `mhn_ws_zusatz` varchar(255) COLLATE utf8mb4_unicode_ci,
@@ -126,7 +125,6 @@ INSERT INTO `daten` VALUES (
     'Hirsch',
     'hilde.hirsch@mailinator.com',
     '', -- mhn_titel
-    'w', -- geschlecht
     'Im Wald',
     '8',
     '',

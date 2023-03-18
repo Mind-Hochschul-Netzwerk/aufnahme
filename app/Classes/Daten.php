@@ -15,7 +15,6 @@ class Daten
         'mhn_nachname',
         'user_email',
         'mhn_titel',
-        'mhn_geschlecht',
         'mhn_ws_strasse',
         'mhn_ws_hausnr',
         'mhn_ws_zusatz',
@@ -90,7 +89,6 @@ class Daten
     public $mhn_nachname = '';
     public $user_email = '';
     public $mhn_titel = '';
-    public $mhn_geschlecht = '';
     public $mhn_ws_strasse = '';
     public $mhn_ws_hausnr = '';
     public $mhn_ws_zusatz = '';
