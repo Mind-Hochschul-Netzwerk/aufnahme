@@ -1,4 +1,4 @@
-<p>Aus der <a href="https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&chapterid=6">Satzung
+<p>Aus der <a target="_parent" href="https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&chapterid=6">Satzung
 des Mind-Hochschul-Netzwerks (MHN)</a>:</p>
 
 <p>Der Verein richtet sich an <strong>hochintelligente</strong> und <strong>wissenschaftlich
@@ -22,6 +22,6 @@ Beitritt. In der Regel erhältst du binnen weniger Wochen eine Rückmeldung von 
 Bereiche freigeschaltet. Damit wollen dich über Angebote anderer informieren und Dir ermöglichen, gut im
 MHN anzukommen und dich, deine Ideen und Erfahrungen einzubringen.</p>
 
-<p>Noch Fragen? <a href="https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&chapterid=3">Nimm
+<p>Noch Fragen? <a target="_parent" href="https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&chapterid=3">Nimm
 Kontakt mit uns auf.</a></p>
 
