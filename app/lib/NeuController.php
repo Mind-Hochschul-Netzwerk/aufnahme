@@ -1,9 +1,9 @@
 <?php
 namespace MHN\Aufnahme;
 
-use MHN\Aufnahme\formData;
 use MHN\Aufnahme\Service\Token;
 use MHN\Aufnahme\Service\EmailService;
+use MHN\Aufnahme\Domain\Model\FormData;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
 use MHN\Aufnahme\Domain\Repository\TemplateRepository;
 
@@ -17,7 +17,7 @@ class NeuController
     public function handleRequest(): void
     {
         $this->smarty = Service\SmartyContainer::getInstance()->getSmarty();
-        $this->werte = new formData();
+        $this->werte = new FormData();
 
         $this->smarty->assign('werte', $this->werte->toArray());
 
@@ -104,21 +104,7 @@ class NeuController
             throw new \RuntimeException('user_email is not set, should be set by NeuController::decodeEmailToken()');
         }
 
-        foreach (formData::getSchema() as $k=>$type) {
-            if ($k === 'user_email') {
-                continue;
-            }
-            if ($k === 'mhn_geburtstag' && isset($_REQUEST[$k])) {
-                $birthday = formData::parseBirthdayInput($_REQUEST[$k]);
-                $this->werte->set($k, $birthday);
-                if (!$birthday) {
-                    $this->smarty->assign('invalidBirthday', true);
-                    $dataIsValid = false;
-                }
-            } elseif (isset($_REQUEST[$k])) {
-                $this->werte->set($k, $_REQUEST[$k]);
-            }
-        }
+        $dataIsValid &= $this->werte->updateFromForm($this->smarty);
 
         $this->werte->set('kenntnisnahme_datenverarbeitung', new \DateTime());
         $this->werte->set('kenntnisnahme_datenverarbeitung_text', $this->smarty->fetch('datenschutz/kenntnisnahme_text.tpl'));

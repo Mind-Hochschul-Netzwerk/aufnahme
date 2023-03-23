@@ -1,11 +1,11 @@
 <?php
-namespace MHN\Aufnahme;
+namespace MHN\Aufnahme\Domain\Model;
 
 use Symfony\Component\Yaml\Yaml;
 
 //die eigentlichen Daten des Aufnahmeantrags. Ausgelagert, damit
 // bei einer Änderung des Formular leichter anpassbar.
-class formData
+class FormData
 {
     private $data = [];
     private static $schema = [];
@@ -15,11 +15,7 @@ class formData
     public function __construct(string $jsonData = '[]') {
         $data = json_decode($jsonData, true);
 
-        if (!static::$schema) {
-            static::$schema = Yaml::parse(file_get_contents(self::SCHEMA_FILENAME));
-        }
-
-        foreach (static::$schema as $name=>$type) {
+        foreach (static::getSchema() as $name=>$type) {
             switch ($type) {
                 case 'mail':
                 case 'text':
@@ -57,6 +53,10 @@ class formData
 
     public static function getSchema(): array
     {
+        if (!static::$schema) {
+            static::$schema = Yaml::parse(file_get_contents(self::SCHEMA_FILENAME));
+        }
+
         return static::$schema;
     }
 
@@ -130,5 +130,53 @@ class formData
             return null;
         }
         return $date;
+    }
+
+    /**
+     * Update by $_POST data
+     * does NOT update user_email, kenntnisnahme_datenverarbeitung, kenntnisnahme_datenverarbeitung_text, einwilligung_datenverarbeitung, einwilligung_datenverarbeitung_text
+     * does NOT update birthday if date is invalid
+     * @return data is valid
+     */
+    public function updateFromForm($smarty): bool
+    {
+        $dataIsValid = true;
+        $postData = $_POST;
+
+        foreach (static::getSchema() as $key=>$type) {
+            // leere Checkboxen werden nicht gesendet
+            if ($type === 'bool') {
+                $postData[$key] = isset($postData[$key]) && $postData[$key] !== "0";
+            }
+
+            // nicht im Formular änderbar:
+            if (in_array($key, [
+                'user_email',
+                'kenntnisnahme_datenverarbeitung',
+                'kenntnisnahme_datenverarbeitung_text',
+                'einwilligung_datenverarbeitung',
+                'einwilligung_datenverarbeitung_text'
+            ], true)) {
+                continue;
+            }
+
+            if (!isset($postData[$key])) {
+                die('nicht vom Formular gesetzt: ' . $key);
+            }
+
+            if ($key === 'mhn_geburtstag' && isset($postData[$key])) {
+                $birthday = FormData::parseBirthdayInput($postData[$key]);
+                if ($birthday) {
+                    $this->set($key, $birthday);
+                } else {
+                    $smarty->assign('invalidBirthday', true);
+                    $dataIsValid = false;
+                }
+            } elseif (isset($postData[$key])) {
+                $this->set($key, $postData[$key]);
+            }
+        }
+
+        return $dataIsValid;
     }
 }

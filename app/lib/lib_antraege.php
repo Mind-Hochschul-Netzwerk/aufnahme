@@ -3,6 +3,7 @@ namespace MHN\Aufnahme;
 
 use MHN\Aufnahme\Domain\Model\Email;
 use MHN\Aufnahme\Domain\Model\Vote;
+use MHN\Aufnahme\Domain\Model\FormData;
 use MHN\Aufnahme\Domain\Repository\EmailRepository;
 use MHN\Aufnahme\Domain\Repository\TemplateRepository;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
@@ -78,35 +79,8 @@ class lib_antraege
         }
         $daten = $this->antrag->getDaten();
 
-        // leere Checkboxen werden nicht gesendet
-        foreach (formData::getSchema() as $key=>$type) {
-            if ($type === 'bool') {
-                $_POST[$key] = isset($_POST[$key]);
-            }
-        }
+        $daten->updateFromForm($this->smarty);
 
-        foreach ($daten->getSchema() as $key=>$type) {
-            // nicht im Formular änderbar:
-            if (in_array($key, [
-                'user_email',
-                'kenntnisnahme_datenverarbeitung',
-                'kenntnisnahme_datenverarbeitung_text',
-                'einwilligung_datenverarbeitung',
-                'einwilligung_datenverarbeitung_text'
-            ], true)) {
-                continue;
-            }
-
-            if (!isset($_POST[$key])) {
-                die('nicht vom Formular gesetzt: ' . $key);
-            }
-
-            if ($key === 'mhn_geburtstag') {
-                $daten->set($key, formData::parseBirthdayInput($_POST[$key]));
-                continue;
-            }
-            $daten->set($key, $_POST[$key]);
-        }
         $this->antrag->save();
     }
 

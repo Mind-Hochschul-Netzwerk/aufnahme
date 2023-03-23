@@ -4,6 +4,7 @@ namespace MHN\Aufnahme;
 use MHN\Aufnahme\Antrag;
 use MHN\Aufnahme\Service\Token;
 use MHN\Aufnahme\Service\EmailService;
+use MHN\Aufnahme\Domain\Model\FormData;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
 use MHN\Aufnahme\Domain\Repository\TemplateRepository;
 
@@ -43,47 +44,9 @@ class EditController
 
     private function handleActionSave(): bool
     {
-        // TODO: Code zum Speichern eines Antrags nur an einer Stelle (aktuell in NeuController, lib_antraege und hier)
-
-        $dataIsValid = true;
-
         $daten = $this->antrag->getDaten();
 
-        // leere Checkboxen werden nicht gesendet
-        foreach (formData::getSchema() as $key=>$type) {
-            if ($type === 'bool') {
-                $_POST[$key] = isset($_POST[$key]);
-            }
-        }
-
-        foreach ($daten->getSchema() as $key=>$type) {
-            // nicht im Formular änderbar:
-            if (in_array($key, [
-                'user_email',
-                'kenntnisnahme_datenverarbeitung',
-                'kenntnisnahme_datenverarbeitung_text',
-                'einwilligung_datenverarbeitung',
-                'einwilligung_datenverarbeitung_text'
-            ], true)) {
-                continue;
-            }
-
-            if (!isset($_POST[$key])) {
-                die('nicht vom Formular gesetzt: ' . $key);
-            }
-
-            if ($key === 'mhn_geburtstag') {
-                $birthday = formData::parseBirthdayInput($_POST[$key]);
-                $daten->set($key, $birthday);
-                if (!$birthday) {
-                    $this->smarty->assign('invalidBirthday', true);
-                    $dataIsValid = false;
-                }
-                continue;
-            }
-
-            $daten->set($key, $_POST[$key]);
-        }
+        $dataIsValid = $daten->updateFromForm($this->smarty);
 
         if (!$dataIsValid) {
             $this->smarty->assign('werte', $daten->toArray());

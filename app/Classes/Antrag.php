@@ -2,7 +2,7 @@
 namespace MHN\Aufnahme;
 
 use MHN\Aufnahme\Domain\Model\Vote;
-use MHN\Aufnahme\formData;
+use MHN\Aufnahme\Domain\Model\FormData;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
 use MHN\Aufnahme\Domain\Repository\VoteRepository;
 use MHN\Aufnahme\Domain\Repository\EmailRepository;

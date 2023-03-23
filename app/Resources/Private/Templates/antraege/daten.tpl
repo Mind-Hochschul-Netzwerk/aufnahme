@@ -1,3 +1,7 @@
+{if !empty($invalidBirthday)}
+    <p class="formmeldung">Fehler: Bitte überprüfe das angegebene Geburtsdatum.</p>
+{/if}
+
 <p>* Pflichtfeld</p>
 
 <h3>Persönliche Daten</h3>
@@ -15,10 +19,10 @@
 <div class="form-group row"'>
     <label for='input-mhn_mensa' class='col-sm-4 col-form-label'>Mitglied bei <a href="https://www.mensa.de">Mensa</a></label>
     <div class="col-sm-8">
-            <label><input type="radio" required value="j" name="mhn_mensa" {if $werte.mhn_mensa === 'j'} checked="checked"{/if}/> ja</label>, <label for="input-mhn_mensa_nr">Mitgliedsnummer: </label>
+            <label><input type="radio" required value="1" name="mhn_mensa" {if $werte.mhn_mensa}checked="checked"{/if}/> ja</label>, <label for="input-mhn_mensa_nr">Mitgliedsnummer: </label>
             <input type="text" id="input-mhn_mensa_nr" name="mhn_mensa_nr" size="24" maxlength="5" value="{$werte.mhn_mensa_nr|escape}" class="form-control" style="width: 100px; display: inline-block;" />
             <br>
-            <label><input type="radio" required value="n" name="mhn_mensa" {if $werte.mhn_mensa === 'n'}checked="checked"{/if}/> nein</label>
+            <label><input type="radio" required value="0" name="mhn_mensa" {if !$werte.mhn_mensa}checked="checked"{/if}/> nein</label>
     </div>
 </div>
 

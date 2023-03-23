@@ -17,7 +17,7 @@ mhn_zws_land: text
 mhn_geburtstag: datetime
 mhn_telefon: text
 mhn_mobil: text
-mhn_mensa: text
+mhn_mensa: bool
 mhn_mensa_nr: text
 mhn_studienfach: text
 mhn_hochschulaktivitaet: text

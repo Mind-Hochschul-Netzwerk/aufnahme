@@ -6,10 +6,6 @@
     <p class="formmeldung">Bitte bestätige die Datenschutzregelungen.</p>
 {/if}
 
-{if !empty($invalidBirthday)}
-    <p class="formmeldung">Fehler: Bitte überprüfe das angegebene Geburtsdatum.</p>
-{/if}
-
 <p>Vielen Dank für die Bestätigung deiner E-Mail-Adresse. Du kannst jetzt mit dem Ausfüllen des Antrags fortfahren.</p>
 
 <h2>Mitgliedsantrag</h2>
