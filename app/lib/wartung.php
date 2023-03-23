@@ -74,11 +74,11 @@ function sendActivationReminders(): void
 }
 
 // Wie lange liegt das letzte Mal zurück? Falls länger als 2 Stunden: Wartung durchführen:
-if (time() - date('U', filemtime($temp_dir . 'letztewartung')) > 60 * 60 * 2) {
+if (time() - date('U', filemtime('/tmp/letztewartung')) > 60 * 60 * 2) {
     Antrag::deleteOld();
     wartung_sende_erinnerung();
     sendActivationReminders();
 
-    touch($temp_dir . 'letztewartung');
+    touch('/tmp/letztewartung');
 }
 
