@@ -1,9 +1,6 @@
 <?php
 namespace MHN\Aufnahme;
 
-// Composer
-require_once '../vendor/autoload.php';
-
 use Symfony\Component\Yaml\Yaml;
 
 class Entrypoint
@@ -32,7 +29,7 @@ class Entrypoint
         assert_options(ASSERT_WARNING, 1);
         assert_options(ASSERT_BAIL, 1);
 
-        include 'wartung.php';
+        include '../lib/wartung.php';
 
         Service\Session::getInstance()->start();
 
@@ -142,7 +139,7 @@ class Entrypoint
 
         //evtl. lib-Datei importieren:
         if (isset($activeEntry['ladenfunktion'])) {
-            require_once $activeEntry['lib'];
+            require_once '../lib/' . $activeEntry['lib'];
 
             if (empty($activeEntry['ladenparameter'])) {
                 $activeEntry['ladenparameter'] = [];
@@ -165,6 +162,4 @@ class Entrypoint
             $smarty->display($mainTemplate, $activeEntry['template']);
         }
     }
-}//class entrypoint
-
-Entrypoint::entry();
+}
