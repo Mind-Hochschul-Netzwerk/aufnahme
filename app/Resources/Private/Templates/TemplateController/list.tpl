@@ -1,4 +1,4 @@
-<h2>Vorlagen bearbeiten</h2>
+<h2>Vorlagen und Texte bearbeiten</h2>
 
 <ul>
 {foreach from=$templates item=template}

@@ -7,13 +7,13 @@
 
     {if $template->getHints()}
         <div class="row">
-            <div class='col-sm-2'>Verwendbare Variablen:</div>
+            <div class='col-sm-2'>Erläuterung:</div>
             <div class="col-sm-10"><pre>{$template->getHints()}</pre></div>
         </div>
     {/if}
 
     <div class="row">
-        <label for='input-subject' class='col-sm-2 col-form-label'>Betreff</label>
+        <label for='input-subject' class='col-sm-2 col-form-label'>Betreff / Überschrift</label>
         <div class="col-sm-10"><input id="input-subject" name="subject" class="form-control" value="{$template->getSubject()|escape}"></div>
     </div>
 

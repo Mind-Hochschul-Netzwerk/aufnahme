@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace MHN\Aufnahme\Domain\Model;
 
+use Parsedown;
+
 /**
  * @author Henrik Gebauer <mensa@henrik-gebauer.de>
  * @license https://creativecommons.org/publicdomain/zero/1.0/ CC0 1.0
@@ -66,12 +68,18 @@ class Template
     /**
      * @param $replacementMap = [$key => $replacement, ...]
      */
-    public function getFinalText(array $replacementMap): string
+    public function getFinalText(array $replacementMap = []): string
     {
         $text = $this->getText();
         foreach ($replacementMap as $key=>$replacement) {
             $text = str_replace('{$' . $key . '}', $replacement, $text);
         }
         return $text;
+    }
+
+    public function getFinalTextMarkdown(array $replacementMap = []): string
+    {
+        $text = $this->getFinalText($replacementMap);
+        return (new Parsedown())->text($text);
     }
 }

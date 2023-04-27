@@ -17,6 +17,11 @@ class NeuController
     public function handleRequest(): void
     {
         $this->smarty = Service\SmartyContainer::getInstance()->getSmarty();
+
+        $this->smarty->assign('introTemplate', TemplateRepository::getInstance()->getOneByName('intro'));
+        $this->smarty->assign('kenntnisnahmeTemplate', TemplateRepository::getInstance()->getOneByName('kenntnisnahme'));
+        $this->smarty->assign('einwilligungTemplate', TemplateRepository::getInstance()->getOneByName('einwilligung'));
+
         $this->werte = new FormData();
 
         $this->smarty->assign('werte', $this->werte->toArray());
@@ -107,9 +112,9 @@ class NeuController
         $dataIsValid &= $this->werte->updateFromForm($this->smarty);
 
         $this->werte->set('kenntnisnahme_datenverarbeitung', new \DateTime());
-        $this->werte->set('kenntnisnahme_datenverarbeitung_text', $this->smarty->fetch('datenschutz/kenntnisnahme_text.tpl'));
+        $this->werte->set('kenntnisnahme_datenverarbeitung_text', TemplateRepository::getInstance()->getOneByName('kenntnisnahme')->getFinalText());
         $this->werte->set('einwilligung_datenverarbeitung', new \DateTime());
-        $this->werte->set('einwilligung_datenverarbeitung_text',  $this->smarty->fetch('datenschutz/einwilligung_text.tpl'));
+        $this->werte->set('einwilligung_datenverarbeitung_text',  TemplateRepository::getInstance()->getOneByName('einwilligung')->getFinalText());
 
         if (!$dataIsValid) {
             return false;

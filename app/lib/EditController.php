@@ -6,7 +6,6 @@ use MHN\Aufnahme\Service\Token;
 use MHN\Aufnahme\Service\EmailService;
 use MHN\Aufnahme\Domain\Model\FormData;
 use MHN\Aufnahme\Domain\Repository\UserRepository;
-use MHN\Aufnahme\Domain\Repository\TemplateRepository;
 
 class EditController
 {

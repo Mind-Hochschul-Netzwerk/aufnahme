@@ -2,8 +2,6 @@
     <p class="formmeldung">Der verwendete Link ist ungültig (geworden).</p>
 {/if}
 
-{if empty($isEmbedded)}<h1>Mitglied werden</h1>{/if}
-
 {include file="NeuController/about.tpl"}
 
 <h2>Start</h2>
