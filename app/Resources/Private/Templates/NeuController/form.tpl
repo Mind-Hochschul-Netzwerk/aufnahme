@@ -1,5 +1,3 @@
-{if empty($isEmbedded)}<h1>Mitglied werden</h1>{/if}
-
 {include file="NeuController/about.tpl"}
 
 {if !empty($datenschutzInfo)}
