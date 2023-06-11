@@ -130,7 +130,7 @@ class lib_antraege
 
     public function speichern_antrag_kommentare()
     {
-        if ($_POST['formular'] === 'speichern_antrag_kommentare' && !empty($_POST['k_add'])) {
+        if (!empty($_POST['k_add'])) {
             $kommentar = $_POST['kommentar'];
             $kommentar = trim($kommentar);
             if ($kommentar == '') {
@@ -143,7 +143,7 @@ class lib_antraege
             } else {
                 $this->smarty->assign('meldung', 'Fehler beim Hinzufügen des Kommentars');
             }
-        } elseif ($_POST['formular'] === 'kommentare_editieren') {
+        } else {
             $this->antrag->setKommentare($_POST['kommentare']);
             if ($this->antrag->save()) {
                 $this->smarty->assign('meldung', 'Kommentare geändert');
@@ -161,62 +161,13 @@ class lib_antraege
         $id = isset($matches[1]) ? (int)$matches[1] : 0;
         $aktion = isset($matches[2]) ? $matches[2] : null;
 
-        if ($aktion && !in_array($aktion, ['aufnehmen', 'nachfragen', 'ablehnen'])) {
+        if ($aktion && !in_array($aktion, ['aufnehmen', 'nachfragen', 'ablehnen', 'kommentare'])) {
             die("invalid request");
         }
 
-        // keine ID angegeben => Übersicht der Anträge anzeigen
         if ($id === 0) {
-            // Übersicht laden
-            if (!empty($this->parameter['archiv'])) {
-                $this->smarty->assign('innentemplate', 'antraege/archiv.tpl');
-                $antraege = Antrag::alleEntschiedenenAntraege();
-            } else {
-                $this->smarty->assign('innentemplate', 'antraege/uebersicht.tpl');
-                $antraege = Antrag::alleOffenenAntraege();
-            }
-            // ggf. alle rausschmeissen, die selbst schon gevotet:
-            if (strpos($this->parameter['urlparams'], 'nichtvonmirgevotet') !== false) {
-                foreach ($antraege as $k => $antrag) {
-                    $vote = $antrag->getLatestVoteByUserName($this->loggedInUser->getUserName());
-
-                    if ($vote === null) {
-                        continue;
-                    }
-
-                    // wenn Antragsstatus "neu bewerten" und seitdem nicht neu bewertet: auch behalten!
-                    if ($antrag->getStatus() == Antrag::STATUS_NEU_BEWERTEN && $votum->getTime()->getTimestamp() < $antrag->ts_statusaenderung) {
-                        continue;
-                    }
-
-                    unset($antraege[$k]);
-                }
-                $this->smarty->assign('nichtvonmirgevotet', true);
-            }
-            // die Voten extrahieren:
-            $userNames_gevotet = [];
-            foreach ($antraege as $antrag) {
-                $votes = $antrag->getVotes();
-                foreach ($votes as $vote) {
-                    $userName = $vote->getUserName();
-                    if (!in_array($userName, $userNames_gevotet, true)) {
-                        $userNames_gevotet[] = $userName;
-                    }
-                }
-            }
-            $realNames = [];
-            foreach ($userNames_gevotet as $userName) {
-                $user = UserRepository::getInstance()->findOneByUserName($userName);
-                if (!$user) {
-                    $realName[$userName] = '(unbekannt)';
-                } else {
-                    $realNames[$userName] = $user->getRealName();
-                }
-            }
-            $this->smarty->assign('realNames', $realNames);
-            $this->smarty->assign('userNames_gevotet', $userNames_gevotet);
-            $this->smarty->assign('antraege', $antraege);
-
+            // Übersicht der Anträge anzeigen
+            $this->showMany();
             return;
         }
 
@@ -227,69 +178,137 @@ class lib_antraege
             return;
         }
 
+        $this->antrag = new Antrag($id);
+        $this->smarty->assign('antrag', $this->antrag);
+
         // Keine Aktion angegeben => Antrag anzeigen
         if (!$aktion) {
-            //speichern:
             $this->speichern_antrag1();
             $this->speichern_antrag_votes();
-            $this->speichern_antrag_kommentare();
             $this->speichern_antrag_daten();
-            // nach dem Speichern: nochmal laden (damit wirklich das dargestellt ist,
-            // was gespeichert wurde ...):
-            $this->antrag = new Antrag($id);
-            $this->smarty->assign('antrag', $this->antrag);
-            $this->smarty->assign('daten', $this->antrag->getDaten()->toArray());
-            $this->smarty->assign('werte', $werte = $this->antrag->getDaten()->toArray());
-            $this->smarty->assign('innentemplate', 'antraege/einzelansicht.tpl');
-            if (isset($_POST['formular']) && $_POST['formular'] == 'speichern_antrag_kommentare'
-                && $_POST['k_edit'] != ''
-            ) {
-                $this->smarty->assign('innentemplate', 'antraege/kommentare-editieren.tpl');
-            }
-            $this->smarty->assign('heute', Util::tsToDatum(time()));
-            global $global_status;
-            $this->smarty->assign('global_status', $global_status);
 
-            $emails = EmailRepository::getInstance()->findByAntrag($this->antrag);
-            $emailData = [];
-            foreach ($emails as $email) {
-                $user = UserRepository::getInstance()->findOneByUserName($email->getSenderUserName());
-                $emailData[] = [
-                    'userName' => ($user !== null) ? $user->getUserName() : 'unbekannt',
-                    'time' => $email->getCreationTime()->getTimestamp(),
-                    'grund' => ucfirst($email->getGrund()),
-                ];
-            }
-            $this->smarty->assign('mails', $emailData);
+            $this->showOne($id);
             return;
-
         }
 
         // Aktion (aufnehmen, nachfragen, ablehnen) zu einem Antrag ausführen
-        $this->smarty->assign('antrag', $this->antrag);
-        $this->smarty->assign('heute', Util::tsToDatum(time()));
         $aktion = trim($aktion, '/');
 
-        $this->smarty->assign('absende_email_kand', getenv('FROM_ADDRESS'));
+        switch ($aktion) {
+            case 'aufnehmen':
+            case 'nachfragen':
+            case 'ablehnen':
+                $this->smarty->assign('heute', Util::tsToDatum(time()));
+                $this->smarty->assign('absende_email_kand', getenv('FROM_ADDRESS'));
 
-        $this->{'aktion_' . $aktion . '_speichern'}();
-        $this->{'aktion_' . $aktion . '_laden'}();
-        $this->smarty->assign('innentemplate', 'antraege/aktion/' . $aktion . '.tpl');
-        $this->smarty->assign('aktion', $aktion);
+                $this->{'aktion_' . $aktion . '_speichern'}();
+                $this->{'aktion_' . $aktion . '_laden'}();
+                $this->smarty->assign('innentemplate', 'antraege/aktion/' . $aktion . '.tpl');
+                $this->smarty->assign('aktion', $aktion);
 
-        $template = TemplateRepository::getInstance()->getOneByName($aktion);
-        $this->smarty->assign('mailSubject', $template->getSubject());
-        $replacements = [
-            'vorname' => $this->antrag->getVorname(),
-            'autor' => $this->loggedInUser->getRealName(),
-        ];
-        if ($aktion === 'nachfragen') {
-            $fragen = array_filter(array_map(function ($vote) {
-                return trim($vote->getNachfrage());
-            }, $this->antrag->getVotes()));
-            $replacements['fragen'] = implode("\n\n", $fragen);
+                $template = TemplateRepository::getInstance()->getOneByName($aktion);
+                $this->smarty->assign('mailSubject', $template->getSubject());
+                $replacements = [
+                    'vorname' => $this->antrag->getVorname(),
+                    'autor' => $this->loggedInUser->getRealName(),
+                ];
+                if ($aktion === 'nachfragen') {
+                    $fragen = array_filter(array_map(function ($vote) {
+                        return trim($vote->getNachfrage());
+                    }, $this->antrag->getVotes()));
+                    $replacements['fragen'] = implode("\n\n", $fragen);
+                }
+                $this->smarty->assign('mailText', $template->getFinalText($replacements));
+                return;
+
+            case 'kommentare':
+                $this->smarty->assign('innentemplate', 'antraege/kommentare-editieren.tpl');
+
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $this->speichern_antrag_kommentare();
+                }
+                return;
         }
-        $this->smarty->assign('mailText', $template->getFinalText($replacements));
+
+
+    }
+
+    private function showMany()
+    {
+        // Übersicht laden
+        if (!empty($this->parameter['archiv'])) {
+            $this->smarty->assign('innentemplate', 'antraege/archiv.tpl');
+            $antraege = Antrag::alleEntschiedenenAntraege();
+        } else {
+            $this->smarty->assign('innentemplate', 'antraege/uebersicht.tpl');
+            $antraege = Antrag::alleOffenenAntraege();
+        }
+        // ggf. alle rausschmeissen, die selbst schon gevotet:
+        if (strpos($this->parameter['urlparams'], 'nichtvonmirgevotet') !== false) {
+            foreach ($antraege as $k => $antrag) {
+                $vote = $antrag->getLatestVoteByUserName($this->loggedInUser->getUserName());
+
+                if ($vote === null) {
+                    continue;
+                }
+
+                // wenn Antragsstatus "neu bewerten" und seitdem nicht neu bewertet: auch behalten!
+                if ($antrag->getStatus() == Antrag::STATUS_NEU_BEWERTEN && $votum->getTime()->getTimestamp() < $antrag->ts_statusaenderung) {
+                    continue;
+                }
+
+                unset($antraege[$k]);
+            }
+            $this->smarty->assign('nichtvonmirgevotet', true);
+        }
+        // die Voten extrahieren:
+        $userNames_gevotet = [];
+        foreach ($antraege as $antrag) {
+            $votes = $antrag->getVotes();
+            foreach ($votes as $vote) {
+                $userName = $vote->getUserName();
+                if (!in_array($userName, $userNames_gevotet, true)) {
+                    $userNames_gevotet[] = $userName;
+                }
+            }
+        }
+        $realNames = [];
+        foreach ($userNames_gevotet as $userName) {
+            $user = UserRepository::getInstance()->findOneByUserName($userName);
+            if (!$user) {
+                $realName[$userName] = '(unbekannt)';
+            } else {
+                $realNames[$userName] = $user->getRealName();
+            }
+        }
+        $this->smarty->assign('realNames', $realNames);
+        $this->smarty->assign('userNames_gevotet', $userNames_gevotet);
+        $this->smarty->assign('antraege', $antraege);
+    }
+
+    private function showOne(int $id)
+    {
+        $this->antrag = new Antrag($id);
+        $this->smarty->assign('antrag', $this->antrag);
+        $this->smarty->assign('daten', $this->antrag->getDaten()->toArray());
+        $this->smarty->assign('werte', $werte = $this->antrag->getDaten()->toArray());
+        $this->smarty->assign('innentemplate', 'antraege/einzelansicht.tpl');
+
+        $this->smarty->assign('heute', Util::tsToDatum(time()));
+        global $global_status;
+        $this->smarty->assign('global_status', $global_status);
+
+        $emails = EmailRepository::getInstance()->findByAntrag($this->antrag);
+        $emailData = [];
+        foreach ($emails as $email) {
+            $user = UserRepository::getInstance()->findOneByUserName($email->getSenderUserName());
+            $emailData[] = [
+                'userName' => ($user !== null) ? $user->getUserName() : 'unbekannt',
+                'time' => $email->getCreationTime()->getTimestamp(),
+                'grund' => ucfirst($email->getGrund()),
+            ];
+        }
+        $this->smarty->assign('mails', $emailData);
     }
 
     /**
@@ -308,11 +327,7 @@ class lib_antraege
         $db_mail->setGrund($grund);
         $db_mail->setSenderUserName($this->loggedInUser->getUserName());
         $db_mail->setSubject($betreff);
-        if ($inhalt_alt == '') {
-            $db_mail->setText($inhalt);
-        } else {
-            $db_mail->setText($inhalt_alt);
-        }
+        $db_mail->setText($inhalt_alt ? $inhalt_alt : $inhalt);
         EmailService::getInstance()->send($this->antrag->getEMail(), $betreff, $inhalt);
         UserRepository::getInstance()->sendEmailToAll($betreff, $inhalt_alt ? $inhalt_alt : $inhalt);
         EmailRepository::getInstance()->add($db_mail);

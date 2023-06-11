@@ -260,5 +260,9 @@ details {
 }
 
 body.embedded .container-fluid {
-    margin: 0;
+    padding: 0;
+}
+
+:root, body {
+    overflow-x: hidden;
 }

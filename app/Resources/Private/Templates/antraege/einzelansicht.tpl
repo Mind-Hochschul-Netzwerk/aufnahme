@@ -1,4 +1,4 @@
-<h1>Detailseite - {$antrag->getName()|escape}</h1>
+<h1>{$antrag->getName()|escape}</h1>
 
 <p>Immer nur einen der Punkte auf einmal verändern (also immer den entsprechenden Speichern-Knopf des jeweiligen Abschnitts betätigen!).</p>
 
@@ -93,11 +93,11 @@ auf den Seiten dort) automatisch gesetzt. Ansonsten gibt es keine automatischen 
 
 <p>Kommentar hinzufügen: </p>
 
-<form action="{$self}" method="post">
+<form action="{$self}kommentare" method="post">
     <textarea class="form-control" name="kommentar" rows="5"></textarea><br />
     <input type="hidden" name="formular" value="speichern_antrag_kommentare" />
     <input class="btn btn-success" type="submit" name="k_add" value="Kommentar hinzufügen" />
-    <input class="btn btn-default" type="submit" name="k_edit" value="Kommentare editieren" />
+    <a href="{$self}kommentare" class="btn btn-default">Kommentare editieren</a>
 </form>
 
 <h2 id="aktionen">Aktionen</h2>

@@ -107,7 +107,6 @@ class Entrypoint
         $smarty->assign('html_title', $activeEntry['title'] ?? '');
 
         $isEmbedded = !empty($_GET['embed']);
-        $mainTemplate = $isEmbedded ? 'embed.tpl' : 'main.tpl';
         if ($isEmbedded) {
             $smarty->assign('isEmbedded', true);
             $parentUrl = empty($_GET['parentUrl']) ? '' : filter_var($_GET['parentUrl'], FILTER_VALIDATE_URL);
@@ -125,7 +124,7 @@ class Entrypoint
         if ($activeEntry === null) {
             @header('HTTP/1.1 404 File Not Found');
             $smarty->assign('innentemplate', '404.tpl');
-            $smarty->display($mainTemplate, '404.tpl');
+            $smarty->display('main.tpl', '404.tpl');
             return;
         }
 
@@ -156,10 +155,10 @@ class Entrypoint
             //HTTP1.0:
             @header('Pragma: no-cache');
 
-            $smarty->display($mainTemplate);
+            $smarty->display('main.tpl');
         } else {
             //als ID das innentemplate verwenden; die Seite ist damit eindeutig bestimmt
-            $smarty->display($mainTemplate, $activeEntry['template']);
+            $smarty->display('main.tpl', $activeEntry['template']);
         }
     }
 }

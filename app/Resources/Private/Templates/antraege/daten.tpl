@@ -17,26 +17,18 @@
 {/if}
 
 <div class="form-group row"'>
-    <label for='input-mhn_mensa' class='col-sm-4 col-form-label'>Mitglied bei <a href="https://www.mensa.de">Mensa</a></label>
+    <label for='input-mhn_mensa_nr' class='col-sm-4 col-form-label'>ggf. Mitgliedsnummer bei <a href="https://www.mensa.de">Mensa e.V.</a></label>
     <div class="col-sm-8">
-            <label><input type="radio" required value="1" name="mhn_mensa" {if $werte.mhn_mensa}checked="checked"{/if}/> ja</label>, <label for="input-mhn_mensa_nr">Mitgliedsnummer: </label>
             <input type="text" id="input-mhn_mensa_nr" name="mhn_mensa_nr" size="24" maxlength="5" value="{$werte.mhn_mensa_nr|escape}" class="form-control" style="width: 100px; display: inline-block;" />
-            <br>
-            <label><input type="radio" required value="0" name="mhn_mensa" {if !$werte.mhn_mensa}checked="checked"{/if}/> nein</label>
     </div>
 </div>
 
 <h3>Kontaktdaten</h3>
 
 {include file='antraege/daten-zeile.tpl' name='user_email' label='E-Mail-Adresse*' value=$werte.user_email type="email" disabled=1}
-{include file='antraege/daten-zeile.tpl' name='mhn_mobil' label='Mobilnummer' value=$werte.mhn_mobil type="tel"}
 {include file='antraege/daten-zeile.tpl' name='mhn_telefon' label='Telefonnummer' value=$werte.mhn_telefon type="tel"}
 
-<div class="form-group row"'>
-    <label for='input-mhn_ws_strasse' class='col-sm-4 col-form-label'>Straße, Hausnummer*</label>
-    {include file="antraege/inputElement.tpl" name="mhn_ws_strasse" value=$werte.mhn_ws_strasse width=4 required=1}
-    {include file="antraege/inputElement.tpl" name="mhn_ws_hausnr" value=$werte.mhn_ws_hausnr width=4 required=1}
-</div>
+{include file='antraege/daten-zeile.tpl' name='mhn_ws_strasse' label='Straße, Hausnummer*' value=$werte.mhn_ws_strasse required=1}
 
 {include file='antraege/daten-zeile.tpl' name='mhn_ws_zusatz' label='evtl. Adresszusatz' value=$werte.mhn_ws_zusatz}
 
@@ -48,15 +40,10 @@
 
 {include file='antraege/daten-zeile.tpl' name='mhn_ws_land' label='Land*' value=$werte.mhn_ws_land required=1}
 
-<details {if $werte.mhn_zws_strasse || $werte.mhn_zws_hausnr || $werte.mhn_zws_zusatz || $werte.mhn_zws_plz || $werte.mhn_zws_ort || $werte.mhn_zws_land}open{/if}>
+<details {if $werte.mhn_zws_strasse || $werte.mhn_zws_zusatz || $werte.mhn_zws_plz || $werte.mhn_zws_ort || $werte.mhn_zws_land}open{/if}>
     <summary>Zweitwohnsitz</summary>
 
-    <div class="form-group row"'>
-        <label for='input-mhn_zws_strasse' class='col-sm-4 col-form-label'>Straße, Hausnummer</label>
-        {include file="antraege/inputElement.tpl" name="mhn_zws_strasse" value=$werte.mhn_zws_strasse width=4}
-        {include file="antraege/inputElement.tpl" name="mhn_zws_hausnr" value=$werte.mhn_zws_hausnr width=4}
-    </div>
-
+    {include file='antraege/daten-zeile.tpl' name='mhn_zws_strasse' label='Straße, Hausnummer*' value=$werte.mhn_zws_strasse}
     {include file='antraege/daten-zeile.tpl' name='mhn_zws_zusatz' label='evtl. Adresszusatz' value=$werte.mhn_zws_zusatz}
 
     <div class="form-group row"'>

@@ -1,6 +1,5 @@
 export function sendResizeMessage() {
-    const contentContainer = document.querySelector(".content");
-    const style = window.getComputedStyle(contentContainer ? contentContainer : document.querySelector("body"));
+    const style = window.getComputedStyle(document.querySelector("html"));
     window.parent.postMessage({
         name: "setHeight",
         height: parseInt(style.height) +
