@@ -15,4 +15,4 @@ USER nobody
 
 COPY --chown=nobody app/ /var/www
 
-RUN composer install -d "/var/www/" --optimize-autoloader --no-dev --no-interaction --no-progress --no-cache
+RUN mkdir -p /var/www/vendor && composer install -d "/var/www/" --optimize-autoloader --no-dev --no-interaction --no-progress --no-cache
