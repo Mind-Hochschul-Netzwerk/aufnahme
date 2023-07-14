@@ -31,6 +31,10 @@ prod: image .env check-traefik
 	@echo "Starting Production Server"
 	docker-compose up -d --force-recreate --remove-orphans $(SERVICENAME)
 
+upgrade:
+	git pull
+	make prod
+
 shell:
 	docker-compose exec $(SERVICENAME) sh
 
