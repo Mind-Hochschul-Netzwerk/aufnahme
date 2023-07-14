@@ -3,4 +3,4 @@ Dockerfile
 .git*
 docker-compose*
 docker/*
-app/vendor
+app/vendor/*

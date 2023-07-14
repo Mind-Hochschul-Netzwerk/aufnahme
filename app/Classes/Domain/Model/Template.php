@@ -72,7 +72,7 @@ class Template
     {
         $text = $this->getText();
         foreach ($replacementMap as $key=>$replacement) {
-            $text = str_replace('{$' . $key . '}', $replacement, $text);
+            $text = str_replace('{$' . $key . '}', "$replacement", $text);
         }
         return $text;
     }

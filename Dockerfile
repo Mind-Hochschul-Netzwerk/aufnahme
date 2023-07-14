@@ -1,25 +1,18 @@
-FROM mindhochschulnetzwerk/php-base
+FROM trafex/php-nginx:3.1.0
 
 LABEL Maintainer="Henrik Gebauer <code@henrik-gebauer.de>" \
       Description="mind-hochschul-netzwerk.de"
 
-COPY config/nginx/ /etc/nginx/
-COPY app/ /var/www/
+HEALTHCHECK --interval=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping
 
-RUN set -ex \
-  && apk --no-cache add \
-    php7-mysqli \
-    php7-xml \
-    php7-zip \
-    php7-curl \
-    php7-gd \
-    php7-ldap \
-    php7-json \
-    php7-session \
-    php7-ctype \
-  && mkdir /var/www/vendor && chown www-data:www-data /var/www/vendor \
-  && su www-data -s /bin/sh -c "composer install -d /var/www --optimize-autoloader --no-dev --no-interaction --no-progress --no-cache" \
-  && chown -R nobody:nobody /var/www \
-  && mkdir -p /tmp /tmp/templates_c /tmp/cache \
-  && touch /tmp/letztewartung \
-  && chown -R www-data:www-data /tmp/*
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+USER root
+
+RUN apk --no-cache add php81-ldap
+
+USER nobody
+
+COPY --chown=nobody app/ /var/www
+
+RUN composer install -d "/var/www/" --optimize-autoloader --no-dev --no-interaction --no-progress --no-cache

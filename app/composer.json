@@ -3,9 +3,9 @@
     "description": "Aufnahmetool",
     "type": "project",
     "require": {
-        "php": ">=5.6.30",
+        "php": ">=8.0",
         "phpmailer/phpmailer": "^6.3",
-        "smarty/smarty": "^3.1",
+        "smarty/smarty": "^4.1",
         "symfony/yaml": "^3.2",
         "symfony/ldap": "^5.2",
         "erusev/parsedown": "^1.7"

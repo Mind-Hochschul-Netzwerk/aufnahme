@@ -9,6 +9,8 @@ use MHN\Aufnahme\Domain\Repository\UserRepository;
 use MHN\Aufnahme\Domain\Repository\TemplateRepository;
 use MHN\Aufnahme\Service\EmailService;
 
+const MAINTENANCE_LOCKFILE = '/tmp/letztewartung';
+
 /**
  * sendet an alle Mitglieder der Aufnahmekommission eine Erinnerung mit einer Liste von Anträgen,
  * die folgende Kriterien erfüllen:
@@ -74,11 +76,10 @@ function sendActivationReminders(): void
 }
 
 // Wie lange liegt das letzte Mal zurück? Falls länger als 2 Stunden: Wartung durchführen:
-if (time() - date('U', filemtime('/tmp/letztewartung')) > 60 * 60 * 2) {
+if (!is_file(MAINTENANCE_LOCKFILE) || time() - date('U', filemtime(MAINTENANCE_LOCKFILE)) > 60 * 60 * 2) {
     Antrag::deleteOld();
     wartung_sende_erinnerung();
     sendActivationReminders();
 
-    touch('/tmp/letztewartung');
+    touch(MAINTENANCE_LOCKFILE);
 }
-

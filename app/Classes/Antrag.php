@@ -475,7 +475,7 @@ class Antrag
      *   - angenommene Anträge, die nicht in die Mitgliederdatenbank übernommen wurden, nach 366 Tagen
      *   - abgelehnte Anträge nach 60 Wochen (Einspruchsmöglichkeit bis zur Mitgliederversammlung)
      */
-    public function deleteOld()
+    public static function deleteOld()
     {
         // aktivierte Benutzerkonten
         Sql::getInstance()->delete(self::TABLE_NAME, 'status=' . self::STATUS_AKTIVIERT . ' AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*7*8');

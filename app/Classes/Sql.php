@@ -41,7 +41,7 @@ class Sql implements Interfaces\Singleton
      * @param \mysqli_result $result
      * @return mixed[]
      */
-    public function queryToArray(\mysqli_result $result)
+    public static function queryToArray(\mysqli_result $result)
     {
         $array = [];
         while (($row = $result->fetch_assoc())) {
@@ -56,7 +56,7 @@ class Sql implements Interfaces\Singleton
      * @param \mysqli_result $result
      * @return mixed[]|null
      */
-    public function queryToArraySingle(\mysqli_result $result)
+    public static function queryToArraySingle(\mysqli_result $result)
     {
         return $result->fetch_assoc();
     }

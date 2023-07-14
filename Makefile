@@ -34,6 +34,9 @@ prod: image .env check-traefik
 shell:
 	docker-compose exec $(SERVICENAME) sh
 
+rootshell:
+	docker-compose exec --user root $(SERVICENAME) sh
+
 mysql: .env
 	@echo "docker-compose exec $(SERVICENAME)-database mysql --user=user --password=\"...\" database"
 	@docker-compose exec $(SERVICENAME)-database mysql --user=user --password="$(MYSQL_PASSWORD)" database
