@@ -9,7 +9,8 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 USER root
 
-RUN apk --no-cache add php81-ldap
+RUN apk --no-cache add php81-ldap \
+  && chown nobody:nobody /var/www
 
 USER nobody
 
