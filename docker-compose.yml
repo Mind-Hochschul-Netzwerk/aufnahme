@@ -37,7 +37,6 @@ services:
       - SMTP_USER
       - SMTP_PASSWORD
       - FROM_ADDRESS
-      - MOODLE_AUFNAHME_URL
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik

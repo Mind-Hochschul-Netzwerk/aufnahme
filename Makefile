@@ -16,6 +16,8 @@ image:
 rebuild:
 	@echo "Rebuilding docker image"
 	docker build -t mindhochschulnetzwerk/$(SERVICENAME):latest .
+	@echo "Restarting service"
+	docker-compose up -d --force-recreate --remove-orphans $(SERVICENAME)
 
 adminer: .env check-traefik
 	docker-compose up -d $(SERVICENAME)-adminer

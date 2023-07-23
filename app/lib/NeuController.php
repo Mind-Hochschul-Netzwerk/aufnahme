@@ -67,7 +67,7 @@ class NeuController
         $token = Token::encode([$email, time()], '', getenv('TOKEN_KEY'));
         $mailTemplate = TemplateRepository::getInstance()->getOneByName('emailToken');
         $text = $mailTemplate->getFinalText([
-            'url' => getenv('MOODLE_AUFNAHME_URL') . "&token=$token",
+            'url' => 'www.' . getenv('DOMAINNAME') . "/aufnahme?token=$token",
         ]);
         EmailService::getInstance()->send($email, $mailTemplate->getSubject(), $text);
 
