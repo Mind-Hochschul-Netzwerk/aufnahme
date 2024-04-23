@@ -1,4 +1,4 @@
-FROM trafex/php-nginx:3.1.0
+FROM trafex/php-nginx:3.5.0
 
 LABEL Maintainer="Henrik Gebauer <code@henrik-gebauer.de>" \
       Description="mind-hochschul-netzwerk.de"
@@ -9,7 +9,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 USER root
 
-RUN apk --no-cache add php81-ldap \
+RUN apk --no-cache add php83-ldap \
   && chown nobody:nobody /var/www
 
 USER nobody
