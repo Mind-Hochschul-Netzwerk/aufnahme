@@ -13,7 +13,7 @@ services:
       - "${VOLUMES_DIR}/mariadb:/var/lib/mysql"
 
   app:
-    image: local/${SERVICENAME}
+    image: ghcr.io/mind-hochschul-netzwerk/${SERVICENAME}
     container_name: ${SERVICENAME}
     restart: unless-stopped
     environment:
@@ -39,7 +39,6 @@ services:
       - traefik.docker.network=traefik
       - traefik.http.routers.${SERVICENAME}.entrypoints=websecure
       - traefik.http.routers.${SERVICENAME}.rule=Host(`${SERVICENAME}.${DOMAINNAME}`)
-      - com.centurylinklabs.watchtower.enable=false
     depends_on:
       - db
     networks:

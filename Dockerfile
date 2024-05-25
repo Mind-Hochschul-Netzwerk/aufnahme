@@ -9,7 +9,14 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 USER root
 
-RUN apk --no-cache add php83-ldap \
+# apply (security) updates
+RUN set -x \
+  && apk upgrade --no-cache
+
+# install packages
+RUN set -x \
+  && apk --no-cache add \
+       php83-ldap \
   && chown nobody:nobody /var/www
 
 USER nobody
