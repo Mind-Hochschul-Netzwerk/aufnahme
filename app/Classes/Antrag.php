@@ -500,7 +500,7 @@ class Antrag
             throw new \LogicException('status muss STATUS_AUFGENOMMEN sein');
         }
         $token = Token::encode([$this->getId()], '', getenv('TOKEN_KEY'));
-        return 'https://mitglieder.' . getenv('DOMAINNAME') . '/aufnahme.php?token=' . $token;
+        return 'https://mitglieder.' . getenv('DOMAINNAME') . '/aufnahme?token=' . $token;
     }
 
     /**
