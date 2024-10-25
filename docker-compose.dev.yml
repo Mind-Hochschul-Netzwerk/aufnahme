@@ -1,4 +1,4 @@
 services:
-  aufnahme:
+  app:
     volumes:
       - "./app:/var/www"
