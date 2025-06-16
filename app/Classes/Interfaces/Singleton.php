@@ -16,8 +16,6 @@ interface Singleton
 {
     /**
      * Gibt die Instanz der Klasse zurück
-     *
-     * @return Singleton
      */
-    public static function getInstance();
+    public static function getInstance(): static;
 }

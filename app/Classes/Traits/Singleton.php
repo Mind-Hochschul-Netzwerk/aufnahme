@@ -18,10 +18,8 @@ trait Singleton
 
     /**
      * Gibt die Instanz der Klasse zurück
-     *
-     * @return Interfaces\Singleton
      */
-    public static function getInstance()
+    public static function getInstance(): static
     {
         if (self::$instance === null) {
             self::$instance = new self();

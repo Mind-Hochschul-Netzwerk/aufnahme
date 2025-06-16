@@ -90,7 +90,8 @@ class UserRepository implements \MHN\Aufnahme\Interfaces\Singleton
         }
         try {
             // employeeType == 1 <=> Benutzerkonto gesperrt
-            $result = $this->ldap->query(getenv('LDAP_PEOPLE_DN'), '(&(objectclass=inetOrgPerson)(cn=' . $userName . ')(employeeType=0))')->execute();
+            $result = $this->ldap->query(getenv('LDAP_PEOPLE_DN'), '(&(objectclass=inetOrgPerson)(cn=' .
+              ldap_escape($userName, '', LDAP_ESCAPE_FILTER) . ')(!(employeeType=1)))')->execute();
         } catch (\Exception $e) {
             error_log($e->getMessage());
             return null;
