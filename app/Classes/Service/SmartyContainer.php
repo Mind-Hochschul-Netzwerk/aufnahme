@@ -1,5 +1,5 @@
 <?php
-namespace MHN\Aufnahme\Service;
+namespace App\Service;
 
 /**
  * @author Henrik Gebauer <mensa@henrik-gebauer.de>
@@ -11,9 +11,9 @@ use Smarty;
 /**
  * Hält Smarty bereit
  */
-class SmartyContainer implements \MHN\Aufnahme\Interfaces\Singleton
+class SmartyContainer implements \App\Interfaces\Singleton
 {
-    use \MHN\Aufnahme\Traits\Singleton;
+    use \App\Traits\Singleton;
 
     /** @var Smarty */
     private $smarty = null;

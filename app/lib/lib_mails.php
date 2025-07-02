@@ -1,8 +1,8 @@
 <?php
-namespace MHN\Aufnahme;
+namespace App;
 
-use MHN\Aufnahme\Domain\Repository\EmailRepository;
-use MHN\Aufnahme\Domain\Repository\UserRepository;
+use App\Domain\Repository\EmailRepository;
+use App\Domain\Repository\UserRepository;
 
 function mails__laden($parameter)
 {

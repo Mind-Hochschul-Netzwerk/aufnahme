@@ -1,5 +1,5 @@
 <?php
-namespace MHN\Aufnahme;
+namespace App;
 
 /**
  * Klasse für Datenbankoperationen.

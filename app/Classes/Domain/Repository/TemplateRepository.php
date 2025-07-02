@@ -1,5 +1,5 @@
 <?php
-namespace MHN\Aufnahme\Domain\Repository;
+namespace App\Domain\Repository;
 
 /**
  * @author Henrik Gebauer <mensa@henrik-gebauer.de>
@@ -7,15 +7,15 @@ namespace MHN\Aufnahme\Domain\Repository;
  */
 
 use DateTime;
-use MHN\Aufnahme\Domain\Model\Template;
-use MHN\Aufnahme\Sql;
+use App\Domain\Model\Template;
+use App\Sql;
 
 /**
  * Verwaltet die Vorlagen in der Datenbank
  */
-class TemplateRepository implements \MHN\Aufnahme\Interfaces\Singleton
+class TemplateRepository implements \App\Interfaces\Singleton
 {
-    use \MHN\Aufnahme\Traits\Singleton;
+    use \App\Traits\Singleton;
 
     /** @var string */
     const TABLE_NAME = 'templates';

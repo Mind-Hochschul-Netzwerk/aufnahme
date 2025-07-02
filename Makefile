@@ -7,13 +7,11 @@ endif
 
 image:
 	@echo "(Re)building docker image"
-	docker build --no-cache -t local/$(SERVICENAME):latest .
+	docker build --no-cache -t ghcr.io/mind-hochschul-netzwerk/$(SERVICENAME):latest .
 
 rebuild:
 	@echo "Rebuilding docker image"
-	docker build -t local/$(SERVICENAME):latest .
-	@echo "Restarting service"
-	docker compose up -d --force-recreate --remove-orphans app
+	docker build -t ghcr.io/mind-hochschul-netzwerk/$(SERVICENAME):latest .
 
 adminer: check-traefik
 	docker compose up -d adminer
@@ -40,8 +38,8 @@ rootshell:
 	docker compose exec --user root app sh
 
 mysql:
-	@echo "docker-compose exec db mariadb --user=user --password=\"...\" database"
-	@docker-compose exec db mariadb --user=user --password="$(MYSQL_PASSWORD)" database
+	@echo "docker compose exec db mariadb --user=user --password=\"...\" database"
+	@docker compose exec db mariadb --user=user --password="$(MYSQL_PASSWORD)" database
 
 logs:
 	docker compose logs -f

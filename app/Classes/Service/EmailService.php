@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace MHN\Aufnahme\Service;
+namespace App\Service;
 
 /**
  * @author Henrik Gebauer <mensa@henrik-gebauer.de>
@@ -12,9 +12,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 /**
  * send emails
  */
-class EmailService implements \MHN\Aufnahme\Interfaces\Singleton
+class EmailService implements \App\Interfaces\Singleton
 {
-    use \MHN\Aufnahme\Traits\Singleton;
+    use \App\Traits\Singleton;
 
     private $mailer = null;
 

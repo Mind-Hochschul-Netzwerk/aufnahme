@@ -1,5 +1,5 @@
 <?php
-namespace MHN\Aufnahme\Domain\Model;
+namespace App\Domain\Model;
 
 /**
  * @author Henrik Gebauer <mensa@henrik-gebauer.de>

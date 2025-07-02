@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace MHN\Aufnahme\Service;
+namespace App\Service;
 
 /**
  * @author Henrik Gebauer <mensa@henrik-gebauer.de>

@@ -1,12 +1,12 @@
 <?php
-namespace MHN\Aufnahme;
+namespace App;
 
-use MHN\Aufnahme\Domain\Model\Vote;
-use MHN\Aufnahme\Domain\Model\FormData;
-use MHN\Aufnahme\Domain\Repository\UserRepository;
-use MHN\Aufnahme\Domain\Repository\VoteRepository;
-use MHN\Aufnahme\Domain\Repository\EmailRepository;
-use MHN\Aufnahme\Service\Token;
+use App\Domain\Model\Vote;
+use App\Domain\Model\FormData;
+use App\Domain\Repository\UserRepository;
+use App\Domain\Repository\VoteRepository;
+use App\Domain\Repository\EmailRepository;
+use App\Service\Token;
 
 class Antrag
 {

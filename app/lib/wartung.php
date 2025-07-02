@@ -1,13 +1,13 @@
 <?php
-namespace MHN\Aufnahme;
+namespace App;
 
 //diese Datei wird von globals.php ca. alle zwei Stunden eingebunden.
 //ein Cron-Job könnte die Hauptseite einmal am Tag aufrufen ...
 
-use MHN\Aufnahme\Antrag;
-use MHN\Aufnahme\Domain\Repository\UserRepository;
-use MHN\Aufnahme\Domain\Repository\TemplateRepository;
-use MHN\Aufnahme\Service\EmailService;
+use App\Antrag;
+use App\Domain\Repository\UserRepository;
+use App\Domain\Repository\TemplateRepository;
+use App\Service\EmailService;
 
 const MAINTENANCE_LOCKFILE = '/tmp/letztewartung';
 

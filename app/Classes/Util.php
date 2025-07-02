@@ -1,5 +1,5 @@
 <?php
-namespace MHN\Aufnahme;
+namespace App;
 
 /**
  * Diese Klasse ist nur als Namespace zu verstehen, also alles "static".

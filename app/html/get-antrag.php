@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace MHN\Aufnahme;
+namespace App;
 
 /**
 * Gibt die Daten an die Mitgliederverwaltung weiter
@@ -11,8 +11,8 @@ namespace MHN\Aufnahme;
 // Composer
 require_once '../vendor/autoload.php';
 
-use MHN\Aufnahme\Service\Token;
-use MHN\Aufnahme\Antrag;
+use App\Service\Token;
+use App\Antrag;
 
 // only allow backend calls
 $ip = ip2long($_SERVER['REMOTE_ADDR']);

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace MHN\Aufnahme\Domain\Model;
+namespace App\Domain\Model;
 
 use Parsedown;
 

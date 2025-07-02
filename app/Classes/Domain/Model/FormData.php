@@ -1,5 +1,5 @@
 <?php
-namespace MHN\Aufnahme\Domain\Model;
+namespace App\Domain\Model;
 
 use Symfony\Component\Yaml\Yaml;
 

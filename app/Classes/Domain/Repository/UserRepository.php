@@ -1,13 +1,13 @@
 <?php
-namespace MHN\Aufnahme\Domain\Repository;
+namespace App\Domain\Repository;
 
 /**
  * @author Jochen Ott
  * @author Henrik Gebauer <mensa@henrik-gebauer.de>
  */
 
-use MHN\Aufnahme\Domain\Model\User;
-use MHN\Aufnahme\Service\EmailService;
+use App\Domain\Model\User;
+use App\Service\EmailService;
 use Symfony\Component\Ldap\Ldap;
 use Symfony\Component\Ldap\Exception\InvalidCredentialsException;
 use Symfony\Component\Ldap\Entry;
@@ -15,9 +15,9 @@ use Symfony\Component\Ldap\Entry;
 /**
  * Verwaltet die Benutzerdatenbank
  */
-class UserRepository implements \MHN\Aufnahme\Interfaces\Singleton
+class UserRepository implements \App\Interfaces\Singleton
 {
-    use \MHN\Aufnahme\Traits\Singleton;
+    use \App\Traits\Singleton;
 
     private $ldap = null;
 

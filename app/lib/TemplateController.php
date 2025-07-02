@@ -1,8 +1,8 @@
 <?php
-namespace MHN\Aufnahme;
+namespace App;
 
-use MHN\Aufnahme\Domain\Repository\TemplateRepository;
-use MHN\Aufnahme\Service\SmartyContainer;
+use App\Domain\Repository\TemplateRepository;
+use App\Service\SmartyContainer;
 
 class TemplateController
 {

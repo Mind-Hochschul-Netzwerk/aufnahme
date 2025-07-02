@@ -1,7 +1,7 @@
 <?php
-namespace MHN\Aufnahme;
+namespace App;
 
-use MHN\Aufnahme\Domain\Repository\UserRepository;
+use App\Domain\Repository\UserRepository;
 use Smarty;
 
 class UserController

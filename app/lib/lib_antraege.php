@@ -1,17 +1,17 @@
 <?php
-namespace MHN\Aufnahme;
+namespace App;
 
-use MHN\Aufnahme\Domain\Model\Email;
-use MHN\Aufnahme\Domain\Model\Vote;
-use MHN\Aufnahme\Domain\Model\FormData;
-use MHN\Aufnahme\Domain\Repository\EmailRepository;
-use MHN\Aufnahme\Domain\Repository\TemplateRepository;
-use MHN\Aufnahme\Domain\Repository\UserRepository;
-use MHN\Aufnahme\Domain\Repository\VoteRepository;
+use App\Domain\Model\Email;
+use App\Domain\Model\Vote;
+use App\Domain\Model\FormData;
+use App\Domain\Repository\EmailRepository;
+use App\Domain\Repository\TemplateRepository;
+use App\Domain\Repository\UserRepository;
+use App\Domain\Repository\VoteRepository;
 use PHPMailer;
 use Smarty;
-use MHN\Aufnahme\Antrag;
-use MHN\Aufnahme\Service\EmailService;
+use App\Antrag;
+use App\Service\EmailService;
 
 class lib_antraege
 {

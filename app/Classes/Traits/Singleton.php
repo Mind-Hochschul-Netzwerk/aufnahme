@@ -1,12 +1,12 @@
 <?php
-namespace MHN\Aufnahme\Traits;
+namespace App\Traits;
 
 /**
  * @author Henrik Gebauer <mensa@henrik-gebauer.de>
  * @license https://creativecommons.org/publicdomain/zero/1.0/ CC0 1.0
  */
 
-use MHN\Aufnahme\Interfaces;
+use App\Interfaces;
 
 /**
  * Trait für Singletons

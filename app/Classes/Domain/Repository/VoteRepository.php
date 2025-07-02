@@ -1,5 +1,5 @@
 <?php
-namespace MHN\Aufnahme\Domain\Repository;
+namespace App\Domain\Repository;
 
 /**
  * @author Henrik Gebauer <mensa@henrik-gebauer.de>
@@ -7,17 +7,17 @@ namespace MHN\Aufnahme\Domain\Repository;
  */
 
 use DateTime;
-use MHN\Aufnahme\Antrag;
-use MHN\Aufnahme\Domain\Model\User;
-use MHN\Aufnahme\Domain\Model\Vote;
-use MHN\Aufnahme\Sql;
+use App\Antrag;
+use App\Domain\Model\User;
+use App\Domain\Model\Vote;
+use App\Sql;
 
 /**
  * Verwaltet die Voten in der Datenbank
  */
-class VoteRepository implements \MHN\Aufnahme\Interfaces\Singleton
+class VoteRepository implements \App\Interfaces\Singleton
 {
-    use \MHN\Aufnahme\Traits\Singleton;
+    use \App\Traits\Singleton;
 
     /** @var string */
     const TABLE_NAME = 'voten';

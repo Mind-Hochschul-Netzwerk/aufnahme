@@ -1,5 +1,5 @@
 <?php
-namespace MHN\Aufnahme;
+namespace App;
 
 use Symfony\Component\Yaml\Yaml;
 
@@ -144,7 +144,7 @@ class Entrypoint
                 $activeEntry['ladenparameter'] = [];
             }
             $activeEntry['ladenparameter']['urlparams'] = $parameters;
-            $activeEntry['ladenfunktion'] = '\\MHN\\Aufnahme\\' . $activeEntry['ladenfunktion'];
+            $activeEntry['ladenfunktion'] = '\\App\\' . $activeEntry['ladenfunktion'];
             $activeEntry['ladenfunktion']($activeEntry['ladenparameter']);
 
             //Das auch den anderen mitteilen...

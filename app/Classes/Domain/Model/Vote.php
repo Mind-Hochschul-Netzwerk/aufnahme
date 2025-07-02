@@ -1,5 +1,5 @@
 <?php
-namespace MHN\Aufnahme\Domain\Model;
+namespace App\Domain\Model;
 
 /**
  * @author Henrik Gebauer <mensa@henrik-gebauer.de>
@@ -7,8 +7,8 @@ namespace MHN\Aufnahme\Domain\Model;
  */
 
 use DateTime;
-use MHN\Aufnahme\Domain\Model\User;
-use MHN\Aufnahme\Domain\Repository\UserRepository;
+use App\Domain\Model\User;
+use App\Domain\Repository\UserRepository;
 
 /**
  * Repräsentiert ein Votum auf einen Antrag

@@ -1,21 +1,21 @@
 <?php
-namespace MHN\Aufnahme\Service;
+namespace App\Service;
 
 /**
  * @author Henrik Gebauer <mensa@henrik-gebauer.de>
  * @license https://creativecommons.org/publicdomain/zero/1.0/ CC0 1.0
  */
 
-use MHN\Aufnahme\Domain\Model\User;
-use MHN\Aufnahme\Domain\Repository\UserRepository;
+use App\Domain\Model\User;
+use App\Domain\Repository\UserRepository;
 use Smarty;
 
 /**
  * Verwaltet die Login-Session und schützt interne Seiten
  */
-class LoginGatekeeper implements \MHN\Aufnahme\Interfaces\Singleton
+class LoginGatekeeper implements \App\Interfaces\Singleton
 {
-    use \MHN\Aufnahme\Traits\Singleton;
+    use \App\Traits\Singleton;
 
     /** @var int seconds */
     const TIMEOUT_IN_SECONDS = 60 * 60;

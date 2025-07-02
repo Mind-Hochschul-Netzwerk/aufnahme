@@ -17,11 +17,14 @@ RUN set -x \
 RUN set -x \
   && apk --no-cache add \
        php83-ldap \
+       php83-pdo_mysql \
+       php83-iconv \
   && chown nobody:nobody /var/www
 
 USER nobody
 
 COPY config/nginx/ /etc/nginx
+COPY config/php-custom.ini /etc/php83/conf.d/custom.ini
 COPY --chown=nobody app/ /var/www
 
 RUN composer install -d "/var/www/" --optimize-autoloader --no-dev --no-interaction --no-progress --no-cache

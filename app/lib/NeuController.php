@@ -1,11 +1,11 @@
 <?php
-namespace MHN\Aufnahme;
+namespace App;
 
-use MHN\Aufnahme\Service\Token;
-use MHN\Aufnahme\Service\EmailService;
-use MHN\Aufnahme\Domain\Model\FormData;
-use MHN\Aufnahme\Domain\Repository\UserRepository;
-use MHN\Aufnahme\Domain\Repository\TemplateRepository;
+use App\Service\Token;
+use App\Service\EmailService;
+use App\Domain\Model\FormData;
+use App\Domain\Repository\UserRepository;
+use App\Domain\Repository\TemplateRepository;
 
 class NeuController
 {

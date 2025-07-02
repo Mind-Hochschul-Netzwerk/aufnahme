@@ -1,5 +1,5 @@
 <?php
-namespace MHN\Aufnahme\Interfaces;
+namespace App\Interfaces;
 
 /**
  * @author Henrik Gebauer <mensa@henrik-gebauer.de>
