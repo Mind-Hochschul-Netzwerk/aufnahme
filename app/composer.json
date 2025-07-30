@@ -10,7 +10,7 @@
         "hengeb/db": "^0.5.0",
         "hengeb/token": "^0.0.1",
         "hengeb/router": "^0.4.1",
-        "hengeb/simplates": "^0.0.2"
+        "hengeb/simplates": "^0.0.3"
     },
     "autoload": {
         "psr-4": {

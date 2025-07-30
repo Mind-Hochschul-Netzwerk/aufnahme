@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c321e278cb651890eb36749e7ecebf19",
+    "content-hash": "991c1ce9a74068f40f14450b34f0d490",
     "packages": [
         {
             "name": "erusev/parsedown",
@@ -144,16 +144,16 @@
         },
         {
             "name": "hengeb/simplates",
-            "version": "v0.0.2",
+            "version": "v0.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hengeb/simplates.git",
-                "reference": "2fbbca6b129df88dc94dd4caaf47c7a6292a7800"
+                "reference": "106d1c3354eff9602f361028382c99bb3e4477a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hengeb/simplates/zipball/2fbbca6b129df88dc94dd4caaf47c7a6292a7800",
-                "reference": "2fbbca6b129df88dc94dd4caaf47c7a6292a7800",
+                "url": "https://api.github.com/repos/hengeb/simplates/zipball/106d1c3354eff9602f361028382c99bb3e4477a6",
+                "reference": "106d1c3354eff9602f361028382c99bb3e4477a6",
                 "shasum": ""
             },
             "require": {
@@ -180,9 +180,9 @@
             "description": "Template Engine for lightweight templates with automatic escaping",
             "support": {
                 "issues": "https://github.com/hengeb/simplates/issues",
-                "source": "https://github.com/hengeb/simplates/tree/v0.0.2"
+                "source": "https://github.com/hengeb/simplates/tree/v0.0.3"
             },
-            "time": "2024-12-14T22:41:36+00:00"
+            "time": "2025-07-26T20:43:38+00:00"
         },
         {
             "name": "hengeb/token",
