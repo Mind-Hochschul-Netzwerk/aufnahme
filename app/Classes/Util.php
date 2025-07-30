@@ -6,15 +6,10 @@ namespace App;
  */
 class Util
 {
-    /**
-     * @param int $ts
-     *
-     * @return string
-     */
-    public static function tsToDatum($ts)
+    public static function tsToDatum(int $ts): string
     {
         if ($ts == 0) {
-            return '';
+            return '(nie)';
         }
         return date('d.m.Y', $ts);
     }
@@ -27,9 +22,9 @@ class Util
      *
      * @return int|false der entsprechende Timestamp oder false bei einem Fehler
      */
-    public static function datumToTs($datum)
+    public static function datumToTs(string $datum): int|false
     {
-        if ($datum == '') {
+        if ($datum === '' || $datum === '(nie)') {
             return 0;
         }
         $res = strptime($datum, '%d.%m.%Y');

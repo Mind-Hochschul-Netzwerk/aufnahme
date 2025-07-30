@@ -1,0 +1,50 @@
+<?php
+if ($currentUser->isLoggedIn()->isTrue()) {
+    $navItems = [
+        'antraege' => ['/antraege', 'Offene Anträge', 'search'],
+        'archiv' => ['/archiv', 'Entschiedene Anträge', 'search'],
+        'templates' => ['/templates', 'Vorlagen', 'wrench'],
+        'users' => ['/users', 'Aufnahmekommission', 'user'],
+        'logout' => ['/logout', 'Logout', 'log-out'],
+        'datenschutz' => ['https://www.' . getenv('DOMAINNAME') . '/mod/book/view.php?id=253&chapterid=4', 'Datenschutz', 'paragraph'],
+        'impressum' => ['https://www.' . getenv('DOMAINNAME') . '/mod/book/view.php?id=253&chapterid=5', 'Impressum', 'globe'],
+    ];
+} else {
+    $navItems = [
+        'antrag' => ['/antrag', 'Mitglied werden', 'plus'],
+        'login' => ['/login', 'Login', 'log-in'],
+        'homepage' => ['https://www.' . getenv('DOMAINNAME'), 'MHN-Webseite', 'home'],
+        'datenschutz' => ['https://www.' . getenv('DOMAINNAME') . '/mod/book/view.php?id=253&chapterid=4', 'Datenschutz', 'paragraph'],
+        'impressum' => ['https://www.' . getenv('DOMAINNAME') . '/mod/book/view.php?id=253&chapterid=5', 'Impressum', 'globe'],
+    ];
+}
+?>
+<nav class="navbar navbar-mhn sidebar" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">
+                <span class="sr-only">Navigation aufklappen</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/"><img src="/img/mhn-logo-small.png" id="mhn-logo"><span class="logo-text"> Aufnahme
+            </span>
+                <span class='pull-right showopacity glyphicon'><img src="/img/mhn-logo-small.png" id="mhn-icon"></span>
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+<?php
+foreach ($navItems as $itemname => $item) {
+    if (!$item) {
+        continue;
+    }
+    $class = ($this->check($navId) && $navId == $itemname) ? 'active' : '';
+    echo "<li class='$class'><a href='$item[0]'>$item[1]<span class='pull-right showopacity glyphicon glyphicon-$item[2]'></span></a></li>\n";
+}
+?>
+            </ul>
+        </div>
+    </div>
+</nav>
