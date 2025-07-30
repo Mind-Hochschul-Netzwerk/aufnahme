@@ -50,10 +50,4 @@ Tpl::getInstance()->set('currentUser', $currentUser);
 Tpl::getInstance()->set('_csrfToken', fn() => $router->createCsrfToken());
 Tpl::getInstance()->set('_timeZone', new \DateTimeZone('Europe/Berlin'));
 
-$response = $router->dispatch($request, $currentUser);
-
-if ($isEmbedded) {
-    $response->headers->set('Content-Security-Policy', 'frame-ancestors www.' . getenv('DOMAINNAME'));
-}
-
-$response->send();
+$response = $router->dispatch($request, $currentUser)->send();
