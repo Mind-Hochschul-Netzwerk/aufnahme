@@ -38,7 +38,7 @@ class TemplateRepository implements \App\Interfaces\Singleton
 
     public function save(Template $template): void
     {
-        Db::getInstance()->query('UPATE templates SET subject = :subject, text = :text WHERE name = :name', [
+        Db::getInstance()->query('UPDATE templates SET subject = :subject, text = :text WHERE name = :name', [
             'subject' => $template->getSubject(),
             'text' => $template->getText(),
             'name' => $template->getName(),
