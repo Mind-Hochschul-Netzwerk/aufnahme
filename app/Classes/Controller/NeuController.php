@@ -126,6 +126,7 @@ class NeuController extends Controller
         $a->setStatus(Antrag::STATUS_BEWERTEN, 0);
         $a->setDaten($this->werte);
         $a->setTsAntrag(time());
+        $a->setTsStatusaenderung(time());
 
         try {
             AntragRepository::getInstance()->add($a);

@@ -134,28 +134,28 @@ class Antrag
 
     public function getDatumStatusaenderung(): string
     {
-        return Util::tsToDatum($this->ts_statusaenderung);
+        return Util::tsToDatum($this->getTsStatusaenderung());
     }
 
     //als Text ...
     public function getDatumAntrag(): string
     {
-        return Util::tsToDatum($this->ts_antrag);
+        return Util::tsToDatum($this->getTsAntrag());
     }
 
     public function getDatumEntscheidung(): string
     {
-        return Util::tsToDatum($this->ts_entscheidung);
+        return Util::tsToDatum($this->getTsEntscheidung());
     }
 
     public function getDatumAntwort(): string
     {
-        return Util::tsToDatum($this->ts_antwort);
+        return Util::tsToDatum($this->getTsAntwort());
     }
 
     public function getDatumNachfrage(): string
     {
-        return Util::tsToDatum($this->ts_nachfrage);
+        return Util::tsToDatum($this->getTsNachfrage());
     }
 
     public function getBemerkung(): string
