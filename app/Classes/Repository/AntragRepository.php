@@ -127,8 +127,8 @@ class AntragRepository implements \App\Interfaces\Singleton
             'status' => Antrag::STATUS_AUFGENOMMEN
         ]);
 
-        // abgelehnte Anträge nach 12 Wochen löschen
-        Db::getInstance()->query('DELETE FROM antraege WHERE status = :status AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*7*12', [
+        // abgelehnte Anträge nach 60 Wochen löschen
+        Db::getInstance()->query('DELETE FROM antraege WHERE status = :status AND UNIX_TIMESTAMP()-ts_entscheidung > 3600*24*7*60', [
             'status' => Antrag::STATUS_ABGELEHNT
         ]);
 
