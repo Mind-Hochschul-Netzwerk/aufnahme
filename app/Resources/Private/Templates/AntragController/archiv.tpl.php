@@ -4,7 +4,7 @@
 
 <ul>
     <li>Angenommene Anträge werden acht Wochen lang aufbewahrt, damit ggf. Fehler festgestellt werden können.</li>
-    <li>Sie bleiben allerdings bis zu einem Jahr im System, solange das Mitglied seinen Zugang nicht aktiviert hat.</li>
+    <li>Sie bleiben allerdings bis zu zwölf Wochen im System, solange das Mitglied seinen Zugang nicht aktiviert hat.</li>
     <li>Abgelehnte Anträge werden wegen der Einspruchsmöglichkeit bei der Mitgliederversammlung 60 Wochen lang aufbewahrt</li>
 </ul>
 
