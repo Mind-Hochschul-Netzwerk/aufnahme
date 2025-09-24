@@ -1,3 +1,11 @@
+SET NAMES utf8;
+SET time_zone = '+00:00';
+SET foreign_key_checks = 0;
+SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+
+SET NAMES utf8mb4;
+
+DROP TABLE IF EXISTS `antraege`;
 CREATE TABLE `antraege` (
   `antrag_id` int(11) NOT NULL AUTO_INCREMENT,
   `status` tinyint(4) NOT NULL,
@@ -6,222 +14,55 @@ CREATE TABLE `antraege` (
   `ts_antwort` int(11) NOT NULL,
   `ts_entscheidung` int(11) NOT NULL,
   `ts_erinnerung` int(11) NOT NULL,
-  `ts_statusaenderung` int(11) NOT NULL DEFAULT '0',
-  `statusaenderung_username` varchar(255),
-  `bemerkung` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `kommentare` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  'formData' text NOT NULL,
-  mail varchar(255) not null,
+  `ts_statusaenderung` int(11) NOT NULL DEFAULT 0,
+  `statusaenderung_username` varchar(255) DEFAULT NULL,
+  `bemerkung` text NOT NULL,
+  `kommentare` text NOT NULL,
+  `formData` text NOT NULL,
+  `mail` varchar(255) NOT NULL,
   PRIMARY KEY (`antrag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `daten` (
-  `antrag_id` int(11) NOT NULL,
-  `mhn_vorname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `mhn_nachname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_email` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_titel` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_ws_strasse` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_ws_hausnr` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_ws_zusatz` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_ws_plz` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_ws_ort` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_ws_land` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_zws_strasse` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_zws_hausnr` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_zws_zusatz` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `mhn_entrydate` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_zws_plz` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_zws_ort` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_zws_land` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_geburtstag` date DEFAULT NULL,
-  `mhn_telefon` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_mobil` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_mensa` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'u',
-  `mhn_mensa_nr` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_beschaeftigung` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_studienort` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_studienfach` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_unityp` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_schwerpunkt` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_nebenfach` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_semester` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_abschluss` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_zweitstudium` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_hochschulaktivitaet` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_stipendien` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_ausland` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_praktika` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_beruf` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_auskunft_studiengang` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_auskunft_stipendien` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_auskunft_ausland` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_auskunft_praktika` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_auskunft_beruf` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_mentoring` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_aufgabe_ma` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_aufgabe_orte` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_aufgabe_vortrag` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_aufgabe_koord` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_aufgabe_graphisch` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_aufgabe_computer` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_aufgabe_texte_schreiben` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_aufgabe_texte_lesen` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_aufgabe_vermittlung` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_aufgabe_ansprechpartner` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_aufgabe_hilfe` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_aufgabe_sonstiges` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'n',
-  `mhn_aufgabe_sonstiges_besch` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_sprachen` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_hobbies` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_interessen` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_homepage` varchar(255) COLLATE utf8mb4_unicode_ci,
-  `mhn_bemerkungen` text COLLATE utf8mb4_unicode_ci,
-  `mhn_aufmerksam` varchar(255) COLLATE utf8mb4_unicode_ci,
-  kenntnisnahme_datenverarbeitung datetime DEFAULT NULL,
-  kenntnisnahme_datenverarbeitung_text text NOT NULL,
-  einwilligung_datenverarbeitung datetime DEFAULT NULL,
-  einwilligung_datenverarbeitung_text text NOT NULL,
-  PRIMARY KEY (`antrag_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+DROP TABLE IF EXISTS `mails`;
 CREATE TABLE `mails` (
   `antrag_id` int(11) NOT NULL,
   `grund` enum('aufnahme','nachfrage','ablehnung') NOT NULL,
-  `username` varchar(255),
+  `username` varchar(255) DEFAULT NULL,
   `ts` int(11) NOT NULL,
   `mailsubject` text NOT NULL,
   `mailtext` text NOT NULL,
   KEY `antrad_id` (`antrag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `voten` (
-  `antrag_id` int(11) NOT NULL,
-  `username` varchar(255),
-  `votum` tinyint(4) NOT NULL,
-  `ts` int(11) NOT NULL,
-  `bemerkung` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nachfrage` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  KEY `antrag_id` (`antrag_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `antraege` SET
-    antrag_id = 1358,
-    status = 0,
-    ts_antrag = UNIX_TIMESTAMP() - 86400 * 2,
-    ts_nachfrage = UNIX_TIMESTAMP() - 86400,
-    ts_antwort = 0,
-    ts_entscheidung = 0,
-    ts_erinnerung = 0,
-    ts_statusaenderung = UNIX_TIMESTAMP(),
-    statusaenderung_username = 'webteam',
-    bemerkung = 'A: Ja; B:ok Falls bis zum 10.08 keine Antwort--> ablehnen',
-    kommentare = ''
-;
-
-INSERT INTO `daten` SET
-    antrag_id = 1358,
-    mhn_vorname = 'Hilde',
-    mhn_nachname = 'Hirsch',
-    user_email = 'hilde.hirsch@mailinator.com',
-    mhn_titel = '',
-    mhn_ws_strasse = 'Im Wald',
-    mhn_ws_hausnr = '8',
-    mhn_ws_zusatz = '',
-    mhn_ws_plz = '12345',
-    mhn_ws_ort = 'Berlin',
-    mhn_ws_land = 'Deutschland',
-    mhn_zws_strasse = '',
-    mhn_zws_hausnr = '',
-    mhn_zws_zusatz = '',
-    mhn_entrydate = NULL,
-    mhn_zws_plz = '',
-    mhn_zws_ort = '',
-    mhn_zws_land = '',
-    mhn_geburtstag = '1990-01-01',
-    mhn_telefon = '08003301000',
-    mhn_mobil = '',
-    mhn_mensa = 'j',
-    mhn_mensa_nr = '999',
-    mhn_beschaeftigung = 'Hochschulstudent',
-    mhn_studienort = 'Berlin',
-    mhn_studienfach = 'BWL',
-    mhn_unityp = 'Universität',
-    mhn_schwerpunkt = '',
-    mhn_nebenfach = '',
-    mhn_semester = '4',
-    mhn_abschluss = '',
-    mhn_zweistudium = '',
-    mhn_hochschulaktivitaet = '',
-    mhn_stipendien = '',
-    mhn_ausland = 'Holland',
-    mhn_praktika = '',
-    mhn_beruf = '',
-    mhn_auskunft_studiengang = 'j',
-    mhn_auskunft_stipendien = 'n',
-    mhn_auskunft_ausland = 'j',
-    mhn_auskunft_praktika = 'n',
-    mhn_auskunft_beruf = 'n',
-    mhn_mentoring = 'n',
-    mhn_aufgabe_ma = 'n',
-    mhn_aufgabe_orte = '',
-    mhn_aufgabe_vortrag = '',
-    mhn_aufgabe_koord = 'j',
-    mhn_aufgabe_graphisch = 'n',
-    mhn_aufgabe_computer = 'j',
-    mhn_aufgabe_texte_schreiben = '',
-    mhn_aufgabe_texte_lesen = 'n',
-    mhn_aufgabe_vermittlung = 'n',
-    mhn_aufgabe_ansprechpartner = '',
-    mhn_aufgabe_hilfe = 'j',
-    mhn_aufgabe_sonstiges = 'n',
-    mhn_aufgabe_sonstiges_besch = NULL,
-    mhn_sprachen = 'Deutsch, Englisch',
-    mhn_hobbies = '-',
-    mhn_interessen = '-',
-    mhn_homepage = 'n',
-    mhn_bemerkungen = '',
-    mhn_aufmerksam = 'Mensa-Website',
-    kenntnisnahme_datenverarbeitung = NOW(),
-    kenntnisnahme_datenverarbeitung_text = 'Kenntnisnahme',
-    einwilligung_datenverarbeitung = NOW(),
-    einwilligung_datenverarbeitung_text = 'Einwilligung'
-;
-
-INSERT INTO `mails` SET
-    antrag_id = 1358,
-    grund = 'nachfrage',
-    username = 'webteam',
-    ts = UNIX_TIMESTAMP(),
-    mailsubject = 'Nachfrage zum MHN-Aufnahmeantrag',
-    mailtext = 'Hallo, danke für Dein Interesse und Deine Bewerbung für das MHN!'
-;
-
-INSERT INTO `voten` SET
-    antrag_id = 1358,
-    username = "webteam",
-    votum = 2,
-    ts = UNIX_TIMESTAMP() - 86400,
-    bemerkung = 'Bemerkung',
-    nachfrage = 'Nachfrage'
-;
-
-
-
+DROP TABLE IF EXISTS `templates`;
 CREATE TABLE `templates` (
-  `name` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-  `label` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-  `subject` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-  `text` text CHARACTER SET utf8mb4 NOT NULL,
-  `hints` text CHARACTER SET utf8mb4 NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `subject` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `hints` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 INSERT INTO `templates` (`name`, `label`, `subject`, `text`, `hints`) VALUES
-('ablehnen',	'Ablehnen',	'Dein MHN-Mitgliedsantrag',	'Hallo {$vorname},\r\n\r\ndeine Bewerbung hat uns in vielen Punkten ganz gut gefallen. Dennoch usw. usw.\r\n\r\nViele Grüße\r\n\r\n{$autor} für die MHN-Aufnahmekommission\r\n',	'{$vorname}\r\n{$autor} Mitglied der Aufnahmekommission (Vor- und Nachname)\r\n'),
-('aufnehmen',	'Aufnehmen',	'MHN: Aufnahme',	'Hallo {$vorname},\r\n\r\nwir freuen uns sehr, dich im Mind-Hochschul-Netzwerk begrüßen zu\r\nkönnen, sobald du den Aufnahmelink aktiviert hast.\r\n\r\nIn dieser E-Mail findest du die wichtigsten Informationen zu den unterschied-\r\nlichen Möglichkeiten, mit anderen MHN-Mitgliedern in Kontakt zu treten und dich\r\nim MHN einzubringen. Um das Netzwerk und seine Möglichkeiten kennenzulernen,\r\nnimm dir bitte ein paar Minuten Zeit, um diese E-Mail zu lesen und dich in der\r\ndigitalen MHN-Umgebung – einer Moodle-Plattform – initial anzumelden und etwas\r\numzuschauen.\r\n\r\nMit deinem Zugangslink bekommst du Zugriff auf …\r\n\r\n… das Mitgliederverzeichnis, in der du deine eigenen Daten verwalten und nach\r\nanderen Mitgliedern suchen kannst. Bitte aktualisiere deine Angaben, wenn sich\r\netwas ändert. Deine Daten sind nur für MHN-Mitglieder sichtbar und können von\r\nExternen nicht eingesehen werden.\r\n\r\n… die Kurse. Du bist automatisch im Kurs „Mitgliederportal“ eingeschrieben,\r\nsodass du Rundmails des Vorstands und den monatlichen Newsletter bekommst. Über\r\nden Kurs „Diskussionslisten“ kannst du alle Themen, die dich interessieren, wie\r\nbeispielsweise Medizin, Spiele oder Philosophie zur MHN-internen Diskussion\r\nverfolgen und mit MHN-Mitgliedern aus deiner Region über die Regionallisten in\r\nKontakt kommen. Dazu abonnierst du einfach das jeweilige Forum, um neue Bei-\r\nträge per E-Mail zu erhalten. Wie viele E-Mails du aus den MHN-Foren bekommst,\r\nkannst du in deinen Profil-Einstellungen ändern.\r\n\r\n… das MHN-Wiki, das unser vereinsinterner Wissensspeicher ist.\r\n\r\n… den MHN-Kalender, in dem die Termine deiner Kurse und überregionale Veran-\r\nstaltungen sichtbar sind.\r\n\r\nWeil nicht alle, die Veranstaltungen anbieten, daran denken, regionale Treffen\r\nin den Veranstaltungskalender einzutragen, legen wir dir ans Herz, dein Regio-\r\nnalforum zu abonnieren, um über Aktionen und Treffen in deiner Region informiert\r\nzu bleiben.\r\n\r\nVon überregionalen Veranstaltungen wie der MHN-Unconference, dem MHN-Camp, der\r\nMind-Akademie, den vielseitigen Seminaren und dem Stammtisch auf unserem Dis-\r\ncord-Server, der immer am 5. des Monats stattfindet, erfährst du in jedem Fall\r\nim Newsletter.\r\n\r\nDiscord kannst du dir hier herunterladen: https://discord.com/download\r\n\r\nHier findest du den Link zum Server: https://discord.gg/rjNRWSSDVf\r\n\r\nBitte poste den Link nicht öffentlich; eine persönliche Weitergabe an Bekannte\r\nist in Ordnung.\r\n\r\nEigeninitiative ist im MHN der Schlüssel zum Glück. Also: Wenn dir ein Angebot\r\nfehlt, biete es einfach selbst an, und du wirst bestimmt nicht alleine bleiben.\r\n\r\nWir wünschen dir viel Spaß im MHN und freuen uns darauf, dich bei einem der\r\nnächsten Treffen persönlich oder im Discord-Server kennenzulernen!\r\n\r\nWenn du inhaltliche Fragen hast, melde dich bei der\r\nMitgliederbetreuung@Mind-Hochschul-Netzwerk.de, für technische Fragen bei der\r\nIT@Mind-Hochschul-Netzwerk.de (oder schreibe in den entsprechenden Moodle-\r\nKurs).\r\n\r\nAbschließend dein Zugangslink:\r\n\r\n{$url}\r\n\r\nBitte bestätige deine Mitgliedschaft über den Aktivierungslink. Erst nachdem du\r\ndeinen Zugang aktiviert hast, beginnt deine Mitgliedschaft. Der Aktivierungslink\r\nist sechs Monate gültig, danach muss das Aufnahmeverfahren erneut durchlaufen\r\nwerden.\r\n\r\nViele Grüße\r\n\r\n{$autor} für die MHN-Aufnahmekommission\r\n\r\n',	'{$vorname} Vorname der Kandidat*in\r\n{$url} Aktivierungslink\r\n{$autor} Mitglied der Aufnahmekommission (Vor- und Nachname)\r\n'),
+('ablehnen',	'Ablehnen',	'Dein MHN-Mitgliedsantrag',	'Hallo {$vorname},\r\n\r\ndeine Bewerbung hat uns in vielen Punkten ganz gut gefallen. Dennoch usw. usw.\r\n\r\nViele Grüße\r\n\r\n{$autor} für die MHN-Aufnahmekommission',	'{$vorname}\r\n{$autor} Mitglied der Aufnahmekommission (Vor- und Nachname)\r\n'),
+('aufnehmen',	'Aufnehmen',	'MHN: Aufnahme',	'Hallo {$vorname},\r\n\r\nwir freuen uns sehr, dich im Mind-Hochschul-Netzwerk begrüßen zu\r\nkönnen, sobald du den Aufnahmelink aktiviert hast.\r\n\r\nIn dieser E-Mail findest du die wichtigsten Informationen zu den unterschied-\r\nlichen Möglichkeiten, mit anderen MHN-Mitgliedern in Kontakt zu treten und dich\r\nim MHN einzubringen. Um das Netzwerk und seine Möglichkeiten kennenzulernen,\r\nnimm dir bitte ein paar Minuten Zeit, um diese E-Mail zu lesen und dich in der\r\ndigitalen MHN-Umgebung – einer Moodle-Plattform – initial anzumelden und etwas\r\numzuschauen.\r\n\r\nMit deinem Zugangslink bekommst du Zugriff auf …\r\n\r\n… das Mitgliederverzeichnis, in der du deine eigenen Daten verwalten und nach\r\nanderen Mitgliedern suchen kannst. Bitte aktualisiere deine Angaben, wenn sich\r\netwas ändert. Deine Daten sind nur für MHN-Mitglieder sichtbar und können von\r\nExternen nicht eingesehen werden.\r\n\r\n… die Kurse. Du bist automatisch im Kurs „Mitgliederportal“ eingeschrieben,\r\nsodass du Rundmails des Vorstands und den monatlichen Newsletter bekommst. Über\r\nden Kurs „Diskussionslisten“ kannst du alle Themen, die dich interessieren, wie\r\nbeispielsweise Medizin, Spiele oder Philosophie zur MHN-internen Diskussion\r\nverfolgen und mit MHN-Mitgliedern aus deiner Region über die Regionallisten in\r\nKontakt kommen. Dazu abonnierst du einfach das jeweilige Forum, um neue Bei-\r\nträge per E-Mail zu erhalten. Wie viele E-Mails du aus den MHN-Foren bekommst,\r\nkannst du in deinen Profil-Einstellungen ändern.\r\n\r\n… das MHN-Wiki, das unser vereinsinterner Wissensspeicher ist.\r\n\r\n… den MHN-Kalender, in dem die Termine deiner Kurse und überregionale Veran-\r\nstaltungen sichtbar sind.\r\n\r\nWeil nicht alle, die Veranstaltungen anbieten, daran denken, regionale Treffen\r\nin den Veranstaltungskalender einzutragen, legen wir dir ans Herz, dein Regio-\r\nnalforum zu abonnieren, um über Aktionen und Treffen in deiner Region informiert\r\nzu bleiben.\r\n\r\nVon überregionalen Veranstaltungen wie der MHN-Unconference, dem MHN-Camp, der\r\nMind-Akademie, den vielseitigen Seminaren und dem Stammtisch auf unserem Dis-\r\ncord-Server, der immer am 5. des Monats stattfindet, erfährst du in jedem Fall\r\nim Newsletter.\r\n\r\nDiscord kannst du dir hier herunterladen: https://discord.com/download\r\n\r\nHier findest du den Link zum Server: https://discord.gg/rjNRWSSDVf\r\n\r\nBitte poste den Link nicht öffentlich; eine persönliche Weitergabe an Bekannte\r\nist in Ordnung.\r\n\r\nEigeninitiative ist im MHN der Schlüssel zum Glück. Also: Wenn dir ein Angebot\r\nfehlt, biete es einfach selbst an, und du wirst bestimmt nicht alleine bleiben.\r\n\r\nWir wünschen dir viel Spaß im MHN und freuen uns darauf, dich bei einem der\r\nnächsten Treffen persönlich oder im Discord-Server kennenzulernen!\r\n\r\nWenn du inhaltliche Fragen hast, melde dich bei der\r\nMitgliederbetreuung@Mind-Hochschul-Netzwerk.de, für technische Fragen bei der\r\nIT@Mind-Hochschul-Netzwerk.de (oder schreibe in den entsprechenden Moodle-\r\nKurs).\r\n\r\nAbschließend dein Zugangslink:\r\n\r\n{$url}\r\n\r\nBitte bestätige deine Mitgliedschaft über den Aktivierungslink. Erst nachdem du\r\ndeinen Zugang aktiviert hast, beginnt deine Mitgliedschaft. Der Aktivierungslink\r\nist sechs Monate gültig, danach muss das Aufnahmeverfahren erneut durchlaufen\r\nwerden.\r\n\r\nViele Grüße\r\n\r\n{$autor} für die MHN-Aufnahmekommission',	'{$vorname} Vorname der Kandidat*in\r\n{$url} Aktivierungslink\r\n{$autor} Mitglied der Aufnahmekommission (Vor- und Nachname)\r\n'),
+('einwilligung',	'Einwilligungserklärung',	'Einwilligungserklärung',	'Deine personenbezogenen Zusatzdaten werden gemäß DSGVO Art. 6 Abs. 1 lit. a von Mind-Hochschul-Netzwerk (MHN) im Aufnahme-Tool verarbeitet und gespeichert. Diese Daten sind im Formular als \"Zusatzdaten\" gekennzeichnet und umfassen unter anderem Angaben zu Ausbildung und Beruf und Angeboten zur Mithilfe. Die Eingabe der Zusatzdaten ist freiwillig. Diese Daten dienen dem Zwecke der Hilfe zur Entscheidung über die Aufnahme. Sie werden ausschließlich dafür genutzt und nicht ohne deine Zustimmung weitergegeben. Einsehen können diese Daten nur Personen der Aufnahmekommision.\r\n\r\nDie eingegebenen Daten werden auf dem MHN-Server solange gespeichert, bis über deinen Antrag abschließend entschieden worden ist. Bei einem positiven Bescheid werden die Daten in die MHN-Mitgliederdatenbank (ebenfalls auf dem MHN-Server) übertragen. Die Daten dienen dann dem Zwecke der Vernetzung der Mitglieder und Vereinsarbeit. Sie werden ausschließlich dafür genutzt und nicht ohne deine Zustimmung weitergegeben. Einsehen können diese Daten zunächst nur die Personen, die mit der MHN-Mitgliederbetreuung oder der MHN-Systemadministration betraut sind; du kannst sie freiwillig für alle Mitglieder sichtbar machen. Im Falle einer Ablehung werden deine Daten nach Einspruchsfrist  vollständig gelöscht.\r\n\r\nWenn du die Löschung deiner Daten beim zuständigen Vorstandsmitglied unter vorstand@mind-hochschul-netzwerk.de beantragst, werden sie innerhalb von zwei Wochen gelöscht.\r\n\r\nFür die Verarbeitung und Speicherung der Daten verantwortlich ist das für die Neuaufnahme zuständige MHN-Vorstandsmitglied, erreichbar unter vorstand@mind-hochschul-netzwerk.de . Du hat das Recht, Auskunft über die über dich gespeicherten Daten zu erhalten, sie zu berichtigen und zu löschen, ihre Verarbeitung einzuschränken oder ihr zu widersprechen sowie Beschwerde bei einer Aufsichtsbehörde einzulegen. Zudem hast du jederzeit das Recht, dieser Einwilligung zu widersprechen. Bitte wende dich dazu an das zuständige Vorstandsmitglied unter vorstand@mind-hochschul-netzwerk.de . Weiterführende Informationen zur Datenverarbeitung bei MHN findest du in der <a target=\"_parent\" href=\"https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&chapterid=4\">Datenschutzerklärung</a>.\r\n',	'Nicht ohne Absprache mit dem Vorstand ändern!\r\nDer Text kann mit der Markdown-Syntax und HTML formatiert werden.'),
 ('emailToken',	'E-Mail-Token',	'Dein MHN-Mitgliedsantrag',	'Hallo!\r\n\r\nVielen Dank für dein Interesse am Mind-Hochschul-Netzwerk.\r\n\r\nDeinen Mitgliedsantrag kannst du unter dem folgenden Link ausfüllen:\r\n\r\n{$url}\r\n\r\nSolltest du Fragen zum Aufnahmeprozess haben, kannst du dich gerne \r\nan aufnahmekommission@mind-hochschul-netzwerk.de wenden.\r\n\r\nDiese Mail wurde automatisch erzeugt.\r\n',	'{$url} Link'),
+('intro',	'Einleitungstext',	'Mitglied werden',	'Aus der <a target=\"_parent\" href=\"https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&chapterid=6\">Satzung\r\ndes Mind-Hochschul-Netzwerks (MHN)</a>:\r\n\r\nDer Verein richtet sich an **hochintelligente** und **wissenschaftlich\r\ninteressierte** Menschen mit Freude an **lebenslangem Lehren und Lernen**. MHN\r\nversteht sich als **Mitmach-Netzwerk**, das von **allen Mitgliedern durch\r\nehrenamtliches Engagement** getragen wird.\r\n\r\nWenn du dich davon angesprochen fühlst, freuen wir uns über dein Interesse, dich aktiv im MHN\r\neinzubringen. Damit wir vor deiner Aufnahme die gegenseitige Passung prüfen können, bitten wir dich, das\r\nfolgende Formular vollständig auszufüllen. Die erhobenen Daten sind nur für MHN-interne Zwecke bestimmt,\r\nwerden vertraulich behandelt und nicht an Dritte weitergegeben.\r\n\r\nViele Angaben sind freiwillig, wir weisen aber darauf hin, dass jede Antwort uns hilft, deinen Antrag\r\nidealerweise ohne Nachfragen bearbeiten zu können.\r\n\r\nWenn du dein Formular abgeschickt hast, erhältst du eine automatische Bestätigungs-E-Mail über den\r\nEingang deines Mitgliedsantrages. Anschließend entscheidet unsere Aufnahmekommission über deinen\r\nBeitritt. In der Regel erhältst du binnen weniger Wochen eine Rückmeldung von uns.\r\n\r\nNach deiner Aufnahme wirst du durch die zuständige Ansprechperson begrüßt und für die internen\r\nBereiche freigeschaltet. Damit wollen dich über Angebote anderer informieren und Dir ermöglichen, gut im\r\nMHN anzukommen und dich, deine Ideen und Erfahrungen einzubringen.\r\n\r\nNoch Fragen? <a target=\"_parent\" href=\"https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&chapterid=3\">Nimm\r\nKontakt mit uns auf.</a>\r\n',	'Introtext über dem Aufnahmeformular\r\nDer Text kann mit der Markdown-Syntax und HTML formatiert werden.'),
+('kenntnisnahme',	'Kenntnisnahme zur Datenverarbeitung',	'Informationspflicht bei Erhebung von personenbezogenen Daten (Art. 13 DSGVO)',	'Deine personenbezogenen Daten werden verarbeitet und gespeichert. Dies umfasst nach DSGVO Art. 6 Abs. 1 lit. b Daten, die zur Entscheidung über die Aufnahme notwendig sind. Die Daten werden ausschließlich dafür genutzt und nicht ohne deine Zustimmung weitergegeben. Diese Daten können während der Bearbeitung des Antrags nur von Personen eingesehen werden, die über deinen Aufnahmeantrag entscheiden.\r\n\r\nDie eingegebenen Daten werden auf dem MHN-Server solange gespeichert, bis über deinen Antrag abschließend entschieden worden ist. Bei einem positiven Bescheid werden die Daten in die MHN-Mitgliederdatenbank (ebenfalls auf dem MHN-Server) übertragen. Die Daten dienen dann dem Zwecke der Vernetzung der Mitglieder und Vereinsarbeit. Sie werden ausschließlich dafür genutzt und nicht ohne deine Zustimmung weitergegeben. Dein Name sowie deine Emailadresse sind dann für alle Mitglieder einsehbar. Alle anderen Daten können zunächst nur die Personen einsehen, die mit der MHN-Mitgliederbetreuung oder der MHN-Systemadministration betraut sind; du kannst sie freiwillig für alle Mitglieder sichtbar machen. Deine Emailadresse wird zum Versand des vereinsinternen Emailnewsletters genutzt. Von diesem kannst du dich jederzeit selbst abmelden. Deine Emailadresse wird weiterhin für die administrative Kommunikation mit dir genutzt.\r\n\r\nIm Falle einer Ablehung werden deine Daten nach Ablauf der Einspruchsfrist vollständig gelöscht.\r\n\r\nDu hast das Recht, Auskunft über die über dich gespeicherten Daten zu erhalten, sie zu berichtigen und zu löschen, ihre Verarbeitung einzuschränken oder ihr zu widersprechen sowie Beschwerde bei einer Aufsichtsbehörde einzulegen. Zudem hast du jederzeit das Recht, dieser Einwilligung zu widersprechen. Bitte wende dich dazu an das zuständige Vorstandsmitglied unter vorstand@mind-hochschul-netzwerk.de. Weiterführende Informationen zur Datenverarbeitung bei MHN findest du in der <a target=\"_parent\" href=\"https://www.mind-hochschul-netzwerk.de/mod/book/view.php?id=253&chapterid=4\">Datenschutzerklärung</a>.\r\n\r\n\r\n',	'Nicht ohne Absprache mit dem Vorstand ändern!\r\nDer Text kann mit der Markdown-Syntax und HTML formatiert werden.'),
 ('nachfragen',	'Nachfrage',	'Nachfrage zum MHN-Aufnahmeantrag',	'Hallo {$vorname},\r\n\r\nwir haben deinen Antrag zur Aufnahme bei MHN erhalten. Jedoch haben\r\nsich bei der Bearbeitung noch Punkte für eine Nachfrage ergeben:\r\n\r\n{$fragen}\r\n\r\nDeinen Antrag kannst du unter der folgenden Adresse bearbeiten:\r\n{$url}\r\nBitte beachte, dass der Link nur eine einmalige Bearbeitung ermöglicht. Mit dem Klick auf Speichern wird der Link ungültig.\r\n\r\nViele Grüße\r\n\r\n{$autor} für die MHN-Aufnahmekommission\r\n',	'{$vorname} Vorname der Kandidat*in\r\n{$fragen} Fragen aus den Voten\r\n{$autor} Mitglied der Aufnahmekommission (Vor- und Nachname)\r\n{$url} Adresse zum einmaligen Bearbeiten des Antrags'),
 ('teamActivationReminder',	'Information über nicht aktivierte Zugänge',	'Nicht aktivierte MHN-Zugänge',	'Der Aktivierungslink für {$name}, Antragsnummer {$antragsnummer}, wurde\r\nnoch nicht aktiviert und ist noch bis zum {$ablaufDatum} gültig.\r\n\r\nEine Erinnerungsmail wurde an das aufzunehmende Mitglied geschickt.',	'{$name}\r\n{$antragsnummer} \r\n{$ablaufDatum} Frist zur Aktivieerung'),
 ('teamReminder',	'Erinnerung an Aufnahmekommission',	'MHN-Mitgliedsanträge warten auf Bewertung',	'Folgende Mitgliedsanträge haben den Status \'Bewerten\' und liegen schon länger als eine Woche:\r\n\r\n{$namen}\r\n',	'{$namen} Namen der Kandidat*innen'),
 ('userActivationReminder',	'Aktivierungserinnerung',	'Dein MHN-Mitgliedsantrag',	'Hallo {$vorname},\r\n\r\ndeine Aufnahme-Mail für das MHN solltest du am {$mailDatum} erhalten haben.\r\n\r\nFür deine Mitgliedschaft fehlt aber noch ein wichtiger, letzter Schritt. Bitte klicke den\r\nAktivierungslink an, um Mitglied im Mind-Hochschul-Netzwerk (MHN) zu werden. Der Link ist\r\nnoch bis zum {$ablaufDatum} gültig. Erst nachdem du den Aktivierungslink angeklickt hast,\r\nbeginnt deine Mitgliedschaft. \r\n\r\nDein Aktivierungslink: {$url}\r\n\r\nViele Grüße\r\nDeine MHN-Aufnahmekommission\r\n',	'{$vorname} Vorname\r\n{$mailDatum} Datum der ursprünglichen Aktivierungsmail (TT.MM.JJJJ)\r\n{$ablaufDatum} Frist für Aktivierungslink (TT.MM.JJJJ)\r\n{$url} Aufnahmelink');
+
+DROP TABLE IF EXISTS `voten`;
+CREATE TABLE `voten` (
+  `antrag_id` int(11) NOT NULL,
+  `username` varchar(255) DEFAULT NULL,
+  `votum` tinyint(4) NOT NULL,
+  `ts` int(11) NOT NULL,
+  `bemerkung` text NOT NULL,
+  `nachfrage` text NOT NULL,
+  KEY `antrag_id` (`antrag_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
