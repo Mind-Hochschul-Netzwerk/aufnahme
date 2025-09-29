@@ -1,10 +1,12 @@
 <?php
-namespace App\Model;
-
 /**
- * @author Henrik Gebauer <mensa@henrik-gebauer.de>
+ * @author Henrik Gebauer <henrik@mind-hochschul-netzwerk.de>
  * @license https://creativecommons.org/publicdomain/zero/1.0/ CC0 1.0
  */
+
+declare(strict_types=1);
+
+namespace App\Model;
 
 use DateTime;
 use App\Model\User;
@@ -16,19 +18,19 @@ use App\Repository\UserRepository;
 class Vote
 {
     /** @var int */
-    const NEIN = 0;
+    const int NEIN = 0;
 
     /** @var int */
-    const JA = 1;
+    const int JA = 1;
 
     /** @var int */
-    const NACHFRAGEN = 2;
+    const int NACHFRAGEN = 2;
 
     /** @var int */
-    const ENTHALTUNG = 3;
+    const int ENTHALTUNG = 3;
 
     /** @var string[] */
-    const VALUE_READABLE = [
+    const array VALUE_READABLE = [
         self::NEIN => 'N',
         self::JA => 'J',
         self::NACHFRAGEN => '?',
@@ -36,7 +38,7 @@ class Vote
     ];
 
     /** @var string[] */
-    const VALUE_COLORS = [
+    const array VALUE_COLORS = [
         self::NEIN => 'antrag_bewertung_rot',
         self::JA => 'antrag_bewertung_gruen',
         self::NACHFRAGEN => 'antrag_bewertung_gelb',
@@ -44,45 +46,28 @@ class Vote
     ];
 
     /** @var int[] */
-    const VALID_VALUES = [self::NEIN, self::JA, self::NACHFRAGEN, self::ENTHALTUNG];
+    const array VALID_VALUES = [self::NEIN, self::JA, self::NACHFRAGEN, self::ENTHALTUNG];
 
-    /** @var int */
-    private $antragId = 0;
+    private int $antragId = 0;
 
-    /** @var string */
-    private $userName = '';
+    private string $userName = '';
 
-    /** @var int */
-    private $value = 0;
+    private int $value = 0;
 
-    /** @var DateTime */
-    private $time = null;
+    private ?\DateTimeInterface $time = null;
 
-    /** @var string */
-    private $bemerkung = '';
+    private string $bemerkung = '';
 
-    /** @var int */
-    private $nachfrage = '';
-
-    /** @var UserRepository */
-    private $userRepository = null;
+    private string $nachfrage = '';
 
     /**
      * Instanziiert das Objekt
      */
-    public function __construct()
+    public function __construct(
+        private UserRepository $userRepository,
+    )
     {
         $this->setTime(new DateTime());
-    }
-
-    /**
-     * @return UserRepository
-     */
-    private function getUserRepository(): UserRepository
-    {
-        $this->userRepository = $this->userRepository ?: UserRepository::getInstance();
-
-        return $this->userRepository;
     }
 
     /**
@@ -118,7 +103,7 @@ class Vote
      */
     public function getUser(): ?User
     {
-        return $this->getUserRepository()->findOneByUserName($this->getUserName());
+        return $this->userRepository->findOneByUserName($this->getUserName());
     }
 
     public function getRealName(): string

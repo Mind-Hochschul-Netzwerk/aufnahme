@@ -1,0 +1,10 @@
+{var $navId = antraege}
+{block content}
+<h1 n:block=title>E-Mail an {$antrag->getName()}</h1>
+
+<p><a href="/antraege/{$antrag->getId()}/#aktionen">Zurück zum Antrag</a></p>
+<p>Mail versandt am {$time|format:d.m.Y} von {$userName} zwecks {$grund}.</p>
+<p><strong>Betreff:</strong> {$subject}</p>
+<pre>
+{$text}
+</pre>

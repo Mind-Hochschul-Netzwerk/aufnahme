@@ -1,0 +1,7 @@
+{var $navId = templates}
+{block content}
+<h1 n:block=title>Vorlagen und Texte bearbeiten</h1>
+
+<ul n:inner-foreach="$templates as $template">
+    <li><a href="/templates/{$template->getName()}">{$template->getLabel()}</a></li>
+</ul>

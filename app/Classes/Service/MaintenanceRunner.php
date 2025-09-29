@@ -11,10 +11,17 @@ use App\Util;
 class MaintenanceRunner {
     const MAINTENANCE_LOCKFILE = '/tmp/letztewartung';
 
+    public function __construct(
+        private AntragRepository $antragRepository,
+        private TemplateRepository $templateRepository,
+        private UserRepository $userRepository,
+        private EmailService $emailService,
+    ) {}
+
     public function run() {
         // Wie lange liegt das letzte Mal zurück? Falls länger als 2 Stunden: Wartung durchführen:
         if (!is_file(self::MAINTENANCE_LOCKFILE) || time() - date('U', filemtime(self::MAINTENANCE_LOCKFILE)) > 60 * 60 * 2) {
-            AntragRepository::getInstance()->deleteOld();
+            $this->antragRepository->deleteOld();
             $this->sendeErinnerung();
             $this->sendActivationReminders();
 
@@ -31,7 +38,7 @@ class MaintenanceRunner {
     private function sendeErinnerung(): void
     {
         $zu_erinnernde = [];
-        foreach (AntragRepository::getInstance()->getAllByStatus(Antrag::STATUS_BEWERTEN) as $antrag) {
+        foreach ($this->antragRepository->getAllByStatus(Antrag::STATUS_BEWERTEN) as $antrag) {
             $t_diff = time() - $antrag->getTsAntrag();
             $t_diff_erinnerung = time() - $antrag->getTsErinnerung();
             if ($t_diff_erinnerung > 9 * 60 * 60 * 24 && $t_diff > 9 * 60 * 60 * 24) {
@@ -45,22 +52,22 @@ class MaintenanceRunner {
         $names = [];
         foreach ($zu_erinnernde as $antrag) {
             $antrag->setTsErinnerung(time());
-            AntragRepository::getInstance()->save($antrag);
+            $this->antragRepository->save($antrag);
             $names[] = $antrag->getName();
         }
 
-        $mailTemplate = TemplateRepository::getInstance()->getOneByName('teamReminder');
-        UserRepository::getInstance()->sendEmailToAll($mailTemplate->getSubject(), $mailTemplate->getFinalText([
+        $mailTemplate = $this->templateRepository->getOneByName('teamReminder');
+        $this->userRepository->sendEmailToAll($mailTemplate->getSubject(), $mailTemplate->getFinalText([
             'namen' => implode("\n", $names),
         ]));
     }
 
     private function sendActivationReminders(): void
     {
-        $userMailTemplate = TemplateRepository::getInstance()->getOneByName('userActivationReminder');
-        $teamMailTemplate = TemplateRepository::getInstance()->getOneByName('teamActivationReminder');
+        $userMailTemplate = $this->templateRepository->getOneByName('userActivationReminder');
+        $teamMailTemplate = $this->templateRepository->getOneByName('teamActivationReminder');
 
-        foreach (AntragRepository::getInstance()->getAllByStatus(Antrag::STATUS_AUFGENOMMEN) as $antrag) {
+        foreach ($this->antragRepository->getAllByStatus(Antrag::STATUS_AUFGENOMMEN) as $antrag) {
             $t_diff = time() - $antrag->getTsEntscheidung();
             $t_diff_erinnerung = time() - $antrag->getTsErinnerung();
 
@@ -69,19 +76,19 @@ class MaintenanceRunner {
             }
 
             $ablaufDatum = Util::tsToDatum($antrag->getTsEntscheidung() + 3600*24*7*12);
-            EmailService::getInstance()->send($antrag->getEmail(), $userMailTemplate->getSubject(), $userMailTemplate->getFinalText([
+            $this->emailService->send($antrag->getEmail(), $userMailTemplate->getSubject(), $userMailTemplate->getFinalText([
                 'vorname' => $antrag->getVorname(),
                 'mailDatum' => $antrag->getDatumEntscheidung(),
                 'ablaufDatum' => $ablaufDatum,
                 'url' => $antrag->getActivationUrl(),
             ]));
-            UserRepository::getInstance()->sendEmailToAll($teamMailTemplate->getSubject(), $teamMailTemplate->getFinalText([
+            $this->userRepository->sendEmailToAll($teamMailTemplate->getSubject(), $teamMailTemplate->getFinalText([
                 'name' => $antrag->getName(),
                 'antragsnummer' => $antrag->getId(),
                 'ablaufDatum' => $ablaufDatum,
             ]));
             $antrag->setTsErinnerung(time());
-            AntragRepository::getInstance()->save($antrag);
+            $this->antragRepository->save($antrag);
         }
     }
 }

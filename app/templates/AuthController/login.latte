@@ -1,0 +1,19 @@
+{var $navId = login}
+{block htmlTitle}Bitte anmelden{/block}
+
+{block content}
+
+<p n:if=$message><span class="formmeldung">{$message}</span></p>
+
+<form method="post" action="/login">
+    {=csrfTokenTag()}
+    {include '../partials/input.latte', name: redirect, type: hidden}
+
+    <p style="text-align:center;border:2px solid #555; background:#eee;padding:2em;">
+    <b>Benutzername:</b><br />{include '../partials/input.latte', name: login, placeholder: 'Benutzername'}<br />
+
+    <b>Passwort:</b><br />{include '../partials/input.latte', name: password, placeholder: Passwort, type: password}<br /><br />
+    <input type="submit" value="login" id="blogin" />
+    </p>
+</form>
+

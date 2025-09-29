@@ -1,0 +1,31 @@
+{var $navId = templates}
+{block content}
+<h1 n:block=title>Vorlage bearbeiten: {$template->getLabel()}</h1>
+
+<p><a class="btn btn-default" href="/templates/">zurück zur Übersicht</a></p>
+
+<form method="post">
+    {=csrfTokenTag()}
+    <input type="hidden" name="templateName" value="{$template->getName()}">
+
+    <div class="row" n:if="$template->getHints()">
+        <div class='col-sm-2'>Erläuterung:</div>
+        <div class="col-sm-10"><pre>{$template->getHints()}</pre></div>
+    </div>
+
+    <div class="row">
+        <label for='input-subject' class='col-sm-2 col-form-label'>Betreff / Überschrift</label>
+        <div class="col-sm-10">{include '../partials/input.latte', name: subject, value: $template->getSubject()}</div>
+    </div>
+
+    <div class="row">
+        <label for='input-text' class='col-sm-2 col-form-label'>Inhalt</label>
+        <div class="col-sm-10">{include '../partials/input.latte', name: text, value: $template->getText(), rows: 20, type: textarea}</div>
+    </div>
+
+    <div class='row'>
+        <div class='col-sm-offset-2 col-sm-10'>
+            <input class="btn btn-success" type="submit" value="Speichern" />
+        </div>
+    </div>
+</form>

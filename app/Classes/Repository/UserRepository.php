@@ -10,31 +10,29 @@ use App\Model\User;
 use App\Service\EmailService;
 use Symfony\Component\Ldap\Ldap;
 use Symfony\Component\Ldap\Exception\InvalidCredentialsException;
-use Symfony\Component\Ldap\Entry;
 
 /**
  * Verwaltet die Benutzerdatenbank
  */
-class UserRepository implements \App\Interfaces\Singleton
+class UserRepository
 {
-    use \App\Traits\Singleton;
-
     private $ldap = null;
 
-    /**
-     * Instanziiert das Objekt
-     *
-     * Wird nur durch Interfaces\Singleton::getInstance() aufgerufen
-     */
-    private function __construct()
-    {
-        $this->ldap = Ldap::create('ext_ldap', ['connection_string' => getenv('LDAP_HOST')]);
+    public function __construct(
+        private EmailService $emailService,
+        string $ldapHost,
+        private string $ldapBindDn,
+        private string $ldapBindPassword,
+        private string $ldapPeopleDn,
+        private string $ldapGroupsDn,
+    ) {
+        $this->ldap = Ldap::create('ext_ldap', ['connection_string' => $ldapHost]);
         $this->bind();
     }
 
     private function bind()
     {
-        $this->ldap->bind(getenv('LDAP_BIND_DN'), getenv('LDAP_BIND_PASSWORD'));
+        $this->ldap->bind($this->ldapBindDn, $this->ldapBindPassword);
     }
 
     private function checkPassword(string $userName, string $password): bool
@@ -52,13 +50,13 @@ class UserRepository implements \App\Interfaces\Singleton
     private function hasAufnahmeRole(string $userName)
     {
         $query = '(&(objectclass=groupOfNames)(cn=aufnahme)(member=' . $this->getDnByUserName($userName) . '))';
-        $entry = $this->ldap->query(getenv('LDAP_ROLES_DN'), $query)->execute()[0];
+        $entry = $this->ldap->query($this->ldapGroupsDn, $query)->execute()[0];
         return !empty($entry);
     }
 
     private function getDnByUserName(string $userName): string
     {
-        return 'cn=' . ldap_escape($userName) . ',' . getenv('LDAP_PEOPLE_DN');
+        return 'cn=' . ldap_escape($userName) . ',' . $this->ldapPeopleDn;
     }
 
     /**
@@ -90,7 +88,7 @@ class UserRepository implements \App\Interfaces\Singleton
         }
         try {
             // employeeType == 1 <=> Benutzerkonto gesperrt
-            $result = $this->ldap->query(getenv('LDAP_PEOPLE_DN'), '(&(objectclass=inetOrgPerson)(cn=' .
+            $result = $this->ldap->query($this->ldapPeopleDn, '(&(objectclass=inetOrgPerson)(cn=' .
               ldap_escape($userName, '', LDAP_ESCAPE_FILTER) . ')(!(employeeType=1)))')->execute();
         } catch (\Exception $e) {
             error_log($e->getMessage());
@@ -114,16 +112,16 @@ class UserRepository implements \App\Interfaces\Singleton
      */
     public function findAll()
     {
-        $result = $this->ldap->query(getenv('LDAP_ROLES_DN'), '(cn=aufnahme)')->execute();
+        $result = $this->ldap->query($this->ldapGroupsDn, '(cn=aufnahme)')->execute();
 
         $members = array_map(function ($dn) {
             if (substr($dn, 0, strlen('cn=')) !== 'cn=') {
                 return null;
             }
-            if (substr($dn, -strlen(getenv('LDAP_PEOPLE_DN'))) !== getenv('LDAP_PEOPLE_DN')) {
+            if (substr($dn, -strlen($this->ldapPeopleDn)) !== $this->ldapPeopleDn) {
                 return null;
             }
-            $userName = substr(substr($dn, strlen('cn=')), 0, -1-strlen(getenv('LDAP_PEOPLE_DN')));
+            $userName = substr(substr($dn, strlen('cn=')), 0, -1-strlen($this->ldapPeopleDn));
             return $this->findOneByUserName($userName);
         }, $result[0]->getAttribute('member'));
 
@@ -134,8 +132,6 @@ class UserRepository implements \App\Interfaces\Singleton
 
     public function sendEmailToAll(string $subject, string $body): void
     {
-        $emailService = EmailService::getInstance();
-
         $users = $this->findAll();
         foreach ($users as $user) {
 
@@ -143,7 +139,7 @@ class UserRepository implements \App\Interfaces\Singleton
             if (!$emailAddress) {
                 continue;
             }
-            $emailService->send($emailAddress, $subject, $body);
+            $this->emailService->send($emailAddress, $subject, $body);
         }
     }
 }

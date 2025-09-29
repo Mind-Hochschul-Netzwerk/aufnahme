@@ -1,14 +1,14 @@
 <?php
+/**
+ * @author Henrik Gebauer <henrik@mind-hochschul-netzwerk.de>
+ * @license https://creativecommons.org/publicdomain/zero/1.0/ CC0 1.0
+ */
+
 declare(strict_types=1);
 
 namespace App\Model;
 
 use Parsedown;
-
-/**
- * @author Henrik Gebauer <mensa@henrik-gebauer.de>
- * @license https://creativecommons.org/publicdomain/zero/1.0/ CC0 1.0
- */
 
 /**
  * editierbare Text-Vorlage

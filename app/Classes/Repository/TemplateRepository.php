@@ -12,13 +12,15 @@ use Hengeb\Db\Db;
 /**
  * Verwaltet die Vorlagen in der Datenbank
  */
-class TemplateRepository implements \App\Interfaces\Singleton
+class TemplateRepository
 {
-    use \App\Traits\Singleton;
+    public function __construct(
+        private Db $db,
+    ) {}
 
     public function getOneByName(string $name): Template
     {
-        $row = Db::getInstance()->query('SELECT * FROM templates WHERE name = :name', [
+        $row = $this->db->query('SELECT * FROM templates WHERE name = :name', [
             'name' => $name
         ])->getRow();
 
@@ -27,7 +29,7 @@ class TemplateRepository implements \App\Interfaces\Singleton
 
     public function getAll()
     {
-        $rows = Db::getInstance()->query('SELECT * FROM templates ORDER BY label')->getAll();
+        $rows = $this->db->query('SELECT * FROM templates ORDER BY label')->getAll();
         return array_map(fn($row) => $this->createTemplateObject($row), $rows);
     }
 
@@ -38,7 +40,7 @@ class TemplateRepository implements \App\Interfaces\Singleton
 
     public function save(Template $template): void
     {
-        Db::getInstance()->query('UPDATE templates SET subject = :subject, text = :text WHERE name = :name', [
+        $this->db->query('UPDATE templates SET subject = :subject, text = :text WHERE name = :name', [
             'subject' => $template->getSubject(),
             'text' => $template->getText(),
             'name' => $template->getName(),

@@ -14,9 +14,11 @@ use Hengeb\Db\Db;
 /**
  * Verwaltet das E-Mail-Archiv
  */
-class EmailRepository implements \App\Interfaces\Singleton
+class EmailRepository
 {
-    use \App\Traits\Singleton;
+    public function __construct(
+        private Db $db,
+    ) {}
 
     /**
      * Gibt alle E-Mail-Objekte zu einem Antrag zurück
@@ -26,7 +28,7 @@ class EmailRepository implements \App\Interfaces\Singleton
      */
     public function findAllByAntrag(Antrag $antrag): array
     {
-        $rows = Db::getInstance()->query('SELECT * FROM mails WHERE antrag_id = :antrag_id ORDER BY ts DESC',
+        $rows = $this->db->query('SELECT * FROM mails WHERE antrag_id = :antrag_id ORDER BY ts DESC',
             ['antrag_id' =>  $antrag->getId()])->getAll();
 
         return array_map(fn($row) => $this->createEmailObject($row), $rows);
@@ -34,7 +36,7 @@ class EmailRepository implements \App\Interfaces\Singleton
 
     public function findOneByAntragAndTimestamp(Antrag $antrag, int $timestamp): ?Email
     {
-        $row = Db::getInstance()->query('SELECT * FROM mails WHERE antrag_id = :antrag_id AND ts = :ts', [
+        $row = $this->db->query('SELECT * FROM mails WHERE antrag_id = :antrag_id AND ts = :ts', [
             'antrag_id' =>  $antrag->getId(),
             'ts' => $timestamp
         ])->getRow();
@@ -77,13 +79,13 @@ class EmailRepository implements \App\Interfaces\Singleton
             'mailtext' => $email->getText(),
         ];
 
-        Db::getInstance()->query('INSERT INTO mails SET ' . implode(', ', array_map(
+        $this->db->query('INSERT INTO mails SET ' . implode(', ', array_map(
             fn($key) => "$key = :$key", array_keys($data)
         )), $data);
     }
 
     public function deleteOrphans(): void
     {
-        Db::getInstance()->query('DELETE FROM mails WHERE (SELECT a.antrag_id FROM antraege a WHERE a.antrag_id = mails.antrag_id) IS NULL');
+        $this->db->query('DELETE FROM mails WHERE (SELECT a.antrag_id FROM antraege a WHERE a.antrag_id = mails.antrag_id) IS NULL');
     }
 }

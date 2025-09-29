@@ -1,0 +1,12 @@
+{var $navId = antraege}
+{block content}
+<h1 n:block=title>Kommentare editieren – {$antrag->getName()}</h1>
+
+<p><a href="/antraege/{$antrag->getID()}/">zurück zur Detailseite</a></p>
+
+<form method="post">
+    {=csrfTokenTag()}
+    {include '../partials/input.latte', type: textarea, name: kommentare, rows: 30, value: $antrag->getKommentare()}<br />
+    <input type="submit" value="Speichern" />
+    <p><a href="/antraege/{$antrag->getID()}/">abbrechen / zurück zur Detailseite</a></p>
+</form>

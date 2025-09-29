@@ -12,26 +12,31 @@ use PHPMailer\PHPMailer\PHPMailer;
 /**
  * send emails
  */
-class EmailService implements \App\Interfaces\Singleton
+class EmailService
 {
-    use \App\Traits\Singleton;
-
     private $mailer = null;
 
-    private function __construct()
-    {
-        if (!getenv('SMTP_HOST') || getenv('SMTP_HOST') === 'log') {
+    public function __construct(
+        private string $host,
+        private string $user,
+        private string $password,
+        private string $secure,
+        private string $port,
+        private string $fromAddress,
+        private string $domain,
+    ) {
+        if (!$host || $host === 'log') {
             return;
         }
 
         $this->mailer = new PHPMailer(true);
 
         $this->mailer->isSMTP();
-        $this->mailer->Host = getenv('SMTP_HOST');
+        $this->mailer->Host = $host;
         $this->mailer->SMTPAuth = true;
-        $this->mailer->Username = getenv('SMTP_USER');
-        $this->mailer->Password = getenv('SMTP_PASSWORD');
-        switch (getenv('SMTP_SECURE')) {
+        $this->mailer->Username = $user;
+        $this->mailer->Password = $password;
+        switch ($secure) {
             case "ssl":
             case "smtps":
                 $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
@@ -44,9 +49,9 @@ class EmailService implements \App\Interfaces\Singleton
                 throw new \Exception('unexpected value for SMTP_SECURE');
                 break;
         }
-        $this->mailer->Port = getenv('SMTP_PORT');
-        $this->mailer->setFrom(getenv('FROM_ADDRESS'), 'MHN-Aufnahmetool');
-        $this->mailer->addReplyTo('aufnahmekommission@' . getenv('DOMAINNAME'), 'MHN-Aufnahmekommission');
+        $this->mailer->Port = $port;
+        $this->mailer->setFrom($fromAddress, 'MHN-Aufnahmetool');
+        $this->mailer->addReplyTo('aufnahmekommission@' . $domain, 'MHN-Aufnahmekommission');
         $this->mailer->CharSet = 'utf-8';
     }
 

@@ -14,16 +14,19 @@ use Hengeb\Db\Db;
 /**
  * Verwaltet die Voten in der Datenbank
  */
-class VoteRepository implements \App\Interfaces\Singleton
+class VoteRepository
 {
-    use \App\Traits\Singleton;
+    public function __construct(
+        private Db $db,
+        private UserRepository $userRepository,
+    ) {}
 
     /**
      * Gibt alle Vote-Objekte zu einem Antrag zurück
      */
     public function findAllByAntrag(Antrag $antrag): array
     {
-        $rows = Db::getInstance()->query('SELECT * FROM voten WHERE antrag_id = :antrag_id ORDER BY ts DESC',
+        $rows = $this->db->query('SELECT * FROM voten WHERE antrag_id = :antrag_id ORDER BY ts DESC',
             ['antrag_id' =>  $antrag->getId()])->getAll();
 
         return array_map(fn($row) => $this->createVoteObject($row), $rows);
@@ -61,7 +64,7 @@ class VoteRepository implements \App\Interfaces\Singleton
      */
     private function createVoteObject(array $row)
     {
-        $vote = new Vote();
+        $vote = new Vote($this->userRepository);
         $vote->setAntragId((int)$row['antrag_id']);
         $vote->setUserName((string)$row['username']);
         $vote->setTime(new DateTime('@' . $row['ts']));
@@ -89,13 +92,13 @@ class VoteRepository implements \App\Interfaces\Singleton
             'nachfrage' => $vote->getNachfrage(),
         ];
 
-        Db::getInstance()->query('INSERT INTO voten SET ' . implode(', ', array_map(
+        $this->db->query('INSERT INTO voten SET ' . implode(', ', array_map(
             fn($key) => "$key = :$key", array_keys($data)
         )), $data);
     }
 
     public function deleteOrphans(): void
     {
-        Db::getInstance()->query('DELETE FROM voten WHERE (SELECT a.antrag_id FROM antraege a WHERE a.antrag_id = voten.antrag_id) IS NULL');
+        $this->db->query('DELETE FROM voten WHERE (SELECT a.antrag_id FROM antraege a WHERE a.antrag_id = voten.antrag_id) IS NULL');
     }
 }

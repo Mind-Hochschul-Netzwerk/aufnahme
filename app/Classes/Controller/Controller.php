@@ -4,46 +4,81 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Service\CurrentUser;
-use App\Service\Tpl;
+use Hengeb\Router\Attribute\Inject;
+use Hengeb\Router\Enum\ResponseType;
 use Hengeb\Router\Exception\AccessDeniedException;
 use Hengeb\Router\Exception\InvalidCsrfTokenException;
 use Hengeb\Router\Exception\InvalidRouteException;
 use Hengeb\Router\Exception\InvalidUserDataException;
 use Hengeb\Router\Exception\NotFoundException;
 use Hengeb\Router\Exception\NotLoggedInException;
+use Hengeb\Router\Interface\CurrentUserInterface;
+use Hengeb\Router\Router;
+use Latte\Engine as Latte;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class Controller {
-    public function __construct(protected Request $request)
-    {
-    }
+    protected array $templateVariables = [];
+
+    #[Inject]
+    public Request $request;
+
+    #[Inject]
+    public Latte $latte;
+
+    #[Inject]
+    public CurrentUser $currentUser;
 
     protected function setTemplateVariable(string $key, mixed $value): void {
-        Tpl::getInstance()->set($key, $value);
+        $this->templateVariables[$key] = $value;
     }
 
     protected function redirect(string $uri): RedirectResponse {
         return new RedirectResponse($uri);
     }
 
+    protected function renderToString(string $templateName, array $data = []): string {
+        $er = error_reporting();
+        // surpress 'undefined variable' warnings
+        error_reporting($er & ~E_WARNING);
+        $res = $this->latte->renderToString($templateName . '.latte', [
+            ...$this->templateVariables,
+            ...$data
+        ]);
+        error_reporting($er);
+
+        $error = error_get_last();
+        if ($error &&
+            // errors to ignore:
+            !str_starts_with($error['message'], 'Undefined variable') &&
+            !str_starts_with($error['message'], 'Undefined array key') &&
+            !str_starts_with($error['message'], 'Undefined property') &&
+            !str_starts_with($error['message'], 'Attempt to read property') &&
+            !str_starts_with($error['message'], 'Trying to access array offset on null')
+        ) {
+            throw new \RuntimeException("Error in template $templateName (file: {$error['file']}, line {$error['line']}): {$error['message']}");
+        }
+        return $res;
+    }
+
     protected function render(string $templateName, array $data = []): Response {
-        return new Response(Tpl::getInstance()->render($templateName, $data));
+        return new Response($this->renderToString($templateName, $data));
     }
 
     public function showError(string $message, int $responseCode = 200): Response {
-        $response = $this->render('Layout/errorpage', ['text' => $message]);
+        $response = $this->render('errorpage', ['text' => $message]);
         $response->setStatusCode($responseCode);
         return $response;
     }
 
     public function showMessage(string $title, string $message): Response {
-        $response = $this->render('Layout/message', [
+        return $this->render('message', [
             'title' => $title,
             'text' => $message,
         ]);
-        return $response;
     }
 
     /**
@@ -102,25 +137,37 @@ class Controller {
         return $values;
     }
 
-    public static function handleException(\Exception $e, Request $request, CurrentUser $user): Response {
+    public static function handleException(\Exception $e, ResponseType $responseType, CurrentUserInterface $user, Router $router): Response {
         $requireLogin = $e instanceof AccessDeniedException || $e instanceof NotFoundException;
 
-        if ($e instanceof InvalidRouteException) {
-            return (new self($request))->showError($e->getMessage() ?: 'URL ungültig', 404);
-        } elseif ($e instanceof NotLoggedInException || $requireLogin && !$user->isLoggedIn()) {
-            return (new self($request))->redirect('/login');
-        } elseif ($e instanceof NotFoundException) {
-            return (new self($request))->showError($e->getMessage() ?: 'nicht gefunden', 404);
-        } elseif ($e instanceof AccessDeniedException) {
-            return (new self($request))->showError($e->getMessage() ?: 'fehlende Rechte', 403);
-        } elseif ($e instanceof InvalidCsrfTokenException) {
-            return (new self($request))->showError($e->getMessage() ?: 'Die Anfrage kann nicht wiederholt werden.', 400);
-        } elseif ($e instanceof InvalidUserDataException) {
-            return (new self($request))->showError($e->getMessage() ?: 'fehlerhafte Eingabedaten', 400);
+        if ($e instanceof NotLoggedInException || $requireLogin && !$user->isLoggedIn()) {
+            return $router->call(AuthController::class, 'loginForm');
+        }
+
+        [$message, $responseCode] = match (true) {
+            $e instanceof InvalidRouteException => ['URL ungültig', 404],
+            $e instanceof NotFoundException => ['nicht gefunden', 404],
+            $e instanceof AccessDeniedException => ['fehlende Rechte', 403],
+            $e instanceof InvalidCsrfTokenException => ['Die Anfrage kann nicht wiederholt werden.', 400],
+            $e instanceof InvalidUserDataException => ['fehlerhafte Eingabedaten', 400],
+            default => (function () use ($e): array {
+                error_log($e->getMessage());
+                error_log($e->getTraceAsString());
+                return ['Ein interner Fehler ist aufgetreten.', 500];
+            })(),
+        };
+
+        if ($e->getMessage()) {
+            $message = $e->getMessage();
+            if ($e->getCode()) {
+                $message .= ' (code: ' . $e->getCode() . ')';
+            }
+        }
+
+        if ($responseType === ResponseType::Html) {
+            return $router->call(self::class, 'showError', ['message' => $message, 'responseCode' => $responseCode]);
         } else {
-            error_log($e->getMessage());
-            error_log($e->getTraceAsString());
-            return (new self($request))->showError('Ein interner Fehler ist aufgetreten.', 500);
+            return new JsonResponse(['error' => $message], $responseCode);
         }
     }
 

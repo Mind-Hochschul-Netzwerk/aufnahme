@@ -4,17 +4,20 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Repository\UserRepository;
-use App\Service\CurrentUser;
 use Hengeb\Db\Db;
+use Hengeb\Router\Attribute\PublicAccess;
 use Hengeb\Router\Attribute\RequestValue;
 use Hengeb\Router\Attribute\Route;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller {
-    #[Route('GET /(login|)', allow: true)]
+    public function __construct(
+        private UserRepository $userRepository,
+    ) {}
+
+    #[Route('GET /(login|)'), PublicAccess]
     public function loginForm(): Response {
-        if (CurrentUser::getInstance()->isLoggedIn()) {
+        if ($this->currentUser->isLoggedIn()) {
             return $this->redirect('/antraege');
         }
         $redirect = $this->request->getPathInfo();
@@ -25,8 +28,8 @@ class AuthController extends Controller {
         ]);
     }
 
-    #[Route('POST /login', allow: true)]
-    public function loginSubmitted(Db $db, CurrentUser $currentUser, #[RequestValue] string $login, #[RequestValue] string $password, #[RequestValue] string $redirect): Response {
+    #[Route('POST /login'), PublicAccess]
+    public function loginSubmitted(#[RequestValue] string $login, #[RequestValue] string $password, #[RequestValue] string $redirect): Response {
         if (!$login && !$password) {
             return $this->render('AuthController/login', [
                 'redirect' => $redirect,
@@ -35,7 +38,7 @@ class AuthController extends Controller {
             ]);
         }
 
-        $user = UserRepository::getInstance()->findOneByCredentials($login, $password);
+        $user = $this->userRepository->findOneByCredentials($login, $password);
 
         if (!$user) {
             return $this->render('AuthController/login', [
@@ -48,17 +51,13 @@ class AuthController extends Controller {
 
         $redirectUrl = preg_replace('/\s/', '', $redirect);
 
-        $currentUser->logIn($user);
+        $this->currentUser->logIn($user);
         return $this->redirect($redirectUrl);
     }
 
-    #[Route('GET /logout', allow: true)]
-    public function logout(CurrentUser $user): Response {
-        $user->logOut();
+    #[Route('GET /logout'), PublicAccess]
+    public function logout(): Response {
+        $this->currentUser->logOut();
         return $this->redirect('/');
-    }
-
-    public static function handleNotLoggedInException(\Exception $e, Request $request): Response {
-        return (new self($request))->loginForm();
     }
 }

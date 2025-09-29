@@ -1,0 +1,11 @@
+{var $navId = users}
+{block content}
+<h1 n:block=title>MHN-Mitglieder mit Zugriff auf das Aufnahmetool</h1>
+
+<div class="table">
+    <table class="table" >
+        <tr><th>Benutzername</th><th>Name</th></tr>
+        <tr n:foreach="$webusers as $w"><td>{$w->getUsername()}</td><td>{$w->getRealname()}</td></tr>
+    </table>
+</div>
+<p>Für Änderungen wendet euch bitte an die Mitgliederbetreuung.</p>

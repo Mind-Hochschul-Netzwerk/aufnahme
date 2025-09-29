@@ -1,4 +1,11 @@
 <?php
+/**
+ * @author Henrik Gebauer <henrik@mind-hochschul-netzwerk.de>
+ * @license https://creativecommons.org/publicdomain/zero/1.0/ CC0 1.0
+ */
+
+declare(strict_types=1);
+
 namespace App\Model;
 
 use App\Model\Vote;
@@ -54,14 +61,15 @@ class Antrag
 
     private FormData $daten;
 
-    public function __construct()
-    {
+    public function __construct(
+        private VoteRepository $voteRepository,
+    ) {
         $this->daten = new FormData();
     }
 
-    public static function fromDatabase(array $row): static
+    public static function fromDatabase(array $row, VoteRepository $voteRepository): static
     {
-        $instance = new static();
+        $instance = new static($voteRepository);
         $instance->antrag_id = (int)$row['antrag_id'];
         $instance->status = (int)$row['status'];
         $instance->ts_antrag = $row['ts_antrag'];
@@ -74,7 +82,7 @@ class Antrag
         $instance->bemerkung = $row['bemerkung'];
         $instance->kommentare = $row['kommentare'];
         $instance->daten = new formData($row['formData']);
-        $instance->votes = VoteRepository::getInstance()->findAllByAntrag($instance);
+        $instance->votes = $voteRepository->findAllByAntrag($instance);
         return $instance;
     }
 
@@ -241,7 +249,7 @@ class Antrag
     public function getGruen()
     {
         $anzahlJa = 0;
-        foreach (VoteRepository::getInstance()->findLatestByAntrag($this) as $vote) {
+        foreach ($this->voteRepository->findLatestByAntrag($this) as $vote) {
             $voteValue = $vote->getValue();
             if ($voteValue === Vote::JA) {
                 ++$anzahlJa;
@@ -261,7 +269,7 @@ class Antrag
     public function getLatestVoteByUserName(string $userName): ?Vote
     {
         if ($this->latestVotes === null) {
-            $this->latestVotes = VoteRepository::getInstance()->findLatestByAntrag($this);
+            $this->latestVotes = $this->voteRepository->findLatestByAntrag($this);
         }
         if (!isset($this->latestVotes[$userName])) {
             return null;

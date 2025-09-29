@@ -1,0 +1,91 @@
+<p n:if=$invalidBirthday class="formmeldung">Fehler: Bitte überprüfe das angegebene Geburtsdatum.</p>
+
+<p>* Pflichtfeld</p>
+
+<h3>Persönliche Daten</h3>
+
+{include '../AntragController/daten-zeile.latte', name: mhn_titel, label: 'Titel'}
+{include '../AntragController/daten-zeile.latte', name: mhn_vorname, label: 'Vorname*', required: true}
+{include '../AntragController/daten-zeile.latte', name: mhn_nachname, label: 'Nachname*', required: true}
+{include '../AntragController/daten-zeile.latte', name: mhn_geburtstag, label: 'Geburtstag (TT.MM.JJJJ)*', type: date, required: true}
+
+<div class="form-group row">
+    <label for='input-mhn_mensa_nr' class='col-sm-4 col-form-label'>ggf. Mitgliedsnummer bei <a href="https://www.mensa.de">Mensa e.V.</a></label>
+    <div class="col-sm-8">
+        {include '../partials/input.latte', name: mhn_mensa_nr, maxlength: 5}
+    </div>
+</div>
+
+<h3>Kontaktdaten</h3>
+
+{include '../AntragController/daten-zeile.latte', name: user_email, label: 'E-Mail-Adresse*', type: email, disabled: true}
+{include '../AntragController/daten-zeile.latte', name: mhn_telefon, label: 'Telefonnummer', type: tel}
+{include '../AntragController/daten-zeile.latte', name: mhn_ws_strasse, label: 'Straße, Hausnummer*', required: true}
+{include '../AntragController/daten-zeile.latte', name: mhn_ws_zusatz, label: 'evtl. Adresszusatz'}
+<div class="form-group row">
+    <label for='input-mhn_ws_plz' class='col-sm-4 col-form-label'>PLZ, Ort*</label>
+    <div class='col-sm-2'>{include '../partials/input.latte', name: mhn_ws_plz, required: true, placeholder: 'PLZ'}</div>
+    <div class='col-sm-6'>{include '../partials/input.latte', name: mhn_ws_ort, required: true, placeholder: 'Ort*'}</div>
+</div>
+
+{include '../AntragController/daten-zeile.latte', name: mhn_ws_land, label: 'Land*', required: true}
+
+<details n:attr="open: ($werte[mhn_zws_strasse] || $werte[mhn_zws_zusatz] || $werte[mhn_zws_plz] || $werte[mhn_zws_ort] || $werte[mhn_zws_land])">
+    <summary>Zweitwohnsitz</summary>
+
+    {include '../AntragController/daten-zeile.latte', name: mhn_zws_strasse, label: 'Straße, Hausnummer*'}
+    {include '../AntragController/daten-zeile.latte', name: mhn_zws_zusatz, label: 'evtl. Adresszusatz'}
+    <div class="form-group row">
+        <label for='input-mhn_ws_plz' class='col-sm-4 col-form-label'>PLZ, Ort</label>
+        <div class='col-sm-2'>{include '../partials/input.latte', name: mhn_zws_plz, placeholder: 'PLZ'}</div>
+        <div class='col-sm-6'>{include '../partials/input.latte', name: mhn_zws_ort, placeholder: 'Ort'}</div>
+    </div>
+    {include '../AntragController/daten-zeile.latte', name: mhn_zws_land, label: 'Land'}
+</details>
+
+{include '../AntragController/daten-zeile.latte', name: mhn_homepage, label: 'Homepage'}
+
+<h3>Ausbildung, Beruf und Interessen</h3>
+
+<p>Wir leben von der fachlichen Vielseitigkeit und dem wissenschaftlichen Interesse der Mitglieder. Bitte erzähl uns etwas über deinen Werdegang.</p>
+
+{include '../AntragController/daten-zeile.latte', name: mhn_studienfach, label: 'Studiengang, Ausbildung'}
+{include '../AntragController/daten-zeile.latte', name: mhn_beruf, label: 'Beruf'}
+{include '../AntragController/daten-zeile.latte', name: mhn_hochschulaktivitaet, label: 'Ehrenamtliches Engagement'}
+{include '../AntragController/daten-zeile.latte', name: mhn_stipendien, label: 'Stipendien'}
+{include '../AntragController/daten-zeile.latte', name: mhn_ausland, label: 'Auslandsaufenthalte'}
+{include '../AntragController/daten-zeile.latte', name: mhn_praktika, label: 'Praktika, Fort- und Weiterbildungen'}
+{include '../AntragController/daten-zeile.latte', name: mhn_sprachen, label: 'Sprachen'}
+{include '../AntragController/daten-zeile.latte', name: mhn_hobbies, label: 'Hobbys'}
+{include '../AntragController/daten-zeile.latte', name: mhn_interessen, label: 'Interessen'}
+
+<h3>Kontaktangebote</h3>
+
+<p>Gegenseitiger Austausch und Unterstützung sind integraler Bestandteil des MHN. MHN-Mitglieder dürfen mich kontaktieren zu:</p>
+<div class="checkbox">{include '../partials/box.latte', name: mhn_auskunft_studiengang, label: 'Studiengang, Ausbildung'}</div>
+<div class="checkbox">{include '../partials/box.latte', name: mhn_auskunft_stipendien, label: 'Stipendien'}</div>
+<div class="checkbox">{include '../partials/box.latte', name: mhn_auskunft_ausland, label: 'Auslandsaufenthalte'}</div>
+<div class="checkbox">{include '../partials/box.latte', name: mhn_auskunft_praktika, label: 'Praktika, Fort- und Weiterbildung'}</div>
+<div class="checkbox">{include '../partials/box.latte', name: mhn_auskunft_beruf, label: 'Beruf'}</div>
+<div class="checkbox">{include '../partials/box.latte', name: mhn_mentoring, label: 'Ich bin bereit berufliches Mentoring anzubieten.'}</div>
+
+<h3>In diesen Bereichen möchte ich mich engagieren</h3>
+
+<p>Das MHN lebt vom Engagement seiner Mitglieder, deshalb suchen wir Neumitglieder, die motiviert sind mitzuarbeiten. Dabei ist es auch in Ordnung, wenn Du noch keine Vorerfahrungen hast, voneinander Lernen und gemeinsames Wachstum stehen bei uns im Mittelpunkt!</p>
+
+<div class="checkbox">{include '../partials/box.latte', name: mhn_aufgabe_orte, label: 'Mithilfe bei der Suche nach Veranstaltungsorte'}</div>
+<div class="checkbox">{include '../partials/box.latte', name: mhn_aufgabe_vortrag, label: 'einen Vortrag, ein Seminar oder einen Workshop anbieten'}</div>
+<div class="checkbox">{include '../partials/box.latte', name: mhn_aufgabe_koord, label: 'eine Koordinations-Aufgabe, die man per Mail/Tel. von zu Hause erledigen kann'}</div>
+<div class="checkbox">{include '../partials/box.latte', name: mhn_aufgabe_computer, label: 'Mitarbeit im IT-Team (IT-Infrastruktur, z.B. Moodle, Mailinglisten, Veranstaltungstool, Mitgliederverwaltung)'}</div>
+<div class="checkbox">{include '../partials/box.latte', name: mhn_aufgabe_texte_schreiben, label: 'Texte verfassen (z.B. für die Homepage oder den MHN-Newsletter)'}</div>
+<div class="checkbox">{include '../partials/box.latte', name: mhn_aufgabe_ansprechpartner, label: 'Ansprechpartner vor Ort (lokale Treffen organisieren, Kontakt zu MHNlern in der Region halten)'}</div>
+<div class="checkbox">{include '../partials/box.latte', name: mhn_aufgabe_hilfe, label: 'eine kleine, zeitlich begrenzte Aufgabe, wenn ihr dringend Hilfe braucht'}</div>
+
+<h3>Du und das MHN</h3>
+
+{include '../AntragController/daten-zeile.latte', label: 'Wie bist du auf das MHN aufmerksam geworden?', name: mhn_aufmerksam, type: textarea}
+{include '../AntragController/daten-zeile.latte', label: 'Was möchtest du zu MHN beitragen?', name: mhn_beitragen, type: textarea}
+{include '../AntragController/daten-zeile.latte', label: 'Was hat Dein Interesse an MHN geweckt?', name: mhn_interesse, type: textarea}
+{include '../AntragController/daten-zeile.latte', label: 'Welche Vorstellung und welche Erwartungen hast Du bislang von MHN?', name: mhn_vorstellung, type: textarea}
+{include '../AntragController/daten-zeile.latte', label: 'Welche MHN-Mitglieder kennst du persönlich?', name: mhn_kennen, type: textarea}
+{include '../AntragController/daten-zeile.latte', label: 'Was möchtest du uns sonst noch mitteilen?', name: mhn_bemerkungen, type: textarea}

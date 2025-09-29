@@ -5,24 +5,19 @@ use App\Model\Antrag;
 use App\Model\FormData;
 use App\Repository\AntragRepository;
 use App\Repository\UserRepository;
-use App\Service\CurrentUser;
-use App\Service\Tpl;
+use Hengeb\Router\Attribute\PublicAccess;
 use Hengeb\Router\Attribute\Route;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class EditController extends Controller
 {
     public function __construct(
-        protected Request $request,
-        private CurrentUser $currentUser,
         private AntragRepository $repository,
-    )
-    {
-    }
+        private UserRepository $userRepository,
+    ) {}
 
-    #[Route('GET /edit/{id=>antrag}/?token={token}', allow: true)]
+    #[Route('GET /edit/{id=>antrag}/?token={token}'), PublicAccess]
     public function form(Antrag $antrag, string $token): Response
     {
         if (!$antrag->validateEditToken($token)) {
@@ -35,7 +30,7 @@ class EditController extends Controller
         ]);
     }
 
-    #[Route('POST /edit/{id=>antrag}/?token={token}', allow: true)]
+    #[Route('POST /edit/{id=>antrag}/?token={token}'), PublicAccess]
     public function submit(Antrag $antrag, string $token, ParameterBag $submittedData): Response
     {
         if (!$antrag->validateEditToken($token)) {
@@ -50,7 +45,7 @@ class EditController extends Controller
         if ($birthday) {
             $daten->set('mhn_geburtstag', $birthday);
         } else {
-            Tpl::getInstance()->set('invalidBirthday', true);
+            $this->setTemplateVariable('invalidBirthday', true);
             $dataIsValid = false;
         }
 
@@ -61,7 +56,7 @@ class EditController extends Controller
         $antrag->setStatus(Antrag::STATUS_NEU_BEWERTEN, 0);
         $this->repository->save($antrag);
 
-        UserRepository::getInstance()->sendEmailToAll('Antrag bearbeitet', "Ein Antrag wurde von der*dem Antragstellenden bearbeitet:\n" . $antrag->getUrl());
+        $this->userRepository->sendEmailToAll('Antrag bearbeitet', "Ein Antrag wurde von der*dem Antragstellenden bearbeitet:\n" . $antrag->getUrl());
 
         return $this->render('EditController/success');
     }

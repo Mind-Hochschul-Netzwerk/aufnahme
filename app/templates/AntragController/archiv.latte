@@ -1,0 +1,25 @@
+{var $navId = archiv}
+{block content}
+<h1 n:block=title>Entschiedene Anträge</h1>
+
+<p>Aus Datenschutzgründen werden die Anträge gelöscht, wenn Sie nicht mehr benötigt werden.</p>
+
+<ul>
+    <li>Angenommene Anträge werden acht Wochen lang aufbewahrt, damit ggf. Fehler festgestellt werden können.</li>
+    <li>Sie bleiben allerdings bis zu zwölf Wochen im System, solange das Mitglied seinen Zugang nicht aktiviert hat.</li>
+    <li>Abgelehnte Anträge werden wegen der Einspruchsmöglichkeit bei der Mitgliederversammlung 60 Wochen lang aufbewahrt</li>
+</ul>
+
+<table class="table">
+    <tr><th>Nr.</th><th>Antragssteller</th><th>Entscheidungsdatum</th><th>Status</th><th>Voten</th><th>Bemerkung</th></tr>
+    <tr n:foreach="$antraege as $index=>$a">
+        <td><a href="/antraege/{$a->getId()}/">{$a->getId()}</a></td>
+        <td>{$a->getName()}</td>
+        <td>{$a->getDatumEntscheidung()}</td>
+        <td>{$a->getStatusReadable()}</td>
+        <td n:inner-foreach="$a->getVotes() as $v">
+            {$v->getUsername()}: {$v->getValueReadable()}<br />
+        </td>
+        <td>{$a->getBemerkung()}</td>
+    </tr>
+</table>

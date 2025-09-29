@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace App\Service;
 
-use App\Interfaces\Singleton;
 use App\Model\User;
 use App\Repository\UserRepository;
 use Hengeb\Router\Exception\NotLoggedInException;
@@ -18,23 +17,15 @@ use Symfony\Component\HttpFoundation\Session\Session;
 /**
  * represents the Current User
  */
-class CurrentUser implements Singleton, CurrentUserInterface {
-    use \App\Traits\Singleton;
-
-    private ?Request $request = null;
-
+class CurrentUser implements CurrentUserInterface {
     private ?User $user = null;
 
-    public function setRequest(Request $request): void
-    {
-        $this->request = $request;
-
-        if (!$request->hasSession()) {
-            $request->setSession(new Session());
-        }
-
+    public function __construct(
+        private Request $request,
+        private UserRepository $userRepository,
+    ) {
         $userName = $request->getSession()->get('userName');
-        $this->user = $userName ? UserRepository::getInstance()->findOneByUserName($userName) : null;
+        $this->user = $userName ? $this->userRepository->findOneByUserName($userName) : null;
     }
 
     private function assertLogin(): void

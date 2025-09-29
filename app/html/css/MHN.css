@@ -259,6 +259,10 @@ details {
     margin-bottom: 0.5em;
 }
 
+body.embedded h1 {
+    display: none;
+}
+
 body.embedded .container-fluid {
     padding: 0;
 }

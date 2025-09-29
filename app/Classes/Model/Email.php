@@ -1,10 +1,12 @@
 <?php
-namespace App\Model;
-
 /**
- * @author Henrik Gebauer <mensa@henrik-gebauer.de>
+ * @author Henrik Gebauer <henrik@mind-hochschul-netzwerk.de>
  * @license https://creativecommons.org/publicdomain/zero/1.0/ CC0 1.0
  */
+
+declare(strict_types=1);
+
+namespace App\Model;
 
 use DateTime;
 

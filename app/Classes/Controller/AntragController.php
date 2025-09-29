@@ -8,34 +8,31 @@ use App\Repository\AntragRepository;
 use App\Repository\EmailRepository;
 use App\Repository\UserRepository;
 use App\Repository\VoteRepository;
-use App\Service\CurrentUser;
-use App\Service\Tpl;
 use App\Util;
 use Hengeb\Router\Attribute\RequestValue;
+use Hengeb\Router\Attribute\RequireLogin;
 use Hengeb\Router\Attribute\Route;
 use Hengeb\Router\Exception\InvalidUserDataException;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class AntragController extends Controller
 {
     public function __construct(
-        protected Request $request,
-        private CurrentUser $currentUser,
         private AntragRepository $repository,
-    )
-    {
-    }
+        private EmailRepository $emailRepository,
+        private UserRepository $userRepository,
+        private VoteRepository $voteRepository,
+    ) {}
 
-    #[Route('GET /antraege', ['loggedIn' => true])]
+    #[Route('GET /antraege'), RequireLogin]
     public function showOffeneAntraege(): Response
     {
         $antraege = $this->repository->alleOffenenAntraege();
         return $this->showAntraege($antraege);
     }
 
-    #[Route('GET /antraege/nichtvonmirgevotet/', ['loggedIn' => true])]
+    #[Route('GET /antraege/nichtvonmirgevotet/'), RequireLogin]
     public function showAntraegeNichtVonMirGevotet(): Response
     {
         $antraege = $this->repository->alleOffenenAntraege();
@@ -55,7 +52,7 @@ class AntragController extends Controller
             unset($antraege[$k]);
         }
 
-        Tpl::getInstance()->set('nichtvonmirgevotet', true);
+        $this->setTemplateVariable('nichtvonmirgevotet', true);
         return $this->showAntraege($antraege);
     }
 
@@ -69,7 +66,7 @@ class AntragController extends Controller
         ]);
     }
 
-    #[Route('GET /archiv', ['loggedIn' => true])]
+    #[Route('GET /archiv'), RequireLogin]
     public function showEntschiedeneAntraege(): Response {
         $antraege = $this->repository->alleEntschiedenenAntraege();
         $userNames_gevotet = $this->getUserNamesGevotet($antraege);
@@ -81,13 +78,13 @@ class AntragController extends Controller
         ]);
     }
 
-    #[Route('GET /antraege/{id=>antrag}', ['loggedIn' => true])]
+    #[Route('GET /antraege/{id=>antrag}'), RequireLogin]
     public function showOne(Antrag $antrag): Response
     {
-        $emails = EmailRepository::getInstance()->findAllByAntrag($antrag);
+        $emails = $this->emailRepository->findAllByAntrag($antrag);
         $emailData = [];
         foreach ($emails as $email) {
-            $user = UserRepository::getInstance()->findOneByUserName($email->getSenderUserName());
+            $user = $this->userRepository->findOneByUserName($email->getSenderUserName());
             $emailData[] = [
                 'userName' => ($user !== null) ? $user->getUserName() : 'unbekannt',
                 'time' => $email->getCreationTime(),
@@ -99,12 +96,11 @@ class AntragController extends Controller
             'mails' => $emailData,
             'antrag' => $antrag,
             'werte' => $antrag->getDaten()->toArray(),
-            'heute' => Util::tsToDatum(time()),
             'statuscodes' => Antrag::STATUS_READABLE,
         ]);
     }
 
-    #[Route('POST /antraege/{id=>antrag}', ['loggedIn' => true])]
+    #[Route('POST /antraege/{id=>antrag}'), RequireLogin]
     public function handleSubmit(Antrag $antrag, ParameterBag $submittedData, #[RequestValue] $formular): Response
     {
         return match ($formular) {
@@ -115,7 +111,7 @@ class AntragController extends Controller
         };
     }
 
-    #[Route('GET /antraege/{id=>antrag}/kommentare', ['loggedIn' => true])]
+    #[Route('GET /antraege/{id=>antrag}/kommentare'), RequireLogin]
     public function showKommentare(Antrag $antrag): Response
     {
         return $this->render('AntragController/kommentare-editieren', [
@@ -123,7 +119,7 @@ class AntragController extends Controller
         ]);
     }
 
-    #[Route('POST /antraege/{id=>antrag}/kommentare', ['loggedIn' => true])]
+    #[Route('POST /antraege/{id=>antrag}/kommentare'), RequireLogin]
     public function storeKommentare(Antrag $antrag): Response
     {
         $input = $this->validatePayload([
@@ -134,16 +130,16 @@ class AntragController extends Controller
         if ($input['kommentar']) {
             $antrag->addKommentar($this->currentUser->getUserName(), $input['kommentar']);
             if ($this->repository->save($antrag)) {
-                Tpl::getInstance()->set('meldung', 'Kommentar hinzugefügt');
+                $this->setTemplateVariable('meldung', 'Kommentar hinzugefügt');
             } else {
-                Tpl::getInstance()->set('meldung', 'Fehler beim Hinzufügen des Kommentars');
+                $this->setTemplateVariable('meldung', 'Fehler beim Hinzufügen des Kommentars');
             }
         } elseif ($input['kommentare']) {
             $antrag->setKommentare($input['kommentare']);
             if ($this->repository->save($antrag)) {
-                Tpl::getInstance()->set('meldung', 'Kommentare geändert');
+                $this->setTemplateVariable('meldung', 'Kommentare geändert');
             } else {
-                Tpl::getInstance()->set('meldung', 'Fehler beim Ändern von Kommentaren');
+                $this->setTemplateVariable('meldung', 'Fehler beim Ändern von Kommentaren');
             }
         }
 
@@ -174,7 +170,7 @@ class AntragController extends Controller
         $ts_antwort = Util::datumToTs($input['datum_antwort']);
         $ts_entscheidung = Util::datumToTs($input['datum_entscheidung']);
         if ($ts_nachfrage === false || $ts_antwort === false || $ts_entscheidung === false) {
-            Tpl::getInstance()->set('meldung', 'Fehler im Datum-Format.');
+            $this->setTemplateVariable('meldung', 'Fehler im Datum-Format.');
             return $this->showOne($antrag);
         }
         $antrag->setTsNachfrage($ts_nachfrage);
@@ -202,25 +198,25 @@ class AntragController extends Controller
             throw new InvalidUserDataException('ungültiger Wert für `votum`');
         }
 
-        Tpl::getInstance()->set('bemerkung', $input['bemerkung']);
-        Tpl::getInstance()->set('nachfrage', $input['nachfrage']);
+        $this->setTemplateVariable('bemerkung', $input['bemerkung']);
+        $this->setTemplateVariable('nachfrage', $input['nachfrage']);
 
         if ($input['votum'] === Vote::NACHFRAGEN && !$input['nachfrage']) {
-            Tpl::getInstance()->set('meldung', 'Fehler: "Nachfragen" gevotet, aber dort nichts eingetragen');
+            $this->setTemplateVariable('meldung', 'Fehler: "Nachfragen" gevotet, aber dort nichts eingetragen');
             return $this->showOne($antrag);
         } elseif ($input['votum'] === Vote::JA && $input['nachfrage']) {
-            Tpl::getInstance()->set('meldung', 'Fehler: "Ja" gevotet, aber in "Nachfragen" etwas eingetragen');
+            $this->setTemplateVariable('meldung', 'Fehler: "Ja" gevotet, aber in "Nachfragen" etwas eingetragen');
             return $this->showOne($antrag);
         }
 
-        $vote = new Vote();
+        $vote = new Vote($this->userRepository);
         $vote->setUserName($this->currentUser->getUserName());
         $vote->setAntragId($antrag->getId());
         $vote->setValue($input['votum']);
         $vote->setNachfrage($input['nachfrage']);
         $vote->setBemerkung($input['bemerkung']);
 
-        VoteRepository::getInstance()->add($vote);
+        $this->voteRepository->add($vote);
 
         return $this->redirect('/antraege/');
     }
@@ -259,7 +255,7 @@ class AntragController extends Controller
     {
         $realNames = [];
         foreach ($userNames_gevotet as $userName) {
-            $user = UserRepository::getInstance()->findOneByUserName($userName);
+            $user = $this->userRepository->findOneByUserName($userName);
             if (!$user) {
                 $realName[$userName] = '(unbekannt)';
             } else {
