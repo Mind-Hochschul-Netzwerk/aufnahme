@@ -8,6 +8,7 @@ use App\Repository\AntragRepository;
 use App\Repository\UserRepository;
 use App\Repository\TemplateRepository;
 use App\Repository\VoteRepository;
+use Hengeb\Router\Attribute\CheckCsrfToken;
 use Hengeb\Router\Attribute\PublicAccess;
 use Hengeb\Router\Attribute\RequestValue;
 use Hengeb\Router\Attribute\Route;
@@ -19,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 class NeuController extends Controller
 {
     private FormData $werte;
+    private array $agreements;
 
     public function __construct(
         private AntragRepository $antragRepository,
@@ -28,10 +30,18 @@ class NeuController extends Controller
         private EmailService $emailService,
     ) {
         $this->setTemplateVariable('introTemplate', $this->templateRepository->getOneByName('intro'));
-        $this->setTemplateVariable('kenntnisnahmeTemplate', $this->templateRepository->getOneByName('kenntnisnahme'));
-        $this->setTemplateVariable('einwilligungTemplate', $this->templateRepository->getOneByName('einwilligung'));
+        $this->loadAgreements();
         $this->werte = new FormData();
         $this->setTemplateVariable('werte', $this->werte->toArray());
+    }
+
+    private function loadAgreements(): void
+    {
+        $this->agreements = [
+            'einwilligung' => json_decode(file_get_contents('http://mitglieder:8080/agreements/text/Einwilligung'), associative: true),
+            'kenntnisnahme' => json_decode(file_get_contents('http://mitglieder:8080/agreements/text/Kenntnisnahme'), associative: true),
+        ];
+        $this->setTemplateVariable('agreements', $this->agreements);
     }
 
     #[Route('GET /antrag'), PublicAccess]
@@ -82,17 +92,42 @@ class NeuController extends Controller
     public function form(string $token): Response
     {
         $this->decodeEmailToken($token);
+
+        $this->agreements['einwilligung']['token'] = $this->createAgreementToken('einwilligung');
+        $this->agreements['kenntnisnahme']['token'] = $this->createAgreementToken('kenntnisnahme');
+
         return $this->render('NeuController/form', [
             'werte' => $this->werte->toArray(),
+            'agreements' => $this->agreements,
         ]);
     }
 
-    #[Route('POST /antrag?token={token}'), PublicAccess]
+    private function createAgreementToken(string $agreementName): string
+    {
+        return Token::encode(
+            [$this->agreements[$agreementName]['version'], time()],
+            $agreementName . $this->werte->getEmail(),
+            getenv('TOKEN_KEY'),
+        );
+    }
+
+    private function getVersionFromAgreementToken(string $token, string $agreementName): int
+    {
+        return Token::decode($token, function ($payload) use ($agreementName) {
+            [$version, $time] = $payload;
+            if ($time + 24*3600 < time()) {
+                throw new InvalidUserDataException('Die Anfrage ist veraltet.', 1759183230);
+            }
+            return $agreementName . $this->werte->getEmail();
+        }, getenv('TOKEN_KEY'))[0];
+    }
+
+    #[Route('POST /antrag?token={token}'), PublicAccess, CheckCsrfToken(false)]
     public function handleActionAntrag(
         string $token,
         ParameterBag $submittedData,
-        #[RequestValue] bool $kenntnisnahme_datenverarbeitung = false,
-        #[RequestValue] $einwilligung_datenverarbeitung = false
+        #[RequestValue] string $kenntnisnahme_datenverarbeitung = '',
+        #[RequestValue] string $einwilligung_datenverarbeitung = '',
     ): Response
     {
         $this->decodeEmailToken($token);
@@ -104,12 +139,15 @@ class NeuController extends Controller
             $dataIsValid = false;
         }
 
+        $kenntnisnahme_version = $this->getVersionFromAgreementToken($kenntnisnahme_datenverarbeitung, 'kenntnisnahme');
+        $einwilligung_version = $this->getVersionFromAgreementToken($einwilligung_datenverarbeitung, 'einwilligung');
+
         $dataIsValid &= $this->werte->updateFromForm($submittedData);
 
         $this->werte->set('kenntnisnahme_datenverarbeitung', new \DateTime());
-        $this->werte->set('kenntnisnahme_datenverarbeitung_text', $this->templateRepository->getOneByName('kenntnisnahme')->getFinalText());
+        $this->werte->set('kenntnisnahme_datenverarbeitung_text', $kenntnisnahme_version);
         $this->werte->set('einwilligung_datenverarbeitung', new \DateTime());
-        $this->werte->set('einwilligung_datenverarbeitung_text',  $this->templateRepository->getOneByName('einwilligung')->getFinalText());
+        $this->werte->set('einwilligung_datenverarbeitung_text', $einwilligung_version);
 
         $birthday = FormData::parseBirthdayInput($submittedData->get('mhn_geburtstag'));
         if ($birthday) {

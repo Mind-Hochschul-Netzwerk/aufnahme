@@ -1,11 +1,11 @@
 <div class="datenschutz-info">
-    <h4>{$kenntnisnahmeTemplate->getSubject()}</h4>
-    {$kenntnisnahmeTemplate->getFinalTextMarkdown()|noescape}
+    <h4>Informationspflicht bei Erhebung von personenbezogenen Daten (Art. 13 DSGVO)</h4>
+    {$agreements[kenntnisnahme][text]|markdown}
 </div>
-<p><label for="kenntnisnahme_datenverarbeitung"><input name="kenntnisnahme_datenverarbeitung" id="kenntnisnahme_datenverarbeitung" type="checkbox" required> Ja, ich nehme zur Kenntnis, dass meine personenbezogenen Daten wie obenstehend verarbeitet und gespeichert werden.</label></p>
+<p><label for="kenntnisnahme_datenverarbeitung"><input name="kenntnisnahme_datenverarbeitung" id="kenntnisnahme_datenverarbeitung" type="checkbox" value="{$agreements[kenntnisnahme][token]}" required> Ja, ich nehme zur Kenntnis, dass meine personenbezogenen Daten wie obenstehend verarbeitet und gespeichert werden.</label></p>
 
 <div class="datenschutz-info">
-    <h4>{$einwilligungTemplate->getSubject()}</h4>
-    {$einwilligungTemplate->getFinalTextMarkdown()|noescape}
+    <h4>Einwilligungserklärung</h4>
+    {$agreements[einwilligung][text]|markdown}
 </div>
-<p><label for="einwilligung_datenverarbeitung"><input name="einwilligung_datenverarbeitung" id="einwilligung_datenverarbeitung" type="checkbox" required> Ja, ich willige ein, dass meine personenbezogenen Daten wie obenstehend verarbeitet und gespeichert werden dürfen.</label></p>
+<p><label for="einwilligung_datenverarbeitung"><input name="einwilligung_datenverarbeitung" id="einwilligung_datenverarbeitung" type="checkbox" value="{$agreements[einwilligung][token]}" required> Ja, ich willige ein, dass meine personenbezogenen Daten wie obenstehend verarbeitet und gespeichert werden dürfen.</label></p>

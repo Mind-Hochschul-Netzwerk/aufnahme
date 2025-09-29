@@ -12,6 +12,7 @@ use DateTime;
 use DateTimeImmutable;
 use Hengeb\Router\Interface\CurrentUserInterface;
 use Hengeb\Router\Router;
+use Parsedown;
 use Tracy\Debugger;
 
 /**
@@ -40,6 +41,7 @@ class LatteExtension extends \Latte\Extension {
 		return [
             'timezone' => $this->timezoneFilter(...),
             'format' => $this->dateformat(...),
+            'markdown' => fn($text) => new \Latte\Runtime\Html(new Parsedown()->text($text)),
         ];
 	}
 
