@@ -2,7 +2,7 @@
 {block content}
 <h1 n:block=title>{$introTemplate->getSubject()}</h1>
 
-{$introTemplate->getFinalTextMarkdown()|raw}
+{$introTemplate->getFinalTextMarkdown()|noescape}
 
 <p n:if=$datenschutzInfo class="formmeldung">Bitte bestätige die Datenschutzregelungen.</p>
 
