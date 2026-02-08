@@ -60,9 +60,9 @@ class NeuController extends Controller
 
         $token = Token::encode([$email, time()], '', getenv('TOKEN_KEY'));
         $mailTemplate = $this->templateRepository->getOneByName('emailToken');
-        $text = $mailTemplate->getFinalText([
-            'url' => 'www.' . getenv('DOMAINNAME') . "/aufnahme?token=$token",
-        ]);
+        $url = 'https://www.' . getenv('DOMAINNAME') . "/aufnahme?token=$token";
+        bdump($url); // dump to debug overlay
+        $text = $mailTemplate->getFinalText(['url' => $url]);
         $this->emailService->send($email, $mailTemplate->getSubject(), $text);
 
         return $this->render('NeuController/initEmailAuth');

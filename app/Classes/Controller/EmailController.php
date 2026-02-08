@@ -91,12 +91,16 @@ class EmailController extends Controller
             case 'aufnehmen':
                 $antrag->setStatus(Antrag::STATUS_AUFGENOMMEN, $this->currentUser->getUserName());
                 $antrag->setTsEntscheidung(time());
-                $mailtext = str_replace('{$url}', $antrag->getActivationUrl(), $mailtext_orig);
+                $url = $antrag->getActivationUrl();
+                bdump($url); // log to debugging panel
+                $mailtext = str_replace('{$url}', $url, $mailtext_orig);
                 break;
             case 'nachfragen':
                 $antrag->setStatus(Antrag::STATUS_AUF_ANTWORT_WARTEN, $this->currentUser->getUserName());
                 $antrag->setTsNachfrage(time());
-                $mailtext = str_replace('{$url}', $antrag->getEditUrl(), $mailtext_orig);
+                $url = $antrag->getEditUrl();
+                bdump($url); // log to debugging panel
+                $mailtext = str_replace('{$url}', $url, $mailtext_orig);
                 break;
             case 'ablehnen':
                 $antrag->setStatus(Antrag::STATUS_ABGELEHNT, $this->currentUser->getUserName());
