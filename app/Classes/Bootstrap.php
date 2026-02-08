@@ -23,33 +23,27 @@ use App\Service\Ldap;
 use App\Service\MaintenanceRunner;
 use Hengeb\Db\Db;
 use Hengeb\Router\Exception\InvalidRouteException;
-use Hengeb\Router\Router;
-use Latte\Engine as Latte;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Tracy\Debugger;
+use Hengeb\Router\ServiceContainer;
 
 /**
  * Service container
  */
-class Bootstrap {
-    private array $instances = [];
-
+class Bootstrap extends ServiceContainer {
     private bool $isEmbedded = false;
 
-    public function run() {
-        $this->startDebugger();
-
-        $this->detectAndHandleEmbedding();
-
-        $this->getMaintenanceRunner()->run();
-
-        $this->getRouter()->dispatch($this->getRequest(), $this->getCurrentUser())->send();
-    }
-
-    private function startDebugger(): void
+    public function __construct()
     {
-        Debugger::enable(str_ends_with(getenv('DOMAINNAME'), 'localhost') ? Debugger::Development : Debugger::Production);
+        parent::__construct();
+        $this->startDebugger();
+        $this->detectAndHandleEmbedding();
+        $this->getMaintenanceRunner()->run();
+        $this->registerService(CurrentUserInterface::class, fn() => $this->getCurrentUser());
+        $this->getService(\Hengeb\Router\LatteExtension::class)->timezone = 'Europe/Berlin';
+        $this->getService(\Latte\Engine::class)->addExtension(new LatteExtension($this->isEmbedded));
+        $this->getRouter()
+            ->addExceptionHandler(InvalidRouteException::class, [Controller::class, 'handleException'])
+            ->addType(Antrag::class, fn($id) => $this->getAntragRepository()->getOneById(intval($id)))
+            ->addType(Template::class, fn(string $name) => $this->getTemplateRepository()->getOneByName($name));
     }
 
     private function detectAndHandleEmbedding(): void
@@ -70,31 +64,9 @@ class Bootstrap {
         }
     }
 
-    private function createService(string $classname, ?callable $setup = null): object
-    {
-        return $this->instances[$classname] ??= ($setup ? $setup() : new $classname);
-    }
-
-    public function getService(string $class): object
-    {
-        $class = basename(str_replace('\\', '/', $class)); // C
-        return $this->{'get' . $class}();
-    }
-
     public function getCurrentUser(): CurrentUser
     {
         return $this->createService(CurrentUser::class, fn() => new CurrentUser($this->getRequest(), $this->getUserRepository()));
-    }
-
-    public function getDb(): Db
-    {
-        return $this->createService(Db::class, fn() => new Db([
-            'host' => getenv('MYSQL_HOST') ?: 'localhost',
-            'port' => getenv('MYSQL_PORT') ?: 3306,
-            'user' => getenv('MYSQL_USER'),
-            'password' => getenv('MYSQL_PASSWORD'),
-            'database' => getenv('MYSQL_DATABASE') ?: 'database',
-        ]));
     }
 
     public function getEmailService(): EmailService
@@ -110,21 +82,6 @@ class Bootstrap {
                 domain: getenv('DOMAINNAME'),
             );
             return $emailService;
-        });
-    }
-
-    public function getLatte(): Latte
-    {
-        return $this->createService(Latte::class, function () {
-            $latte = new Latte;
-            $latte->setTempDirectory('/tmp/latte');
-            $latte->setLoader(new \Latte\Loaders\FileLoader('/var/www/templates'));
-            $latte->addExtension(new LatteExtension(
-                router: $this->getRouter(),
-                currentUser: $this->getCurrentUser(),
-                isEmbedded: $this->isEmbedded,
-            ));
-            return $latte;
         });
     }
 
@@ -147,44 +104,10 @@ class Bootstrap {
         ));
     }
 
-    public function getRequest(): Request
-    {
-        return $this->createService(Request::class, function () {
-            $request = Request::createFromGlobals();
-            $request->setSession(new Session());
-            return $request;
-        });
-    }
-
-    public function getRouter(): Router
-    {
-        return $this->createService(Router::class, function () {
-            $router = new Router(__DIR__ . '/Controller');
-
-            $router
-                ->addExceptionHandler(InvalidRouteException::class, [Controller::class, 'handleException'])
-
-                ->addType(Antrag::class, fn($id) => $this->getAntragRepository()->getOneById(intval($id)))
-                ->addType(Template::class, fn(string $name) => $this->getTemplateRepository()->getOneByName($name))
-
-                ->addService(Latte::class, $this->getLatte(...))
-                ->addService(Db::class, $this->getDb(...))
-                ->addService(EmailService::class, $this->getEmailService(...))
-                ->addService(AntragRepository::class, $this->getAntragRepository(...))
-                ->addService(EmailRepository::class, $this->getEmailRepository(...))
-                ->addService(TemplateRepository::class, $this->getTemplateRepository(...))
-                ->addService(UserRepository::class, $this->getUserRepository(...))
-                ->addService(VoteRepository::class, $this->getVoteRepository(...))
-                ;
-
-            return $router;
-        });
-    }
-
     public function getAntragRepository(): AntragRepository
     {
         return $this->createService(AntragRepository::class, fn() => new AntragRepository(
-            $this->getDb(),
+            $this->getService(Db::class),
             $this->getEmailRepository(),
             $this->getVoteRepository()
         ));
@@ -193,14 +116,14 @@ class Bootstrap {
     public function getEmailRepository(): EmailRepository
     {
         return $this->createService(EmailRepository::class, fn() => new EmailRepository(
-            $this->getDb(),
+            $this->getService(Db::class),
         ));
     }
 
     public function getTemplateRepository(): TemplateRepository
     {
         return $this->createService(TemplateRepository::class, fn() => new TemplateRepository(
-            $this->getDb(),
+            $this->getService(Db::class),
         ));
     }
 
@@ -219,7 +142,7 @@ class Bootstrap {
     public function getVoteRepository(): VoteRepository
     {
         return $this->createService(VoteRepository::class, fn() => new VoteRepository(
-            $this->getDb(),
+            $this->getService(Db::class),
             $this->getUserRepository(),
         ));
     }
