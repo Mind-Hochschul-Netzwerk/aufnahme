@@ -19,7 +19,6 @@ CREATE TABLE `antraege` (
   `bemerkung` text NOT NULL,
   `kommentare` text NOT NULL,
   `formData` text NOT NULL,
-  `mail` varchar(255) NOT NULL,
   PRIMARY KEY (`antrag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

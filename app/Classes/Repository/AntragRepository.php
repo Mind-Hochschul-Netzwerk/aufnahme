@@ -29,7 +29,7 @@ class AntragRepository
 
     public function findOneByEmail(string $email): ?Antrag
     {
-        $row = $this->db->query('SELECT * FROM antraege WHERE mail = :mail', [
+        $row = $this->db->query('SELECT * FROM antraege WHERE JSON_VALUE(formData, "$.user_email") = :mail', [
             'mail' => $email,
         ])->getRow();
 
@@ -54,7 +54,6 @@ class AntragRepository
             'bemerkung' => $antrag->getBemerkung(),
             'kommentare' => $antrag->getKommentare(),
             'formData' => $antrag->getDaten()->json(),
-            'mail' => $antrag->getDaten()->getEmail(),
             'ts_erinnerung' => 0,
         ];
 
@@ -108,7 +107,6 @@ class AntragRepository
             'statusaenderung_username' => $antrag->getStatusaenderungUserName(),
             'ts_erinnerung' => $antrag->getTsErinnerung(),
             'formData' => $antrag->getDaten()->json(),
-            'mail' => $antrag->getDaten()->getEmail(),
         ];
 
         $this->db->query('UPDATE antraege SET ' . implode(', ', array_map(
