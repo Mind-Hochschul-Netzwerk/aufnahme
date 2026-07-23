@@ -152,7 +152,7 @@ class Controller {
         $requireLogin = $e instanceof AccessDeniedException || $e instanceof NotFoundException;
 
         if ($e instanceof NotLoggedInException || $requireLogin && !$user->isLoggedIn()) {
-            return $router->call(AuthController::class, 'loginForm');
+            return $router->call(AuthController::class, 'login');
         }
 
         [$message, $responseCode] = match (true) {
