@@ -3,7 +3,7 @@
         'antraege' => ['/antraege', 'Offene Anträge', 'search'],
         'archiv' => ['/archiv', 'Entschiedene Anträge', 'search'],
         'templates' => ['/templates', 'Vorlagen', 'wrench'],
-        'users' => ['/users', 'Aufnahmekommission', 'user'],
+        'users' => ['https://mitglieder.' . getenv('DOMAINNAME') . '/groups/aufnahme', 'Aufnahmekommission', 'user'],
         'logout' => ['/logout', 'Logout', 'log-out'],
         'datenschutz' => ['https://www.' . getenv('DOMAINNAME') . '/mod/book/view.php?id=253&chapterid=4', 'Datenschutz', 'paragraph'],
         'impressum' => ['https://www.' . getenv('DOMAINNAME') . '/mod/book/view.php?id=253&chapterid=5', 'Impressum', 'globe'],
