@@ -5,6 +5,8 @@ namespace App\Controller;
 
 use App\Service\CurrentUser;
 use Hengeb\Router\Attribute\Inject;
+use Hengeb\Router\Attribute\PublicAccess;
+use Hengeb\Router\Attribute\Route;
 use Hengeb\Router\Enum\ResponseType;
 use Hengeb\Router\Exception\AccessDeniedException;
 use Hengeb\Router\Exception\InvalidCsrfTokenException;
@@ -31,6 +33,15 @@ class Controller {
 
     #[Inject]
     public CurrentUser $currentUser;
+
+    #[Route('GET /'), PublicAccess]
+    public function home(): RedirectResponse {
+        if ($this->currentUser->isLoggedIn()) {
+            return $this->redirect('/antraege');
+        } else {
+            return $this->redirect('/login');
+        }
+    }
 
     protected function setTemplateVariable(string $key, mixed $value): void {
         $this->templateVariables[$key] = $value;

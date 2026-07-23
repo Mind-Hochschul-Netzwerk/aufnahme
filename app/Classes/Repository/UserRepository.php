@@ -9,14 +9,13 @@ namespace App\Repository;
 use App\Model\User;
 use App\Service\EmailService;
 use Symfony\Component\Ldap\Ldap;
-use Symfony\Component\Ldap\Exception\InvalidCredentialsException;
 
 /**
  * Verwaltet die Benutzerdatenbank
  */
 class UserRepository
 {
-    private $ldap = null;
+    private Ldap $ldap;
 
     public function __construct(
         private EmailService $emailService,
@@ -35,18 +34,6 @@ class UserRepository
         $this->ldap->bind($this->ldapBindDn, $this->ldapBindPassword);
     }
 
-    private function checkPassword(string $userName, string $password): bool
-    {
-        $passwordCorrect = true;
-        try {
-            $this->ldap->bind($this->getDnByUsername($userName), $password);
-        } catch (InvalidCredentialsException $e) {
-            $passwordCorrect = false;
-        }
-        $this->bind();
-        return $passwordCorrect;
-    }
-
     private function hasAufnahmeRole(string $userName)
     {
         $query = '(&(objectclass=groupOfNames)(cn=aufnahme)(member=' . $this->getDnByUserName($userName) . '))';
@@ -57,25 +44,6 @@ class UserRepository
     private function getDnByUserName(string $userName): string
     {
         return 'cn=' . ldap_escape($userName) . ',' . $this->ldapPeopleDn;
-    }
-
-    /**
-     * Gibt einen nicht-deaktivierten Benutzer zu gegebenen Credentials zurück
-     *
-     * @param string $userName
-     * @param string $password im Klartext
-     * @return User|null falls gefunden
-     */
-    public function findOneByCredentials(string $userName, string $password): ?User
-    {
-        if (!$userName || !$password || !$this->checkPassword($userName, $password)) {
-            return null;
-        }
-        $user = $this->findOneByUserName($userName);
-        if (!$user->hasAufnahmeRole()) {
-            return null;
-        }
-        return $user;
     }
 
     /**

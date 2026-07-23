@@ -21,6 +21,7 @@ use App\Service\EmailService;
 use App\Service\LatteExtension;
 use App\Service\Ldap;
 use App\Service\MaintenanceRunner;
+use App\Service\OpenIdConnect;
 use Hengeb\Db\Db;
 use Hengeb\Router\Exception\InvalidRouteException;
 use Hengeb\Router\ServiceContainer;
@@ -101,6 +102,18 @@ class Bootstrap extends ServiceContainer {
             templateRepository: $this->getTemplateRepository(),
             userRepository: $this->getUserRepository(),
             emailService: $this->getEmailService(),
+        ));
+    }
+
+    public function getOpenIdConnect(): OpenIdConnect
+    {
+        return $this->createService(OpenIdConnect::class, fn() => new OpenIdConnect(
+            providerUrl: getenv('OIDC_PROVIDER_URL') ?: '',
+            clientId: getenv('OIDC_CLIENT_ID') ?: '',
+            clientSecret: getenv('OIDC_CLIENT_SECRET') ?: '',
+            redirectUrl: 'https://aufnahme.' . getenv('DOMAINNAME') . '/login',
+            request: $this->getRequest(),
+            publicProviderHost: getenv('OIDC_PUBLIC_URL') ? parse_url(getenv('OIDC_PUBLIC_URL'), PHP_URL_HOST) : null,
         ));
     }
 

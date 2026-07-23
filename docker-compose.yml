@@ -30,6 +30,10 @@ services:
       - LDAP_PEOPLE_DN=ou=people,dc=mind-hochschul-netzwerk,dc=de
       - LDAP_BIND_DN=cn=admin,dc=mind-hochschul-netzwerk,dc=de
       - LDAP_BIND_PASSWORD
+      - OIDC_PROVIDER_URL=http://authelia:9091
+      - OIDC_PUBLIC_URL=https://sso.${DOMAINNAME}
+      - OIDC_CLIENT_ID=aufnahme
+      - OIDC_CLIENT_SECRET
       - SMTP_HOST
       - SMTP_SECURE
       - SMTP_PORT
