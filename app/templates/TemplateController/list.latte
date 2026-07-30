@@ -1,7 +1,14 @@
 {var $navId = templates}
-{block content}
-<h1 n:block=title>Vorlagen und Texte bearbeiten</h1>
 
-<ul n:inner-foreach="$templates as $template">
-    <li><a href="/templates/{$template->getName()}">{$template->getLabel()}</a></li>
-</ul>
+{block title}Vorlagen und Texte bearbeiten{/block}
+{block page-label}<i class="ti ti-settings" aria-hidden="true"></i> Aufnahmetool{/block}
+
+{block content}
+
+<section class="panel" aria-labelled-by="templates-heading">
+    <h2 id="templates-heading"><i class="label-icon ti ti-settings" aria-hidden="true"></i>Vorlagen und Texte</h2>
+    <ul class="feature-list" n:inner-foreach="$templates as $template">
+        <li><a href="/templates/{$template->getName()}">{$template->getLabel()}</a></li>
+    </ul>
+</section>
+{/block}

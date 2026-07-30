@@ -1,40 +1,45 @@
+{import ../partials/components.latte}
 {var $navId = antrag}
+
+{block title}{$introTemplate->getSubject()}{/block}
+{block page-label}<i class="ti ti-user-plus" aria-hidden="true"></i> Mitgliedschaft{/block}
+{block page-header}
+    {$introTemplate->getFinalTextMarkdown()|noescape}
+{/block}
+
 {block content}
-<h1 n:block=title>{$introTemplate->getSubject()}</h1>
 
-{$introTemplate->getFinalTextMarkdown()|noescape}
+<section class="panel" aria-labelledby="start-heading">
+    <h2 id="start-heading"><i class="label-icon ti ti-mail" aria-hidden="true"></i>Start</h2>
 
-<h2>Start</h2>
+    <p>Bitte gib die E-Mail-Adresse an, unter der wir dich erreichen können. Wir schicken dir eine
+    automatische E-Mail, um die E-Mail-Adresse zu bestätigen und mit dem Antrag fortfahren zu können. Die
+    E-Mail-Adresse wird noch nicht auf dem Server gespeichert, sondern erst, wenn du den Antrag abschickst.</p>
 
-<p>Bitte gib die E-Mail-Adresse an, unter der wir dich erreichen können. Wir schicken dir eine
-automatische E-Mail, um die E-Mail-Adresse zu bestätigen und mit dem Antrag fortfahren zu können. Die
-E-Mail-Adresse wird noch nicht auf dem Server gespeichert, sondern erst, wenn du den Antrag abschickst.</p>
+    {if $emailUsed}
+        {include info-box, type: danger, id: 'email-used-info', text: 'Fehler: Ein Antrag mit dieser E-Mail-Adresse wurde bereits gestellt.'}
+    {/if}
 
-<p n:if=$emailUsed class="formmeldung">Fehler: Ein Antrag mit dieser E-Mail-Adresse wurde bereits gestellt.</p>
+    <form method="post">
+        {=csrfTokenTag()}
 
-<form method="post">
-    {=csrfTokenTag()}
+        {include input,
+            name: email,
+            value: $email,
+            label: 'E-Mail-Adresse',
+            type: email,
+            required: true,
+        }
 
-    {include '../AntragController/daten-zeile.latte',
-        name: email,
-        value: $email,
-        label: 'E-Mail-Adresse',
-        type: email,
-        required: true,
-    }
+        <div class="form-actions">
+            <button type="submit">E-Mail-Adresse bestätigen</button>
+        </div>
+    </form>
+</section>
 
-    <div class="form-group row">
-        <div class='col-sm-4'></div>
-        <div class='col-sm-8'><p><input class="btn btn-success" type="submit" value="E-Mail-Adresse bestätigen" /></p></div>
-    </div>
-</form>
-
-<div style="position: relative; border: solid #999 1px;">
-<div style="position: absolute; width:100%; height:100%; z-index: 1; background-color: #fff; opacity: 0.4;"></div>
-<div style="position: absolute; width:100%; height:100%; z-index: 2; background-color: #ccc; opacity: 0.2;"></div>
-<div style="padding: 0em 1em;">
-    <h2>Mitgliedsantrag</h2>
+<section class="panel" aria-labelledby="preview-heading" style="opacity: 0.5; pointer-events: none;">
+    <h2 id="preview-heading"><i class="label-icon ti ti-id" aria-hidden="true"></i>Mitgliedsantrag</h2>
     {include '../AntragController/daten.latte'}
     {include '../datenschutz/form.latte'}
-</div>
-</div>
+</section>
+{/block}

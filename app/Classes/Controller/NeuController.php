@@ -60,7 +60,7 @@ class NeuController extends Controller
 
         $token = Token::encode([$email, time()], '', getenv('TOKEN_KEY'));
         $mailTemplate = $this->templateRepository->getOneByName('emailToken');
-        $url = 'https://www.' . getenv('DOMAINNAME') . "/aufnahme?token=$token";
+        $url = 'https://aufnahme.' . getenv('DOMAINNAME') . "/antrag?token=$token";
         bdump($url); // dump to debug overlay
         $text = $mailTemplate->getFinalText(['url' => $url]);
         $this->emailService->send($email, $mailTemplate->getSubject(), $text);
@@ -97,7 +97,7 @@ class NeuController extends Controller
         $this->agreements['kenntnisnahme']['token'] = $this->createAgreementToken('kenntnisnahme');
 
         return $this->render('NeuController/form', [
-            'werte' => $this->werte->toArray(),
+            ... $this->werte->toArray(),
             'agreements' => $this->agreements,
         ]);
     }

@@ -45,7 +45,7 @@ class AntragController extends Controller
             }
 
             // wenn Antragsstatus "neu bewerten" und seitdem nicht neu bewertet: auch behalten!
-            if ($antrag->getStatus() == Antrag::STATUS_NEU_BEWERTEN && $vote->getTime()->getTimestamp() < $antrag->ts_statusaenderung) {
+            if ($antrag->getStatus() == Antrag::STATUS_NEU_BEWERTEN && $vote->getTime()->getTimestamp() < $antrag->getTsStatusaenderung()) {
                 continue;
             }
 
@@ -93,9 +93,9 @@ class AntragController extends Controller
         }
 
         return $this->render('AntragController/einzelansicht', [
+            ...$antrag->getDaten()->toArray(),
             'mails' => $emailData,
             'antrag' => $antrag,
-            'werte' => $antrag->getDaten()->toArray(),
             'statuscodes' => Antrag::STATUS_READABLE,
         ]);
     }

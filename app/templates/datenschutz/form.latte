@@ -1,11 +1,25 @@
-<div class="datenschutz-info">
-    <h4>Informationspflicht bei Erhebung von personenbezogenen Daten (Art. 13 DSGVO)</h4>
-    {$agreements[kenntnisnahme][text]|markdown}
-</div>
-<p><label for="kenntnisnahme_datenverarbeitung"><input name="kenntnisnahme_datenverarbeitung" id="kenntnisnahme_datenverarbeitung" type="checkbox" value="{$agreements[kenntnisnahme][token]}" required> Ja, ich nehme zur Kenntnis, dass meine personenbezogenen Daten wie obenstehend verarbeitet und gespeichert werden.</label></p>
+{import ../partials/components.latte}
+<div class="panel" aria-labelledby="kenntnisnahme-heading">
+    <h3 id="kenntnisnahme-heading">
+        <i class="ti ti-file-text-shield" aria-hidden="true">
+        </i> Informationspflicht bei Erhebung von personenbezogenen Daten (Art. 13 DSGVO)
+    </h3>
 
-<div class="datenschutz-info">
-    <h4>Einwilligungserklärung</h4>
-    {$agreements[einwilligung][text]|markdown}
+    <div class="agreement-text prose">
+        {$agreements[kenntnisnahme][text]|markdown}
+    </div>
+
+    {include box, name: kenntnisnahme_datenverarbeitung, value: $agreements[kenntnisnahme][token], required: true, label: 'Ja, ich nehme zur Kenntnis, dass meine personenbezogenen Daten wie obenstehend verarbeitet und gespeichert werden.'}
+
 </div>
-<p><label for="einwilligung_datenverarbeitung"><input name="einwilligung_datenverarbeitung" id="einwilligung_datenverarbeitung" type="checkbox" value="{$agreements[einwilligung][token]}" required> Ja, ich willige ein, dass meine personenbezogenen Daten wie obenstehend verarbeitet und gespeichert werden dürfen.</label></p>
+
+<div class="panel" aria-labelledby="einwilligung-heading">
+    <h3 id="einwilligung-heading">
+        <i class="ti ti-file-text-shield" aria-hidden="true"></i> Einwilligung zur Verarbeitung personenbezogener Daten (Art. 6 Abs. 1 lit. a DSGVO)
+    </h3>
+    <div class="agreement-text prose">
+        {$agreements[einwilligung][text]|markdown}
+    </div>
+    {include box, name: einwilligung_datenverarbeitung, value: $agreements[einwilligung][token], required: true, label: 'Ja, ich willige ein, dass meine personenbezogenen Daten wie obenstehend verarbeitet und gespeichert werden dürfen.'}
+</div>
+

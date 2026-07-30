@@ -1,56 +1,61 @@
+{import ../partials/components.latte}
 {var $navId = antraege}
+
+{block title}{ucfirst($aktion)} – {$antrag->getName()}{/block}
+{block page-label}<i class="ti ti-mail" aria-hidden="true"></i> Antrag Nr. {$antrag->getId()}{/block}
+{block page-header}
+    <div class="action-links">
+        <a href="/antraege/{$antrag->getID()}/"><i class="ti ti-arrow-left" aria-hidden="true"></i> zurück zum Antrag</a>
+    </div>
+{/block}
+
 {block content}
-<h1 n:block=title>{ucfirst($aktion) . ' – ' . $antrag->getName()}</h1>
 
-<p n:if=$meldung_speichern><span class="formmeldung">{$meldung_speichern}</span></p>
-<p n:if=$meldungen_laden><div class="formmeldung">{$meldungen_laden}</div></p>
+{if $meldung_speichern}
+    {include info-box, type: info, id: 'meldung-speichern-info', text: $meldung_speichern}
+{/if}
+{if $meldungen_laden}
+    {include info-box, type: info, id: 'meldungen-laden-info', text: $meldungen_laden}
+{/if}
 
-<p><a class="btn btn-default" href="/antraege/{$antrag->getID()}/">zurück zum Antrag</a></p>
+<section class="panel" aria-labelledby="email-heading">
+    <p>Bei Bestätigung wird:</p>
+    <ul class="feature-list">
+        {if $aktion == 'aufnehmen'}
+            <li>Eine Aufnahme-E-Mail mit einem Zugangscode versandt (siehe unten).</li>
+            <li>Der Antrags-Status auf "Aufgenommen" und das Entscheidungsdatum auf heute gesetzt.</li>
+        {elseif $aktion == 'ablehnen'}
+            <li>Eine Ablehn-Mail versandt (siehe unten).</li>
+            <li>Der Antrags-Status auf "Abgelehnt" gesetzt und das Entscheidungsdatum auf heute gesetzt
+                (und damit implizit der Antrag ins Archiv verschoben).
+            </li>
+        {else}
+            <li>Eine Nachfrage-E-Mail versandt (siehe unten).</li>
+            <li>Der Antrags-Status auf "Auf Antwort warten" und das Nachfragedatum auf heute gesetzt.</li>
+        {/if}
+    </ul>
 
-<p>Bei Bestätigung wird:</p>
+    <h2 id="email-heading"><i class="label-icon ti ti-mail" aria-hidden="true"></i>E-Mail</h2>
 
-<ul>
-    {if $aktion == 'aufnehmen'}
-        <li>Eine Aufnahme-E-Mail mit einem Zugangscode versandt (siehe unten).</li>
-        <li>Der Antrags-Status auf "Aufgenommen" und das Entscheidungsdatum auf heute gesetzt.</li>
-    {elseif $aktion == 'ablehnen'}
-        <li>Eine Ablehn-Mail versandt (siehe unten).</li>
-        <li>Der Antrags-Status auf "Abgelehnt" gesetzt und das Entscheidungsdatum auf heute gesetzt
-            (und damit implizit der Antrag ins Archiv verschoben).
-        </li>
-    {else}
-        <li>Eine Nachfrage-E-Mail versandt (siehe unten).</li>
-        <li>Der Antrags-Status auf "Auf Antwort warten" und das Nachfragedatum auf heute gesetzt.</li>
-    {/if}
-</ul>
+    <form method="post">
+        {=csrfTokenTag()}
+        <dl>
+            <div>
+                <dt>Von</dt>
+                <dd>{$absende_email_kand}</dd>
+            </div>
+            <div>
+                <dt>An</dt>
+                <dd>{$antrag->getEMail()}</dd>
+            </div>
+        </dl>
 
-<h2>E-Mail</h2>
+        {include form-group, name: betreff, label: 'Betreff', value: $mailSubject}
+        {include form-group, name: mailtext, label: 'Inhalt', type: textarea, value: $mailText}
 
-<form method="post">
-    {=csrfTokenTag()}
-    <div class="row">
-        <div class="col-sm-2">Von</div>
-        <div class="col-sm-10">{$absende_email_kand}</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-2">An</div>
-        <div class="col-sm-10">{$antrag->getEMail()}</div>
-    </div>
-
-    <div class='form-group row '>
-        <label for='input-betreff' class='col-sm-2 col-form-label'>Betreff</label>
-        <div class='col-sm-10'>{include '../partials/input.latte', name: betreff, value: $mailSubject}</div>
-    </div>
-
-    <div class='form-group row '>
-        <label for='input-mailtext' class='col-sm-2 col-form-label'>Inhalt</label>
-        <div class="col-sm-10">{include '../partials/input.latte', name: mailtext, rows: 20, type: textarea, value: $mailText}</div>
-    </div>
-
-    <div class='row'>
-        <div class='col-sm-offset-2 col-sm-10'>
-            <input class="btn btn-success" type="submit" value="Bestätigen" />
+        <div class="form-actions">
+            <button type="submit">Bestätigen</button>
         </div>
-    </div>
-</form>
+    </form>
+</section>
+{/block}

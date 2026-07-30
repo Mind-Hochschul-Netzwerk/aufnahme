@@ -1,4 +1,7 @@
-{default $elementId = 'input-' . $name}
-<div class='form-group row'><label class='col-sm-4 col-form-label' for={$elementId}>{$label}</label>
-    <div class='col-sm-8'>{include '../partials/input.latte', label: null, placeholder: $placeholder ?: $label}</div>
-</div>
+{import ../partials/components.latte}
+{default $value = $werte[$name] ?? null}
+{default $type = 'text'}
+{default $required = false}
+{default $disabled = false}
+{default $placeholder = null}
+{include form-group, name: $name, label: $label, value: $value, type: $type, required: $required, disabled: $disabled, placeholder: $placeholder}

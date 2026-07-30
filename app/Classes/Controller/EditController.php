@@ -26,7 +26,7 @@ class EditController extends Controller
 
         return $this->render('EditController/form', [
             'antrag' => $antrag,
-            'werte' => $antrag->getDaten()->toArray(),
+            ...$antrag->getDaten()->toArray(),
         ]);
     }
 

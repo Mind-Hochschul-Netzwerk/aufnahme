@@ -1,19 +1,31 @@
+{import ../partials/components.latte}
 {var $navId = antrag}
+
+{block title}{$introTemplate->getSubject()}{/block}
+{block page-label}<i class="ti ti-user-plus" aria-hidden="true"></i> Mitgliedschaft{/block}
+{block page-header}
+    {$introTemplate->getFinalTextMarkdown()|noescape}
+{/block}
+
 {block content}
-<h1 n:block=title>{$introTemplate->getSubject()}</h1>
 
-{$introTemplate->getFinalTextMarkdown()|noescape}
-
-<p n:if=$datenschutzInfo class="formmeldung">Bitte bestätige die Datenschutzregelungen.</p>
-
-<p>Vielen Dank für die Bestätigung deiner E-Mail-Adresse. Du kannst jetzt mit dem Ausfüllen des Antrags fortfahren.</p>
-
-<h2>Mitgliedsantrag</h2>
+{if $datenschutzInfo}
+    {include info-box, type: danger, id: 'datenschutz-info', text: 'Bitte bestätige die Datenschutzregelungen.'}
+{/if}
 
 <form method="post">
     {=csrfTokenTag()}
-    {include '../AntragController/daten.latte'}
-    {include '../datenschutz/form.latte'}
     <input type="hidden" name="actionAntrag" value="1" />
-    <p><input class="btn btn-success" type="submit" value="Daten speichern" /></p>
+
+    {include info-box, type: info, text: 'Vielen Dank für die Bestätigung deiner E-Mail-Adresse. Du kannst jetzt mit dem Ausfüllen des Antrags fortfahren.'}
+
+    {include '../AntragController/daten.latte'}
+
+    {include '../datenschutz/form.latte'}
+
+    <div class="form-actions">
+        <button type="submit">Daten speichern</button>
+    </div>
+
 </form>
+{/block}

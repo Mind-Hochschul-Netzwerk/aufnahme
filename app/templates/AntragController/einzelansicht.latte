@@ -1,126 +1,113 @@
+{import ../partials/components.latte}
 {var $navId = antraege}
+
+{block title}{$antrag->getName()}{/block}
+{block page-label}<i class="ti ti-file" aria-hidden="true"></i> Antrag Nr. {$antrag->getId()}{/block}
+{block page-header}
+    <div class="meta">
+        <span><strong>Antragsdatum:</strong> {$antrag->getDatumAntrag()}</span>
+        <span><strong>Status:</strong> {$antrag->getStatusReadable()}</span>
+    </div>
+    <div class="action-links">
+        <a href="/antraege/{$antrag->getId()}/aufnehmen"><i class="ti ti-check" aria-hidden="true"></i> Aufnehmen</a>
+        <a href="/antraege/{$antrag->getId()}/nachfragen"><i class="ti ti-help" aria-hidden="true"></i> Nachfragen</a>
+        <a href="/antraege/{$antrag->getId()}/ablehnen"><i class="ti ti-x" aria-hidden="true"></i> Ablehnen</a>
+    </div>
+{/block}
+
 {block content}
-<h1 n:block=title>{$antrag->getName()}</h1>
 
-<p>Immer nur einen der Punkte auf einmal verändern (also immer den entsprechenden Speichern-Knopf des jeweiligen Abschnitts betätigen!).</p>
+{include info-box, text: "Immer nur einen der Punkte auf einmal verändern, also immer den entsprechenden Speichern-Knopf des jeweiligen Abschnitts betätigen!"}
 
-<p n:if=$meldung><span class="formmeldung">{$meldung}</span></p>
+{if $meldung}
+    {include info-box, type: info, id: 'meldung-info', text: $meldung}
+{/if}
 
-<h2>Status des Antrags</h2>
+<section class="panel" aria-labelledby="status-heading">
+    <h2 id="status-heading"><i class="label-icon ti ti-adjustments" aria-hidden="true"></i>Status des Antrags</h2>
 
-<p><strong>Hinweis:</strong> Der Status und das entsprechende Datum werden bei Aktionen (siehe 3. und die Beschreibungen
-auf den Seiten dort) automatisch gesetzt. Ansonsten gibt es keine automatischen Änderungen am Status.</p>
+    <p><strong>Hinweis:</strong> Der Status und das entsprechende Datum werden bei Aktionen (siehe Aktionen oben und die Beschreibungen
+    auf den Seiten dort) automatisch gesetzt. Ansonsten gibt es keine automatischen Änderungen am Status.</p>
 
-<form method="post">
-    {=csrfTokenTag()}
-    <input type="hidden" name="formular" value="grunddaten" />
+    <form method="post">
+        {=csrfTokenTag()}
+        <input type="hidden" name="formular" value="grunddaten" />
 
-    <div class="row">
-        <div class="col-sm-2">Antragsdatum</div>
-        <div class="col-sm-10">{$antrag->getDatumAntrag()}</div>
-    </div>
+        {include form-group, name: status, label: 'Status', type: select, value: $antrag->getStatus(), options: $statuscodes}
+        <p class="meta-note">zuletzt geändert am {$antrag->getDatumStatusaenderung()} von {$antrag->getStatusaenderungUsername()}</p>
 
-    <div class='form-group row '>
-        <label for='input-status' class='col-sm-2 col-form-label'>Status</label>
-        <div class='col-sm-10'>
-            <select id='input-status' name='status' class='form-control' title='Status'>
-                <option n:foreach="$statuscodes as $i=>$s" value="{$i}" n:attr="selected: $antrag->getStatus() == $i">{$s}</option>
-            </select>
-            (zuletzt geändert am {$antrag->getDatumStatusaenderung()} von {$antrag->getStatusaenderungUsername()})
+        {include form-group, name: datum_nachfrage, label: 'Nachfragedatum', value: $antrag->getDatumNachfrage()}
+        {include form-group, name: datum_antwort, label: 'Antwortdatum', value: $antrag->getDatumAntwort()}
+        {include form-group, name: datum_entscheidung, label: 'Entscheidungsdatum', value: $antrag->getDatumEntscheidung()}
+        {include form-group, name: bemerkung, label: 'Bemerkung', type: textarea, value: $antrag->getBemerkung()}
+
+        <div class="form-actions">
+            <button type="submit" name="sub" value="Speichern">Speichern</button>
         </div>
-    </div>
+    </form>
+</section>
 
-    <div class='form-group row'>
-        <label for='input-datum_nachfrage' class='col-sm-2 col-form-label'>Nachfragedatum</label>
-        <div class='col-sm-10'>{include '../partials/input.latte', name: datum_nachfrage, value: $antrag->getDatumNachfrage()}</div>
-    </div>
+<section class="panel" aria-labelledby="voten-heading">
+    <h2 id="voten-heading"><i class="label-icon ti ti-thumb-up" aria-hidden="true"></i>Voten</h2>
+    <p class="meta-note">(chronologisch sortiert, neueste zuerst)</p>
 
-    <div class='form-group row '>
-        <label for='input-datum_antwort' class='col-sm-2 col-form-label'>Antwortdatum</label>
-        <div class='col-sm-10'>{include '../partials/input.latte', name: datum_antwort, value: $antrag->getDatumAntwort()}</div>
-    </div>
-    <div class='form-group row '>
-        <label for='input-datum_entscheidung' class='col-sm-2 col-form-label'>Entscheidungsdatum</label>
-        <div class='col-sm-10'>{include '../partials/input.latte', name: datum_entscheidung, value: $antrag->getDatumEntscheidung()}</div>
-    </div>
-
-    <div class='form-group row '>
-        <label for='input-datum_entscheidung' class='col-sm-2 col-form-label'>Bemerkung</label>
-        <div class='col-sm-10'>{include '../partials/input.latte', name: bemerkung, value: $antrag->getBemerkung(), type: textarea}</div>
-    </div>
-
-    <p><input class="btn btn-success" type="submit" name="sub" value="Speichern" /></p>
-</form>
-
-<h2>Voten</h2>
-
-<p>(chronologisch sortiert, neueste zuerst)</p>
-
-<form method="post">
-    {=csrfTokenTag()}
-    <input type="hidden" name="formular" value="votes"/>
-
-    <table class="table">
+    <div class="table-wrapper"><table>
         <tr><th>Wer</th><th>Votum</th><th>Datum</th><th>Bemerkung</th><th>Nachfrage</th></tr>
         <tr n:foreach="$antrag->getVotes() as $i">
             <td>{$i->getRealName()}</td>
             <td>{$i->getValueReadable()}</td>
-            <td>{$i->getTime()|format:"d.m.Y"}</td><td>{nl2br($i->getBemerkung())}</td>
-            <td>{nl2br($i->getNachfrage())}</td>
+            <td>{$i->getTime()|format:"d.m.Y"}</td>
+            <td>{nl2br(htmlspecialchars($i->getBemerkung()))|noescape}</td>
+            <td>{nl2br(htmlspecialchars($i->getNachfrage()))|noescape}</td>
         </tr>
-        <tr>
-            <td>{currentUser()->getRealName()}</td>
-            <td>
-                <select class="form-control" name="votum">
-                    <option value="0">Nein</option>
-                    <option value="1">Ja</option>
-                    <option value="2">Nachfragen</option>
-                    <option value="3" selected="selected">Enthaltung</option>
-                </select>
-            </td>
-            <td>{=now()|format:d.m.Y}</td>
-            <td><textarea class="form-control" rows="8" name="bemerkung">{$bemerkung}</textarea></td>
-            <td><textarea class="form-control" rows="8" name="nachfrage">{$nachfrage}</textarea></td>
-        </tr>
-    </table>
-    <input class="btn btn-success" type="submit" value="Votum hinzufügen" /> (du wirst wieder auf die Übersichtsseite weitergeleitet).
-</form>
+    </table></div>
 
-<h2>Kommentare</h2>
+    <form method="post">
+        {=csrfTokenTag()}
+        <input type="hidden" name="formular" value="votes"/>
 
-<pre>
-{$antrag->getKommentare()}
-</pre>
+        {include form-group, name: votum, label: 'Neues Votum von ' . currentUser()->getRealName(), type: select, value: 3, options: [0 => 'Nein', 1 => 'Ja', 2 => 'Nachfragen', 3 => 'Enthaltung']}
+        {include form-group, name: bemerkung, id: 'input-vote-bemerkung', label: 'Bemerkung', type: textarea, value: $bemerkung}
+        {include form-group, name: nachfrage, id: 'input-vote-nachfrage', label: 'Nachfrage', type: textarea, value: $nachfrage}
 
-<p>Kommentar hinzufügen: </p>
+        <div class="form-actions">
+            <button type="submit">Votum hinzufügen</button>
+        </div>
+        <p class="small-note">(du wirst wieder auf die Übersichtsseite weitergeleitet)</p>
+    </form>
+</section>
 
-<form action="/antraege/{$antrag->getId()}/kommentare" method="post">
-    {=csrfTokenTag()}
-    <textarea class="form-control" name="kommentar" rows="5"></textarea><br />
-    <input class="btn btn-success" type="submit" value="Kommentar hinzufügen" />
-    <a class="btn btn-default" href="/antraege/{$antrag->getId()}/kommentare">Kommentare editieren</a>
-</form>
+<section class="panel" aria-labelledby="kommentare-heading">
+    <h2 id="kommentare-heading"><i class="label-icon ti ti-message" aria-hidden="true"></i>Kommentare</h2>
+    <pre>{$antrag->getKommentare()}</pre>
 
-<h2 id="aktionen">Aktionen</h2>
+    <form action="/antraege/{$antrag->getId()}/kommentare" method="post">
+        {=csrfTokenTag()}
+        {include form-group, name: kommentar, label: 'Kommentar hinzufügen', type: textarea}
+        <div class="form-actions">
+            <a class="button ghost" href="/antraege/{$antrag->getId()}/kommentare">Kommentare editieren</a>
+            <button type="submit">Kommentar hinzufügen</button>
+        </div>
+    </form>
+</section>
 
-<p>
-    <a class="btn btn-success" href="/antraege/{$antrag->getId()}/aufnehmen">Aufnehmen</a>
-    <a class="btn btn-default" href="/antraege/{$antrag->getId()}/nachfragen">Nachfragen</a>
-    <a class="btn btn-danger" href="/antraege/{$antrag->getId()}/ablehnen">Ablehnen</a>
-</p>
-
-<p>Bereits via Aktionen versandte Mails:</p>
-
-<ul n:if=$mails n:inner-foreach="$mails as $mail">
-    <li>Von {$mail[userName]} am {$mail[time]|format:d.m.Y} zwecks {$mail[grund]}; <a href="/mails/{$antrag->getId()}/{$mail[time]->getTimestamp()}">zum Mailtext</a></li>
-</ul>
-<p n:else>keine</p>
-
-<h2>5. Daten aus dem Antrag einsehen</h2>
+<section class="panel" aria-labelledby="mails-heading">
+    <h2 id="mails-heading"><i class="label-icon ti ti-mail" aria-hidden="true"></i>Versandte Mails</h2>
+    <ul n:if=$mails class="feature-list" n:inner-foreach="$mails as $mail">
+        <li>Von {$mail[userName]} am {$mail[time]|format:d.m.Y} zwecks {$mail[grund]}; <a href="/mails/{$antrag->getId()}/{$mail[time]->getTimestamp()}">zum Mailtext</a></li>
+    </ul>
+    <p n:else class="small-note">keine</p>
+</section>
+<br>
 
 <form method="post">
     {=csrfTokenTag()}
     <input type="hidden" name="formular" value="daten" />
+
     {include 'daten.latte'}
-    <p><input class="btn btn-success" type="submit" value="Daten speichern" /></p>
+
+    <div class="form-actions">
+        <button type="submit">Daten speichern</button>
+    </div>
 </form>
+{/block}

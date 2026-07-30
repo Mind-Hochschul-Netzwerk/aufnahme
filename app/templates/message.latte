@@ -1,6 +1,9 @@
 {layout 'layout.latte'}
+{block title}{$title}{/block}
+
 {block content}
 
-<h1 n:block=title>{$title}</h1>
-
-{$text}
+<section class="panel">
+    {$text}
+</section>
+{/block}

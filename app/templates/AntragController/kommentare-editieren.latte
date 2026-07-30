@@ -1,12 +1,25 @@
+{import ../partials/components.latte}
 {var $navId = antraege}
+
+{block title}Kommentare editieren – {$antrag->getName()}{/block}
+{block page-label}<i class="ti ti-message" aria-hidden="true"></i> Antrag Nr. {$antrag->getId()}{/block}
+{block page-header}
+    <div class="action-links">
+        <a href="/antraege/{$antrag->getID()}/"><i class="ti ti-arrow-left" aria-hidden="true"></i> zurück zur Detailseite</a>
+    </div>
+{/block}
+
 {block content}
-<h1 n:block=title>Kommentare editieren – {$antrag->getName()}</h1>
 
-<p><a href="/antraege/{$antrag->getID()}/">zurück zur Detailseite</a></p>
+<section class="panel" aria-label="Kommentare editieren">
+    <form method="post">
+        {=csrfTokenTag()}
+        {include form-group, name: kommentare, label: 'Kommentare', type: textarea, value: $antrag->getKommentare()}
 
-<form method="post">
-    {=csrfTokenTag()}
-    {include '../partials/input.latte', type: textarea, name: kommentare, rows: 30, value: $antrag->getKommentare()}<br />
-    <input type="submit" value="Speichern" />
-    <p><a href="/antraege/{$antrag->getID()}/">abbrechen / zurück zur Detailseite</a></p>
-</form>
+        <div class="form-actions">
+            <a class="button ghost" href="/antraege/{$antrag->getID()}/">abbrechen</a>
+            <button type="submit">Speichern</button>
+        </div>
+    </form>
+</section>
+{/block}

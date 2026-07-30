@@ -1,8 +1,3 @@
-$(function() {
-    $('[data-tooltip="sichtbarkeit"] .toggle-group .toggle-on').prop("title", "sichtbar für andere Mitglieder");
-    $('[data-tooltip="sichtbarkeit"] .toggle-group .toggle-off').prop("title", "nicht sichtbar");
-});
-
 function formatTime(timestamp, includeDate = true, includeTime = true) {
     if (typeof timestamp !== "object") {
         timestamp = new Date(timestamp);
@@ -18,31 +13,61 @@ function formatTime(timestamp, includeDate = true, includeTime = true) {
 }
 
 let csrfToken = "";
-function callApi(method = "GET", url = "", data = {}, loader = undefined) {
-    if (loader) {
-        loader.classList.remove("hidden");
+async function callApi(method = "GET", url = "", data = {}, loader = undefined) {
+    if (!loader) {
+        loader = document.querySelector(".loader");
     }
-    let options = {
-        method: method,
-        headers: {
-            "X-CSRF-Token": csrfToken
-        },
-        body: (method !== "GET" && method !== "HEAD") ? (
-            (data instanceof FormData ? data : JSON.stringify(data))
-        ) : undefined
-    };
-    return fetch(url, options).then(response => {
-        if (loader) {
-            loader.classList.add("hidden");
+
+    loader.classList.remove("hidden");
+
+    try {
+        if (data instanceof FormData && data.has("_csrfToken")) {
+            data.delete("_csrfToken");
+        } else if (data && data["_csrfToken"]) {
+            delete data["_csrfToken"];
         }
 
+        const options = {
+            method,
+            headers: {
+                "X-CSRF-Token": csrfToken,
+                "Accept": "application/json"
+            },
+            body: (method !== "GET" && method !== "HEAD")
+                ? (data instanceof FormData ? data : JSON.stringify(data))
+                : undefined
+        };
+
+        const response = await fetch(url, options);
+
         const token = response.headers.get("x-csrf-token");
-        if (token) {
-            csrfToken = token;
-        }
+        if (token) csrfToken = token;
+
+        loader.classList.add("hidden");
+
         if (!response.ok) {
-            throw new Error(JSON.stringify(response));
+            let message = `HTTP ${response.status}`;
+
+            try {
+                const errData = await response.json();
+                message = errData?.error || errData?.message || message;
+            } catch (_) {}
+
+            throw new Error(message);
         }
-        return response.json();
-    });
+
+        if (response.redirected) {
+            return [];
+        }
+        return await response.json();
+
+    } catch (err) {
+        loader.classList.add("hidden");
+        throw err;
+    }
+}
+
+function showError(error) {
+    console.warn("API Fehler:", error);
+    alert(error.message);
 }

@@ -1,31 +1,35 @@
+{import ../partials/components.latte}
 {var $navId = templates}
+
+{block title}Vorlage bearbeiten: {$template->getLabel()}{/block}
+{block page-label}<i class="ti ti-settings" aria-hidden="true"></i> Aufnahmetool{/block}
+{block page-header}
+    <div class="action-links">
+        <a href="/templates/"><i class="ti ti-arrow-left" aria-hidden="true"></i> zurück zur Übersicht</a>
+    </div>
+{/block}
+
 {block content}
-<h1 n:block=title>Vorlage bearbeiten: {$template->getLabel()}</h1>
 
-<p><a class="btn btn-default" href="/templates/">zurück zur Übersicht</a></p>
+<section class="panel" aria-label="Vorlage bearbeiten">
+<h2 id="templates-heading"><i class="label-icon ti ti-edit" aria-hidden="true"></i>Vorlage bearbeiten</h2>
+    <form method="post">
+        {=csrfTokenTag()}
+        <input type="hidden" name="templateName" value="{$template->getName()}">
 
-<form method="post">
-    {=csrfTokenTag()}
-    <input type="hidden" name="templateName" value="{$template->getName()}">
+        <dl n:if="$template->getHints()">
+            <div>
+                <dt>Erläuterung</dt>
+                <dd><pre>{$template->getHints()}</pre></dd>
+            </div>
+        </dl>
 
-    <div class="row" n:if="$template->getHints()">
-        <div class='col-sm-2'>Erläuterung:</div>
-        <div class="col-sm-10"><pre>{$template->getHints()}</pre></div>
-    </div>
+        {include form-group, name: subject, label: 'Betreff / Überschrift', value: $template->getSubject()}
+        {include form-group, name: text, label: 'Inhalt', type: textarea, value: $template->getText()}
 
-    <div class="row">
-        <label for='input-subject' class='col-sm-2 col-form-label'>Betreff / Überschrift</label>
-        <div class="col-sm-10">{include '../partials/input.latte', name: subject, value: $template->getSubject()}</div>
-    </div>
-
-    <div class="row">
-        <label for='input-text' class='col-sm-2 col-form-label'>Inhalt</label>
-        <div class="col-sm-10">{include '../partials/input.latte', name: text, value: $template->getText(), rows: 20, type: textarea}</div>
-    </div>
-
-    <div class='row'>
-        <div class='col-sm-offset-2 col-sm-10'>
-            <input class="btn btn-success" type="submit" value="Speichern" />
+        <div class="form-actions">
+            <button type="submit">Speichern</button>
         </div>
-    </div>
-</form>
+    </form>
+</section>
+{/block}

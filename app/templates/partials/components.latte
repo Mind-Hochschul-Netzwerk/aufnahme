@@ -1,0 +1,103 @@
+{define info-box, $type, $text, $hide = false, $id, $showCloseButton = true}
+<div id={$id} n:class="info-box, 'info-box--' . $type, $hide ? hidden" role="alert">
+    <i n:class="ti, match ($type) {
+        'info' => ti-info-circle,
+        'success' => ti-check,
+        'warning' => ti-alert-triangle,
+        'danger' => ti-alert-triangle,
+        default => ti-info-circle,
+    }" aria-hidden="true"></i>
+    <p>{block info-box-text}{$text}{/block}</p>
+    <div n:ifcontent>{block info-box-button}{/block}</div>
+    <button n:if=$showCloseButton type="button" class="secondary close" onclick="this.parentElement.classList.add('hidden')" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{/define}
+
+{define input, $name, $label, $type, $value, $class = "", $uncoverVariable, $type = 'text', $elementId, $placeholder, $autocomplete, $disabled, $required, $options = []}
+    {var $elementId = $elementId ?? 'input-' . $name}
+    {var $value = $value ?? get_defined_vars()[$name]}
+    {if $value instanceof \DateTimeInterface}{var $value = ($value|format:'Y-m-d')}{/if}
+    <div class="form-group" n:tag-if=$label>
+        <label n:ifcontent for="$elementId">{$label}</label>
+        {if $type === select}
+            <select n:attr="id: $elementId, name: $name, class: $class">
+                {foreach $options as $option=>$optionlabel}
+                    {if $option === '---' || $optionlabel == '---'}
+                        <hr />
+                    {else}
+                        <option n:attr="selected: $value === $option, value: $option">{$optionlabel}</option>
+                    {/if}
+                {/foreach}
+            </select>
+        {elseif $type === textarea}
+            <textarea n:attr="
+                id: $elementId,
+                name: $name,
+                class: $class,
+                placeholder: $placeholder ?: $label,
+                disabled: (bool) $disabled,
+                required: (bool) $required,
+                rows: 6
+            ">{$value}</textarea>
+        {else}
+            <input n:attr="
+                id: $elementId,
+                name: $name,
+                type: $type !== text ? $type,
+                value: $value ?: null,
+                class: $class,
+                placeholder: $placeholder ?: $label,
+                autocomplete: $autocomplete ?: null,
+                disabled: (bool) $disabled,
+                required: (bool) $required
+            ">
+        {/if}
+    </div>
+{/define}
+
+{define box, $name, $label, $type = checkbox, $id, $state, $value, $class, $onclick, $disabled, $required}
+    {var $type = $type ?? checkbox}
+    {var $label = $label ?? $name}
+    {var $state = $state ?? get_defined_vars()[$name]}
+    {var $checked = $type === checkbox ? (bool) $state : ($state === $value)}
+    <label n:tag-if=$label><input n:attr="
+        type: $type,
+        checked: $checked,
+        value: $value,
+        id: $id ?? ($type === checkbox ? 'input-' . $name),
+        name: $name,
+        class: $class,
+        onclick: $onclick ?: null,
+        disabled: (bool) $disabled,
+        required: (bool) $required
+    "> {block box-label}{$label}{/block}</label>
+{/define}
+
+{define form-group, $label, $name, $value, $class = "", $type = 'text', $id, $placeholder, $autocomplete, $disabled, $required, $options = []}
+    {var $id = $id ?? ($name ? 'input-' . $name)}
+    <div class='form-group'>
+        <label for={$id}>{$label}</label>
+        {block inputs}
+            {include input, ...get_defined_vars(), label: null, placeholder: $placeholder ?: $label}
+        {/block}
+    </div>
+{/define}
+
+{define dialog, $id, $ariaLabel = "", $labelIcon = "", $label = "", $title, $subtitle = "", $open = false}
+<dialog n:attr="
+    id: $id,
+    aria-label: $ariaLabel,
+    aria-labelledby: !$ariaLabel ? $id . _title,
+    closedby: $open ? none : any,
+    open: $open
+">
+    <span n:if=!$open class="dialog-close" onclick="document.getElementById({$id}).close()">&times;</span>
+    <div n:ifcontent class="page-label"><i n:if=$labelIcon class="ti ti-{$labelIcon}" aria-hidden="true"></i> {$label}</div>
+    <div n:ifcontent class="page-label">{block dialog-label}{/block}</div>
+    <h{$open?1:2} class="dialog-title" id="{$id}_title">{$title}</h{$open?1:2}>
+    <p n:if=$subtitle class="dialog-subtitle">{$subtitle}</p>
+    {block dialog-content}{/block}
+</dialog>
+{/define}
