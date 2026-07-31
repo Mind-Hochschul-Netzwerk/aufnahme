@@ -7,6 +7,7 @@ use App\Repository\UserRepository;
 use App\Service\OpenIdConnect;
 use Hengeb\Router\Attribute\PublicAccess;
 use Hengeb\Router\Attribute\Route;
+use Jumbojett\OpenIDConnectClientException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,7 +40,14 @@ class AuthController extends Controller {
         }
 
         // callback from the IdP: validate the tokens
-        $openIdConnect->authenticate();
+        try {
+            $openIdConnect->authenticate();
+        } catch (OpenIDConnectClientException $e) {
+            if (str_starts_with($e->getMessage(), 'Error: access_denied')) {
+                return $this->showError('Der Zugriff wurde verweigert, weil du kein Mitglied der Aufnahmekommission bist.', 403);
+            }
+            throw $e;
+        }
 
         $session->remove('oidc_stepup');
 
