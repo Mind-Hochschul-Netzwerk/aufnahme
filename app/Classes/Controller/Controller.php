@@ -39,7 +39,7 @@ class Controller {
         if ($this->currentUser->isLoggedIn()) {
             return $this->redirect('/antraege');
         } else {
-            return $this->redirect('/login');
+            return $this->redirect('/antrag');
         }
     }
 

@@ -9,7 +9,7 @@
         <p class="sidebar-section-label">Aufnahmetool</p>
         {include nav-link, 'Offene Anträge', '/antraege', 'file', antraege}
         {include nav-link, 'Entschiedene Anträge', '/archiv', 'file-check', archiv}
-        {include nav-link, 'Vorlagen', '/templates', 'settings', bearbeiten}
+        {include nav-link, 'Vorlagen', '/templates', 'settings', templates}
         {include nav-link, 'Aufnahmekommission', 'https://mitglieder.' . getenv('DOMAINNAME') . '/groups/aufnahme', 'user-check', users}
 
         <p class="sidebar-section-label">MHN</p>
@@ -26,11 +26,11 @@
     <nav n:else>
         <p class="sidebar-section-label">Mitgliedschaft</p>
         {include nav-link, 'Mitglied werden', '/antrag', 'plus', antrag}
+        {include nav-link, 'Über MHN', 'https://www.mind-hochschul-netzwerk.de/ueber-mhn', 'file-info'}
+        {include nav-link, 'Satzung', 'https://wiki.mind-hochschul-netzwerk.de/s/327084de-2f86-43bc-8a5f-045a1283b55a', 'file-info'}
 
         <p class="sidebar-section-label">MHN</p>
         {include nav-link, 'Startseite', 'https://www.' . getenv('DOMAINNAME'), 'home'}
-        {include nav-link, 'Über MHN', 'https://www.mind-hochschul-netzwerk.de/ueber-mhn', 'file-info'}
-        {include nav-link, 'Satzung', 'https://wiki.mind-hochschul-netzwerk.de/s/327084de-2f86-43bc-8a5f-045a1283b55a', 'file-info'}
         {include nav-link, 'Kontakt', 'https://www.mind-hochschul-netzwerk.de/kontakt', 'brand-line'}
         {include nav-link, 'Datenschutz', 'https://www.' . getenv('DOMAINNAME') . '/mod/book/view.php?id=253&chapterid=4', 'file-text-shield'}
         {include nav-link, 'Impressum', 'https://www.' . getenv('DOMAINNAME') . '/mod/book/view.php?id=253&chapterid=5', 'file'}

@@ -7,23 +7,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{ifset htmlTitle}{include htmlTitle} – {elseifset title}{include title|striptags} – {/ifset}Mein MHN</title>
-    <link rel="icon" href="/favicon.png">
-    <link rel="stylesheet" href="/css/style.css?{=md5((string)filemtime('/var/www/html/css/style.css'))}">
-    <link rel="stylesheet" href="/css/tabler-icons.min.css"/>
+    <link rel="icon" href="https://mitglieder.{getenv('DOMAINNAME')}/favicon.png">
+    <link rel="stylesheet" href="https://mitglieder.{getenv('DOMAINNAME')}/css/style.css">
+    <link rel="stylesheet" href="https://mitglieder.{getenv('DOMAINNAME')}/css/tabler-icons.min.css"/>
+    <link rel="stylesheet" href="/css/MHN.css"/>
     {block css}{/block}
   </head>
   <body class="{$bodyClass}">
     {=debugger()}
-    <script src="/js/MHN.js?{=md5((string)filemtime('/var/www/html/js/MHN.js'))}"></script>
-    <script src="/js/marked.min.js"></script>
-    <script>csrfToken = {csrfToken()};</script>
-
 <a class="skip-link" href="#main-content">Zum Hauptinhalt springen</a>
 <input id="nav-toggle" type="checkbox" aria-hidden="true">
 
 <div class="topbar">
   <label class="brand" for="nav-toggle">
-    <img src="/img/mhn-logo-small.png" alt="MHN-Logo">
+    <img src="https://mitglieder.{getenv('DOMAINNAME')}/img/mhn-logo-small.png" alt="MHN-Logo">
     <div class="brand-text">
       <span class="name">Mind-Hochschul-Netzwerk</span>
       <span class="caption">{currentUser()->isLoggedIn() ? Aufnahmekommission : Mitgliedschaft}</span>
