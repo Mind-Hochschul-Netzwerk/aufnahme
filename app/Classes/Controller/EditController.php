@@ -4,7 +4,7 @@ namespace App\Controller;
 use App\Model\Antrag;
 use App\Model\FormData;
 use App\Repository\AntragRepository;
-use App\Repository\UserRepository;
+use App\Service\EmailService;
 use Hengeb\Router\Attribute\PublicAccess;
 use Hengeb\Router\Attribute\Route;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -14,7 +14,7 @@ class EditController extends Controller
 {
     public function __construct(
         private AntragRepository $repository,
-        private UserRepository $userRepository,
+        private EmailService $emailService,
     ) {}
 
     #[Route('GET /edit/{id=>antrag}/?token={token}'), PublicAccess]
@@ -56,7 +56,7 @@ class EditController extends Controller
         $antrag->setStatus(Antrag::STATUS_NEU_BEWERTEN, 0);
         $this->repository->save($antrag);
 
-        $this->userRepository->sendEmailToAll('Antrag bearbeitet', "Ein Antrag wurde von der*dem Antragstellenden bearbeitet:\n" . $antrag->getUrl());
+        $this->emailService->sendToTeam('Antrag bearbeitet', "Ein Antrag wurde von der*dem Antragstellenden bearbeitet:\n" . $antrag->getUrl());
 
         return $this->render('EditController/success');
     }

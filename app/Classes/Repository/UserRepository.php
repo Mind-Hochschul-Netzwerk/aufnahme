@@ -7,7 +7,6 @@ namespace App\Repository;
  */
 
 use App\Model\User;
-use App\Service\EmailService;
 use Symfony\Component\Ldap\Ldap;
 
 /**
@@ -18,12 +17,10 @@ class UserRepository
     private Ldap $ldap;
 
     public function __construct(
-        private EmailService $emailService,
         string $ldapHost,
         private string $ldapBindDn,
         private string $ldapBindPassword,
         private string $ldapPeopleDn,
-        private string $ldapGroupsDn,
     ) {
         $this->ldap = Ldap::create('ext_ldap', ['connection_string' => $ldapHost]);
         $this->bind();
@@ -34,25 +31,10 @@ class UserRepository
         $this->ldap->bind($this->ldapBindDn, $this->ldapBindPassword);
     }
 
-    private function hasAufnahmeRole(string $userName)
-    {
-        $query = '(&(objectclass=groupOfNames)(cn=aufnahme)(member=' . $this->getDnByUserName($userName) . '))';
-        $entry = $this->ldap->query($this->ldapGroupsDn, $query)->execute()[0];
-        return !empty($entry);
-    }
-
-    private function getDnByUserName(string $userName): string
-    {
-        return 'cn=' . ldap_escape($userName) . ',' . $this->ldapPeopleDn;
-    }
-
-    /**
-     * @param bool $skipRoleCheck: skip the check if the user has the "aufnahme" role because it is already known that the user has the role
-     */
-    public function findOneByUserName(string $userName, bool $skipRoleCheck = false): ?User
+    public function findOneByUserName(string $userName): ?User
     {
         if (!$userName) {
-            return new User('unknown', 'unknown', '', false);
+            return new User('unknown', 'unknown', '');
         }
         try {
             // employeeType == 1 <=> Benutzerkonto gesperrt
@@ -66,48 +48,9 @@ class UserRepository
             $entry = $result[0];
             $userName = $entry->getAttribute('cn')[0];
             $email = $entry->getAttribute('mail')[0];
-            $hasRole = $skipRoleCheck ? true : $this->hasAufnahmeRole($userName);
-            return new User($userName, $entry->getAttribute('givenName')[0] . ' ' . $entry->getAttribute('sn')[0], $email, $hasRole);
+            return new User($userName, $entry->getAttribute('givenName')[0] . ' ' . $entry->getAttribute('sn')[0], $email);
         } else {
-            return new User($userName, $userName, '', false);
-        }
-    }
-
-    /**
-     * Gibt ein Array mit allen Benutzern zurück
-     *
-     * @return User[]
-     */
-    public function findAll()
-    {
-        $result = $this->ldap->query($this->ldapGroupsDn, '(cn=aufnahme)')->execute();
-
-        $members = array_map(function ($dn) {
-            if (substr($dn, 0, strlen('cn=')) !== 'cn=') {
-                return null;
-            }
-            if (substr($dn, -strlen($this->ldapPeopleDn)) !== $this->ldapPeopleDn) {
-                return null;
-            }
-            $userName = substr(substr($dn, strlen('cn=')), 0, -1-strlen($this->ldapPeopleDn));
-            return $this->findOneByUserName($userName);
-        }, $result[0]->getAttribute('member'));
-
-        return array_filter($members, function ($entry) {
-            return $entry !== null;
-        });
-    }
-
-    public function sendEmailToAll(string $subject, string $body): void
-    {
-        $users = $this->findAll();
-        foreach ($users as $user) {
-
-            $emailAddress = $user->getEmailAddress();
-            if (!$emailAddress) {
-                continue;
-            }
-            $this->emailService->send($emailAddress, $subject, $body);
+            return new User($userName, $userName, '');
         }
     }
 }

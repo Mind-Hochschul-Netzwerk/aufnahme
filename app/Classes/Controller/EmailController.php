@@ -8,7 +8,6 @@ use App\Repository\EmailRepository;
 use App\Repository\TemplateRepository;
 use App\Repository\UserRepository;
 use App\Service\EmailService;
-use App\Util;
 use Hengeb\Router\Attribute\RequestValue;
 use Hengeb\Router\Attribute\RequireLogin;
 use Hengeb\Router\Attribute\Route;
@@ -142,7 +141,7 @@ class EmailController extends Controller
         $db_mail->setSubject($betreff);
         $db_mail->setText($inhalt_alt ? $inhalt_alt : $inhalt);
         $this->emailService->send($antrag->getEMail(), $betreff, $inhalt);
-        $this->userRepository->sendEmailToAll($betreff, $inhalt_alt ? $inhalt_alt : $inhalt);
+        $this->emailService->sendToTeam($betreff, $inhalt_alt ? $inhalt_alt : $inhalt);
         $this->repository->add($db_mail);
     }
 }

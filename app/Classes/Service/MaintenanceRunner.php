@@ -3,7 +3,6 @@ namespace App\Service;
 
 use App\Model\Antrag;
 use App\Repository\AntragRepository;
-use App\Repository\UserRepository;
 use App\Repository\TemplateRepository;
 use App\Service\EmailService;
 use App\Util;
@@ -14,7 +13,6 @@ class MaintenanceRunner {
     public function __construct(
         private AntragRepository $antragRepository,
         private TemplateRepository $templateRepository,
-        private UserRepository $userRepository,
         private EmailService $emailService,
     ) {}
 
@@ -57,7 +55,7 @@ class MaintenanceRunner {
         }
 
         $mailTemplate = $this->templateRepository->getOneByName('teamReminder');
-        $this->userRepository->sendEmailToAll($mailTemplate->getSubject(), $mailTemplate->getFinalText([
+        $this->emailService->sendToTeam($mailTemplate->getSubject(), $mailTemplate->getFinalText([
             'namen' => implode("\n", $names),
         ]));
     }
@@ -82,7 +80,7 @@ class MaintenanceRunner {
                 'ablaufDatum' => $ablaufDatum,
                 'url' => $antrag->getActivationUrl(),
             ]));
-            $this->userRepository->sendEmailToAll($teamMailTemplate->getSubject(), $teamMailTemplate->getFinalText([
+            $this->emailService->sendToTeam($teamMailTemplate->getSubject(), $teamMailTemplate->getFinalText([
                 'name' => $antrag->getName(),
                 'antragsnummer' => $antrag->getId(),
                 'ablaufDatum' => $ablaufDatum,

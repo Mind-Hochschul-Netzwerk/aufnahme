@@ -5,7 +5,6 @@ use App\Model\Antrag;
 use App\Service\EmailService;
 use App\Model\FormData;
 use App\Repository\AntragRepository;
-use App\Repository\UserRepository;
 use App\Repository\TemplateRepository;
 use App\Repository\VoteRepository;
 use Hengeb\Router\Attribute\CheckCsrfToken;
@@ -25,7 +24,6 @@ class NeuController extends Controller
     public function __construct(
         private AntragRepository $antragRepository,
         private TemplateRepository $templateRepository,
-        private UserRepository $userRepository,
         private VoteRepository $voteRepository,
         private EmailService $emailService,
     ) {
@@ -173,7 +171,7 @@ class NeuController extends Controller
             throw new \RuntimeException('failed to save. Error message: ' . $e->getMessage(), 1614464427);
         }
 
-        $this->userRepository->sendEmailToAll('Neuer Antrag', 'Im MHN-Aufnahmetool ist ein neuer Mitgliedsantrag eingegangen.');
+        $this->emailService->sendToTeam('Neuer Antrag', 'Im MHN-Aufnahmetool ist ein neuer Mitgliedsantrag eingegangen.');
 
         return $this->redirect('/antrag/success/?' . $this->queryStringForEmbedding());
     }

@@ -14,7 +14,9 @@ use PHPMailer\PHPMailer\PHPMailer;
  */
 class EmailService
 {
-    private $mailer = null;
+    public final string $teamAddress;
+
+    private PHPMailer $mailer;
 
     public function __construct(
         private string $host,
@@ -25,6 +27,8 @@ class EmailService
         private string $fromAddress,
         private string $domain,
     ) {
+        $this->teamAddress = $fromAddress;
+
         if (!$host || $host === 'log') {
             return;
         }
@@ -83,5 +87,10 @@ $body
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    public function sendToTeam(string $subject, string $body): bool
+    {
+        return $this->send($this->teamAddress, $subject, $body);
     }
 }

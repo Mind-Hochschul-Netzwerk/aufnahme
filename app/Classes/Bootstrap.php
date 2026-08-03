@@ -100,7 +100,6 @@ class Bootstrap extends ServiceContainer {
         return $this->createService(MaintenanceRunner::class, fn() => new MaintenanceRunner(
             antragRepository: $this->getAntragRepository(),
             templateRepository: $this->getTemplateRepository(),
-            userRepository: $this->getUserRepository(),
             emailService: $this->getEmailService(),
         ));
     }
@@ -143,12 +142,10 @@ class Bootstrap extends ServiceContainer {
     public function getUserRepository(): UserRepository
     {
         return $this->createService(UserRepository::class, fn() => new UserRepository(
-            emailService: $this->getEmailService(),
             ldapHost: getenv('LDAP_HOST'),
             ldapBindDn: getenv('LDAP_BIND_DN'),
             ldapBindPassword: getenv('LDAP_BIND_PASSWORD'),
             ldapPeopleDn: getenv('LDAP_PEOPLE_DN'),
-            ldapGroupsDn: getenv('LDAP_ROLES_DN'),
         ));
     }
 
