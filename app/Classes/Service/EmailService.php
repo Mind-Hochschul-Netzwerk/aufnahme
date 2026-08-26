@@ -16,7 +16,7 @@ class EmailService
 {
     public final string $teamAddress;
 
-    private PHPMailer $mailer;
+    private ?PHPMailer $mailer = null;
 
     public function __construct(
         private string $host,
