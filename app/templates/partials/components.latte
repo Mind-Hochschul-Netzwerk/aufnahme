@@ -78,7 +78,7 @@
 {define form-group, $label, $name, $value, $class = "", $type = 'text', $id, $placeholder, $autocomplete, $disabled, $required, $options = []}
     {var $id = $id ?? ($name ? 'input-' . $name)}
     <div class='form-group'>
-        <label for={$id}>{$label}</label>
+        <label for={$id}>{$label} {if $required}<span><i style="color: var(--accent);" class="ti ti-asterisk" aria-hidden="true"></i></span>{/if}</label>
         {block inputs}
             {include input, ...get_defined_vars(), label: null, placeholder: $placeholder ?: $label}
         {/block}

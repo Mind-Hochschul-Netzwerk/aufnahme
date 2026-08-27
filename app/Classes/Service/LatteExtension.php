@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Model\FormData;
 use Parsedown;
 
 /**
@@ -37,6 +38,7 @@ class LatteExtension extends \Latte\Extension {
 	{
         return [
             'isEmbedded' => fn() => $this->isEmbedded,
+            'getCountryNames' => fn() => FormData::COUNTRY_NAMES,
         ];
 	}
 }

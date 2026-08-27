@@ -1,7 +1,0 @@
-{import ../partials/components.latte}
-{default $value = $werte[$name] ?? null}
-{default $type = 'text'}
-{default $required = false}
-{default $disabled = false}
-{default $placeholder = null}
-{include form-group, name: $name, label: $label, value: $value, type: $type, required: $required, disabled: $disabled, placeholder: $placeholder}
