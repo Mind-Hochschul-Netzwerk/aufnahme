@@ -36,7 +36,6 @@ class Bootstrap extends ServiceContainer {
     {
         parent::__construct();
         $this->startDebugger();
-        $this->detectAndHandleEmbedding();
         $this->getMaintenanceRunner()->run();
         $this->registerService(CurrentUserInterface::class, fn() => $this->getCurrentUser());
         $this->getService(\Hengeb\Router\LatteExtension::class)->timezone = 'Europe/Berlin';
@@ -45,24 +44,6 @@ class Bootstrap extends ServiceContainer {
             ->addExceptionHandler(InvalidRouteException::class, [Controller::class, 'handleException'])
             ->addType(Antrag::class, fn($id) => $this->getAntragRepository()->getOneById(intval($id)))
             ->addType(Template::class, fn(string $name) => $this->getTemplateRepository()->getOneByName($name));
-    }
-
-    private function detectAndHandleEmbedding(): void
-    {
-        $this->isEmbedded = !empty($_GET['embed']);
-
-        if ($this->isEmbedded) {
-            $parentUrl = empty($_GET['parentUrl']) ? '' : filter_var($_GET['parentUrl'], FILTER_VALIDATE_URL);
-            $urlComponents = $parentUrl ? parse_url($parentUrl) : [];
-            if (!empty($urlComponents['query'])) {
-                parse_str($urlComponents['query'], $parentQuery);
-                foreach ($parentQuery as $k=>$v) {
-                    if (!isset($_GET[$k])) {
-                        $_GET[$k] = $v;
-                    }
-                }
-            }
-        }
     }
 
     public function getCurrentUser(): CurrentUser

@@ -72,11 +72,6 @@
 
     {include form-group, "Telefon", mhn_telefon, type: tel}
 
-    <div class="form-group">
-        <label for="input-mhn_mensa_nr">ggf. Mitgliedsnummer bei <a href="https://www.mensa.de">Mensa in Deutschland e.V.</a></label>
-        {include input, mhn_mensa_nr, placeholder: "Mensa-Mitgliedsnummer"}
-    </div>
-
     {include form-group, "Homepage", mhn_homepage, type: url}
 </section>
 
@@ -87,7 +82,7 @@
 
     <p>
         Wir leben von der fachlichen Vielseitigkeit und dem multidisziplinären
-        wissenschaftlichen Interesse aller Mitglieder. Bitte erzähl uns etwas
+        wissenschaftlichen Interesse aller Mitglieder. Bitte erzähl uns etwas über
         deinen Werdegang.
     </p>
 
@@ -104,9 +99,9 @@
     {include box, name: mhn_mentoring, label: 'Ich stehe gerne als Mentor*in für andere MHN-Mitglieder in meinem Fachbereich zur Verfügung.'}
 </section>
 
-<section class="panel" aria-labelledby="network-heading">
+<section class="panel" aria-labelledby="engagement-heading">
     <h2 id="network-heading">
-        <i class="label-icon ti ti-affiliate" aria-hidden="true"></i>Netzwerk
+        <i class="label-icon ti ti-carambola" aria-hidden="true"></i>Engagement für den Verein
     </h2>
 
     <p>
@@ -141,6 +136,11 @@
     {default $mhn_geburtstag = \DateTimeImmutable::createFromFormat('Y-m-d', '0000-00-00')}
     {include form-group, "Geburtsdatum", mhn_geburtstag, type: date, required: true}
 
+    <div class="form-group">
+        <label for="input-mhn_mensa_nr">ggf. Mitgliedsnummer bei <a href="https://www.mensa.de">Mensa in Deutschland e.V.</a></label>
+        {include input, mhn_mensa_nr, placeholder: "Mensa-Mitgliedsnummer"}
+    </div>
+
     {include form-group, "Sprachen", mhn_sprachen}
     {include form-group, "Hobbys", mhn_hobbies}
     {include form-group, "Interessen", mhn_interessen}
@@ -155,11 +155,11 @@
 
     <p>
         Diese Angaben benötigen wir für den Aufnahmeantrag. Nur die Aufnahmekommission
-        und die IT-Administrator:innen können sie einsehen.
+        und die IT-Administrator*innen können sie einsehen.
     </p>
 
     {embed info-box, showCloseButton: false}{block info-box-text}
-        Diese angaben werden nach der Aufnahme-Entscheidung gelöscht (d.h. bei
+        Diese Angaben werden nach der Aufnahme-Entscheidung gelöscht (d.h. bei
         Aufnahme nach einem Monat, bei Ablehnung nach der nächsten Mitgliederversammlung).
     {/block}{/embed}
 
