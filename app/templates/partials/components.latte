@@ -20,7 +20,7 @@
     {var $value = $value ?? get_defined_vars()[$name]}
     {if $value instanceof \DateTimeInterface}{var $value = ($value|format:'Y-m-d')}{/if}
     <div class="form-group" n:tag-if=$label>
-        <label n:ifcontent for="$elementId">{$label}</label>
+        <label n:ifcontent for="{$elementId}">{$label}</label>
         {if $type === select}
             <select n:attr="id: $elementId, name: $name, class: $class">
                 {foreach $options as $option=>$optionlabel}
