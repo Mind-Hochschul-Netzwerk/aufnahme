@@ -22,6 +22,13 @@
 
     <form method="post">
         {=csrfTokenTag()}
+        <input type="hidden" name="formToken" value="{$formToken}">
+
+        {* Honeypot gegen Bots: für Menschen unsichtbar, wird von einfachen Bots trotzdem ausgefüllt *}
+        <div class="hp-field" aria-hidden="true">
+            <label for="input-website">Website</label>
+            <input type="text" id="input-website" name="website" tabindex="-1" autocomplete="off">
+        </div>
 
         {include input,
             name: email,

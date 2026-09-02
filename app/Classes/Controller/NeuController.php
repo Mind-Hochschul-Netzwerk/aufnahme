@@ -45,12 +45,25 @@ class NeuController extends Controller
     #[Route('GET /antrag'), PublicAccess]
     public function emailForm(): Response
     {
-        return $this->render('NeuController/emailForm', ['email' => '']);
+        return $this->render('NeuController/emailForm', [
+            'email' => '',
+            'formToken' => Token::encode(time(), '', getenv('TOKEN_KEY')),
+        ]);
     }
 
     #[Route('POST /antrag'), PublicAccess]
-    public function initEmailAuth(#[RequestValue] string $email): Response
+    public function initEmailAuth(
+        #[RequestValue] string $email,
+        // Honeypot field to prevent spam bots from submitting the form
+        #[RequestValue] string $website = '',
+        // Time trap to prevent spam bots from submitting the form too quickly
+        #[RequestValue] string $formToken = '',
+    ): Response
     {
+        if ($website !== '' || !$this->isFormTokenValid($formToken)) {
+            return $this->render('NeuController/initEmailAuth');
+        }
+
         if ($this->antragRepository->findOneByEmail($email)) {
             $this->setTemplateVariable('emailUsed', true);
             return $this->emailForm();
@@ -64,6 +77,16 @@ class NeuController extends Controller
         $this->emailService->send($email, $mailTemplate->getSubject(), $text);
 
         return $this->render('NeuController/initEmailAuth');
+    }
+
+    private function isFormTokenValid(string $formToken): bool
+    {
+        try {
+            $issuedAt = (int) Token::decode($formToken, null, getenv('TOKEN_KEY'));
+        } catch (\RuntimeException) {
+            return false;
+        }
+        return time() - $issuedAt >= 3;
     }
 
     private function decodeEmailToken(string $token): void
