@@ -20,12 +20,17 @@ use Symfony\Component\HttpFoundation\Session\Session;
 class CurrentUser implements CurrentUserInterface {
     private ?User $user = null;
 
+    /** @var string[] */
+    private array $groups = [];
+
     public function __construct(
         private Request $request,
         private UserRepository $userRepository,
     ) {
-        $userName = $request->getSession()->get('userName');
+        $session = $request->getSession();
+        $userName = $session->get('userName');
         $this->user = $userName ? $this->userRepository->findOneByUserName($userName) : null;
+        $this->groups = $session->get('groups', []);
     }
 
     private function assertLogin(): void
@@ -60,6 +65,11 @@ class CurrentUser implements CurrentUserInterface {
         return boolval($this->user);
     }
 
+    public function hasGroup(string $name): bool
+    {
+        return in_array($name, $this->groups, true);
+    }
+
     public function isBackendConnection(): bool
     {
         $ip = ip2long($_SERVER['REMOTE_ADDR']);
@@ -68,13 +78,18 @@ class CurrentUser implements CurrentUserInterface {
     }
 
 
-    public function logIn(User $user)
+    /**
+     * @param string[] $groups
+     */
+    public function logIn(User $user, array $groups = [])
     {
         if (!$this->request) {
             throw new \LogicException('request is not set', 1729975906);
         }
         $this->request->getSession()->set('userName', $user->getUserName());
+        $this->request->getSession()->set('groups', $groups);
         $this->user = $user;
+        $this->groups = $groups;
     }
 
     public function logOut(): void
@@ -83,7 +98,9 @@ class CurrentUser implements CurrentUserInterface {
             throw new \LogicException('request is not set', 1729975906);
         }
         $this->request->getSession()->remove('userName');
+        $this->request->getSession()->remove('groups');
         $this->user = null;
+        $this->groups = [];
     }
 
     public function getWrappedUser(): ?User

@@ -9,8 +9,8 @@ use App\Repository\EmailRepository;
 use App\Repository\UserRepository;
 use App\Repository\VoteRepository;
 use App\Util;
+use Hengeb\Router\Attribute\AllowIf;
 use Hengeb\Router\Attribute\RequestValue;
-use Hengeb\Router\Attribute\RequireLogin;
 use Hengeb\Router\Attribute\Route;
 use Hengeb\Router\Exception\InvalidUserDataException;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -25,14 +25,14 @@ class AntragController extends Controller
         private VoteRepository $voteRepository,
     ) {}
 
-    #[Route('GET /antraege'), RequireLogin]
+    #[Route('GET /antraege'), AllowIf(group: 'aufnahme')]
     public function showOffeneAntraege(): Response
     {
         $antraege = $this->repository->alleOffenenAntraege();
         return $this->showAntraege($antraege);
     }
 
-    #[Route('GET /antraege/nichtvonmirgevotet/'), RequireLogin]
+    #[Route('GET /antraege/nichtvonmirgevotet/'), AllowIf(group: 'aufnahme')]
     public function showAntraegeNichtVonMirGevotet(): Response
     {
         $antraege = $this->repository->alleOffenenAntraege();
@@ -66,7 +66,7 @@ class AntragController extends Controller
         ]);
     }
 
-    #[Route('GET /archiv'), RequireLogin]
+    #[Route('GET /archiv'), AllowIf(group: 'aufnahme')]
     public function showEntschiedeneAntraege(): Response {
         $antraege = $this->repository->alleEntschiedenenAntraege();
         $userNames_gevotet = $this->getUserNamesGevotet($antraege);
@@ -78,7 +78,7 @@ class AntragController extends Controller
         ]);
     }
 
-    #[Route('GET /antraege/{id=>antrag}'), RequireLogin]
+    #[Route('GET /antraege/{id=>antrag}'), AllowIf(group: 'aufnahme')]
     public function showOne(Antrag $antrag): Response
     {
         $emails = $this->emailRepository->findAllByAntrag($antrag);
@@ -100,7 +100,7 @@ class AntragController extends Controller
         ]);
     }
 
-    #[Route('POST /antraege/{id=>antrag}'), RequireLogin]
+    #[Route('POST /antraege/{id=>antrag}'), AllowIf(group: 'aufnahme')]
     public function handleSubmit(Antrag $antrag, ParameterBag $submittedData, #[RequestValue] $formular): Response
     {
         return match ($formular) {
@@ -111,7 +111,7 @@ class AntragController extends Controller
         };
     }
 
-    #[Route('GET /antraege/{id=>antrag}/kommentare'), RequireLogin]
+    #[Route('GET /antraege/{id=>antrag}/kommentare'), AllowIf(group: 'aufnahme')]
     public function showKommentare(Antrag $antrag): Response
     {
         return $this->render('AntragController/kommentare-editieren', [
@@ -119,7 +119,7 @@ class AntragController extends Controller
         ]);
     }
 
-    #[Route('POST /antraege/{id=>antrag}/kommentare'), RequireLogin]
+    #[Route('POST /antraege/{id=>antrag}/kommentare'), AllowIf(group: 'aufnahme')]
     public function storeKommentare(Antrag $antrag): Response
     {
         $input = $this->validatePayload([

@@ -1,0 +1,22 @@
+{var $navId = aktivierung}
+
+{block title}Positiv beschiedene Anträge{/block}
+{block page-label}<i class="ti ti-user-check" aria-hidden="true"></i> Aktivierung{/block}
+{block page-header}
+    <p>Anträge, die von der Aufnahmekommission positiv entschieden wurden.</p>
+{/block}
+
+{block content}
+
+<section class="panel" aria-label="Positiv beschiedene Anträge">
+    <div class="table-wrapper"><table>
+        <tr><th>Nr.</th><th>Antragssteller</th><th>Entscheidungsdatum</th><th>Status</th></tr>
+        <tr n:foreach="$antraege as $a">
+            <td><a href="/aktivierung/{$a->getId()}/">{$a->getId()}</a></td>
+            <td>{$a->getName()}</td>
+            <td>{$a->getDatumEntscheidung()}</td>
+            <td>{$a->getStatusReadable()}</td>
+        </tr>
+    </table></div>
+</section>
+{/block}

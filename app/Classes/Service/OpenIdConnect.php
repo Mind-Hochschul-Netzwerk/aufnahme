@@ -30,6 +30,14 @@ class OpenIdConnect
         get => $this->getUserInfo('name') ?? ($this->getUserInfo('given_name') . ' ' . $this->getUserInfo('family_name'));
     }
 
+    /** @var string[] Gruppen des Nutzers, z.B. ['aufnahme'] oder ['aktivierung'] */
+    public array $groups {
+        get {
+            $value = $this->client->getVerifiedClaims('groups') ?? $this->client->requestUserInfo('groups');
+            return is_array($value) ? array_values(array_map('strval', $value)) : [];
+        }
+    }
+
     public function __construct(
         string $providerUrl,
         string $clientId,
@@ -85,7 +93,7 @@ class OpenIdConnect
         };
         $this->client->setRedirectURL($redirectUrl);
         // jumbojett always appends the mandatory "openid" scope itself
-        $this->client->addScope(['profile', 'email']);
+        $this->client->addScope(['profile', 'email', 'groups']);
         $this->client->setCodeChallengeMethod('S256');
     }
 

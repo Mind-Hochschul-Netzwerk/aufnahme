@@ -7,10 +7,11 @@
 <div class="sidebar" id="site-navigation" aria-label="Seitennavigation">
     <nav n:if="currentUser()->isLoggedIn()">
         <p class="sidebar-section-label">Aufnahmetool</p>
-        {include nav-link, 'Offene Anträge', '/antraege', 'file', antraege}
-        {include nav-link, 'Entschiedene Anträge', '/archiv', 'file-check', archiv}
-        {include nav-link, 'Vorlagen', '/templates', 'settings', templates}
-        {include nav-link, 'Aufnahmekommission', 'https://mitglieder.' . getenv('DOMAINNAME') . '/groups/aufnahme', 'user-check', users}
+        {include nav-link, 'Offene Anträge', '/antraege', 'file', antraege, currentUser()->hasGroup('aufnahme')}
+        {include nav-link, 'Entschiedene Anträge', '/archiv', 'file-check', archiv, currentUser()->hasGroup('aufnahme')}
+        {include nav-link, 'Vorlagen', '/templates', 'settings', templates, currentUser()->hasGroup('aufnahme')}
+        {include nav-link, 'Aufnahmekommission', 'https://mitglieder.' . getenv('DOMAINNAME') . '/groups/aufnahme', 'user-check', users, currentUser()->hasGroup('aufnahme')}
+        {include nav-link, 'Aktivierung', '/aktivierung', 'user-check', aktivierung, currentUser()->hasGroup('aktivierung')}
 
         <p class="sidebar-section-label">MHN</p>
         {include nav-link, 'Mitgliederverzeichnis', 'https://mitglieder.' . getenv('DOMAINNAME'), 'users', mitgliederverzeichnis}

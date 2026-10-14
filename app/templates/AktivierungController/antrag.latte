@@ -1,0 +1,14 @@
+{var $navId = aktivierung}
+
+{block title}{$antrag->getName()}{/block}
+{block page-label}<i class="ti ti-file" aria-hidden="true"></i> Antrag Nr. {$antrag->getId()}{/block}
+{block page-header}
+    <div class="meta">
+        <span><strong>Status:</strong> {$antrag->getStatusReadable()}</span>
+    </div>
+{/block}
+
+{block content}
+
+{include '../AntragController/daten.latte'}
+{/block}

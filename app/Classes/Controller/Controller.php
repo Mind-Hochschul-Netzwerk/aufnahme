@@ -36,8 +36,10 @@ class Controller {
 
     #[Route('GET /'), PublicAccess]
     public function home(): RedirectResponse {
-        if ($this->currentUser->isLoggedIn()) {
+        if ($this->currentUser->hasGroup('aufnahme')) {
             return $this->redirect('/antraege');
+        } elseif ($this->currentUser->hasGroup('aktivierung')) {
+            return $this->redirect('/aktivierung');
         } else {
             return $this->redirect('/antrag');
         }

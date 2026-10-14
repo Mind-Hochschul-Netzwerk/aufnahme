@@ -9,7 +9,7 @@ use App\Repository\TemplateRepository;
 use App\Repository\UserRepository;
 use App\Service\EmailService;
 use Hengeb\Router\Attribute\RequestValue;
-use Hengeb\Router\Attribute\RequireLogin;
+use Hengeb\Router\Attribute\AllowIf;
 use Hengeb\Router\Attribute\Route;
 use Hengeb\Router\Exception\NotFoundException;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +26,7 @@ class EmailController extends Controller
         private EmailService $emailService,
     ) {}
 
-    #[Route('GET /mails/{id=>antrag}/{timestamp}'), RequireLogin]
+    #[Route('GET /mails/{id=>antrag}/{timestamp}'), AllowIf(group: 'aufnahme')]
     public function show(Antrag $antrag, int $timestamp): Response
     {
         $mail = $this->repository->findOneByAntragAndTimestamp($antrag, $timestamp);
@@ -46,7 +46,7 @@ class EmailController extends Controller
         ]);
     }
 
-    #[Route('GET /antraege/{id=>antrag}/{aufnehmen|nachfragen|ablehnen:aktion}'), RequireLogin]
+    #[Route('GET /antraege/{id=>antrag}/{aufnehmen|nachfragen|ablehnen:aktion}'), AllowIf(group: 'aufnahme')]
     public function aktion(Antrag $antrag, string $aktion): Response
     {
         $this->setTemplateVariable('absende_email_kand', getenv('FROM_ADDRESS'));
@@ -80,7 +80,7 @@ class EmailController extends Controller
         ]);
     }
 
-    #[Route('POST /antraege/{id=>antrag}/{aufnehmen|nachfragen|ablehnen:aktion}'), RequireLogin]
+    #[Route('POST /antraege/{id=>antrag}/{aufnehmen|nachfragen|ablehnen:aktion}'), AllowIf(group: 'aufnahme')]
     public function submitAktion(Antrag $antrag, string $aktion, #[RequestValue] string $mailtext, #[RequestValue] string $betreff): Response
     {
         $this->isSubmitted = true;

@@ -61,7 +61,7 @@ class AuthController extends Controller {
             // hier wird nur der Klarname für die spätere Anzeige (z.B. bei Voten) zwischengespeichert
             $user = new User($username, $openIdConnect->fullName);
             $this->userRepository->upsert($user);
-            $this->currentUser->logIn($user);
+            $this->currentUser->logIn($user, $openIdConnect->groups);
         }
 
         $redirectUrl = $this->sanitizeLocalPath((string) $session->get('oidc_redirect', '/'));
