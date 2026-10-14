@@ -4,8 +4,6 @@ Dies ist das Tool der Aufnahmekommission des MHN.
 
 ## Starten
 
-[php-base](https://github.com/Mind-Hochschul-Netzwerk/php-base) muss bereits gebaut sein.
-
 ### Target "dev" (Entwicklung)
 
     $ composer install -d app

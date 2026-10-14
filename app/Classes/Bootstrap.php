@@ -19,7 +19,6 @@ use App\Repository\VoteRepository;
 use App\Service\CurrentUser;
 use App\Service\EmailService;
 use App\Service\LatteExtension;
-use App\Service\Ldap;
 use App\Service\MaintenanceRunner;
 use App\Service\OpenIdConnect;
 use Hengeb\Db\Db;
@@ -65,15 +64,6 @@ class Bootstrap extends ServiceContainer {
             );
             return $emailService;
         });
-    }
-
-    public function getLdap(): Ldap
-    {
-        return $this->createService(Ldap::class, fn() => new Ldap(
-            host: getenv('LDAP_HOST'),
-            bindDn: getenv('LDAP_BIND_DN'),
-            bindPassword: getenv('LDAP_BIND_PASSWORD'),
-        ));
     }
 
     public function getMaintenanceRunner(): MaintenanceRunner

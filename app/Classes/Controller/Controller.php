@@ -155,6 +155,14 @@ class Controller {
             return $router->call(AuthController::class, 'login');
         }
 
+        // nur bei diesen Typen ist die Exception-Message bewusst für die Anzeige gedacht;
+        // bei allen anderen (default-Zweig) könnte sie interne Details (SQL, Pfade, ...) enthalten
+        $messageIsUserFacing = $e instanceof InvalidRouteException
+            || $e instanceof NotFoundException
+            || $e instanceof AccessDeniedException
+            || $e instanceof InvalidCsrfTokenException
+            || $e instanceof InvalidUserDataException;
+
         [$message, $responseCode] = match (true) {
             $e instanceof InvalidRouteException => ['URL ungültig', 404],
             $e instanceof NotFoundException => ['nicht gefunden', 404],
@@ -168,7 +176,7 @@ class Controller {
             })(),
         };
 
-        if ($e->getMessage()) {
+        if ($messageIsUserFacing && $e->getMessage()) {
             $message = $e->getMessage();
             if ($e->getCode()) {
                 $message .= ' (code: ' . $e->getCode() . ')';
