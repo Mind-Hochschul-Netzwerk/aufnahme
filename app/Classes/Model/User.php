@@ -19,14 +19,10 @@ class User
     /** @var string */
     private $realName = '';
 
-    /** @var string */
-    private $emailAddress = '';
-
-    public function __construct(string $userName, string $realName, string $emailAddress)
+    public function __construct(string $userName, string $realName)
     {
         $this->userName = $userName;
         $this->realName = $realName;
-        $this->emailAddress = $emailAddress;
     }
 
     public function getUserName(): string
@@ -37,10 +33,5 @@ class User
     public function getRealName(): string
     {
         return $this->realName;
-    }
-
-    public function getEmailAddress(): string
-    {
-        return $this->emailAddress;
     }
 }

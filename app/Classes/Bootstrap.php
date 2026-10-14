@@ -92,7 +92,8 @@ class Bootstrap extends ServiceContainer {
         return $this->createService(AntragRepository::class, fn() => new AntragRepository(
             $this->getService(Db::class),
             $this->getEmailRepository(),
-            $this->getVoteRepository()
+            $this->getVoteRepository(),
+            $this->getUserRepository(),
         ));
     }
 
@@ -113,10 +114,7 @@ class Bootstrap extends ServiceContainer {
     public function getUserRepository(): UserRepository
     {
         return $this->createService(UserRepository::class, fn() => new UserRepository(
-            ldapHost: getenv('LDAP_HOST'),
-            ldapBindDn: getenv('LDAP_BIND_DN'),
-            ldapBindPassword: getenv('LDAP_BIND_PASSWORD'),
-            ldapPeopleDn: getenv('LDAP_PEOPLE_DN'),
+            $this->getService(Db::class),
         ));
     }
 

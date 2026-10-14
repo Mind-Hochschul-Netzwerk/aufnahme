@@ -16,7 +16,6 @@ RUN set -x \
 # install packages
 RUN set -x \
   && apk --no-cache add \
-       php84-ldap \
        php84-pdo_mysql \
        php84-iconv \
   && chown nobody:nobody /var/www

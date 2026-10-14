@@ -10,6 +10,7 @@ class AntragRepository
         private Db $db,
         private EmailRepository $emailRepository,
         private VoteRepository $voteRepository,
+        private UserRepository $userRepository,
     ) {}
 
     /**
@@ -137,5 +138,8 @@ class AntragRepository
         // verwaiste Mails und Voten löschen
         $this->emailRepository->deleteOrphans();
         $this->voteRepository->deleteOrphans();
+
+        // Benutzer-Cache-Einträge löschen, auf die nichts mehr verweist
+        $this->userRepository->deleteOrphans();
     }
 }

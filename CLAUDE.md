@@ -20,7 +20,7 @@ Alle weiteren Make-Targets (Produktion starten, Shell im Container, DB-Zugriff, 
 
 Es gibt **keine Tests, kein PHPStan/Psalm, keinen Linter und keine CI-Lint/Test-Stufe** (CI baut nur das Image und pusht nach GHCR). Änderungen müssen manuell im Dev-Container verifiziert werden.
 
-Die App erwartet LDAP und Authelia (SSO) als externe, bereits laufende Docker-Services/Netzwerke (`ldap`-Netzwerk extern, `OIDC_PROVIDER_URL=http://authelia:9091`) – die liegen nicht in diesem Repo.
+Die App erwartet Authelia (SSO) als externen, bereits laufenden Docker-Service (`OIDC_PROVIDER_URL=http://authelia:9091`) – der liegt nicht in diesem Repo.
 
 ## Architektur
 
@@ -38,8 +38,8 @@ Die App erwartet LDAP und Authelia (SSO) als externe, bereits laufende Docker-Se
 
 **Verzeichnisse unter `app/Classes/`:**
 - `Controller/` – ein Controller je Formular-/Ressourcenbereich, erben von `Controller.php` (Basis mit `render()`, `redirect()`, `handleException()` u. a.). Wichtige Controller: `AuthController` (OIDC/SSO-Login), `NeuController` (neuen Antrag stellen), `AntragController` (Bewertung/Abstimmung durch die Kommission), `EditController` (nachträgliche Datenänderung durch Antragstellende per Token), `EmailController` (Entscheidungs-Mails versenden), `TemplateController` (E-Mail-Vorlagen pflegen), `OnboardingController` (interne JSON-API für den externen "mitglieder"-Dienst, nur aus internem IP-Bereich erreichbar).
-- `Model/` – `Antrag` (Status-Workflow, siehe unten), `FormData` (Bewerbungsdaten, Schema aus `Resources/Private/formData.yml`), `Vote`, `Email` (Mail-Audit-Log), `Template`, `User` (LDAP-Nutzer).
-- `Repository/` – je Model ein Repository; `UserRepository` greift nicht auf die DB, sondern per `symfony/ldap` auf den LDAP-Server zu.
+- `Model/` – `Antrag` (Status-Workflow, siehe unten), `FormData` (Bewerbungsdaten, Schema aus `Resources/Private/formData.yml`), `Vote`, `Email` (Mail-Audit-Log), `Template`, `User` (Kommissionsmitglied, nur `username`+`realName`).
+- `Repository/` – je Model ein Repository; `UserRepository` ist nur ein Klarnamen-Cache (Tabelle `users`), siehe Gotchas.
 - `Service/` – `CurrentUser` (Session-Wrapper um `User`, delegiert per `__call`), `EmailService` (SMTP via PHPMailer; `SMTP_HOST=log` schreibt Mails nur ins Error-Log statt sie zu versenden – praktisch für Dev), `OpenIdConnect` (OIDC-Client-Wrapper), `MaintenanceRunner` (läuft bei jedem Request, gedrosselt auf alle 2h via Lockfile `/tmp/letztewartung`: löscht alte Anträge nach Fristen, verschickt Erinnerungsmails).
 
 **Templates:** Latte (`app/templates/`), Ordner je Controller benannt. `layout.latte` ist das zentrale Seitenlayout und bindet CSS/Branding vom externen Mitgliederportal ein (`https://mitglieder.{DOMAINNAME}/css/style.css`). `partials/components.latte` enthält wiederverwendbare Komponenten (Formularfelder, Dialoge, Info-Boxen), `errorpage.latte`/`message.latte` sind generische Fehler-/Meldungsseiten.
@@ -53,7 +53,7 @@ Die App erwartet LDAP und Authelia (SSO) als externe, bereits laufende Docker-Se
 ## Domänen-Workflow
 
 1. **Antrag stellen** (`NeuController`): E-Mail-Adresse angeben → signierter Token-Link per Mail (`Hengeb\Token\Token`, HMAC mit `TOKEN_KEY`) → Formular ausfüllen (inkl. versionsgebundener Einwilligungs-/Kenntnisnahme-Consent-Tokens) → `Antrag` mit `STATUS_BEWERTEN` wird angelegt, Kommission wird benachrichtigt.
-2. **Bewertung/Abstimmung** (`AntragController`, `Vote`): Kommissionsmitglieder (LDAP/SSO-Login) geben je Antrag ein Votum ab (`Vote::JA`/`NEIN`/`NACHFRAGEN`/`ENTHALTUNG`). Nur das jeweils neueste Votum pro Mitglied zählt. Ein Antrag gilt als "grün" (`Antrag::getGruen()`), wenn ≥3 Ja-Stimmen vorliegen und kein Nein/Nachfragen-Votum existiert. Statuswechsel erfolgt manuell durch die Kommission.
+2. **Bewertung/Abstimmung** (`AntragController`, `Vote`): Kommissionsmitglieder (SSO-Login via Authelia/OIDC) geben je Antrag ein Votum ab (`Vote::JA`/`NEIN`/`NACHFRAGEN`/`ENTHALTUNG`). Nur das jeweils neueste Votum pro Mitglied zählt. Ein Antrag gilt als "grün" (`Antrag::getGruen()`), wenn ≥3 Ja-Stimmen vorliegen und kein Nein/Nachfragen-Votum existiert. Statuswechsel erfolgt manuell durch die Kommission.
 3. **Status-Konstanten** (`Antrag::STATUS_*`): `NEU_BEWERTEN` (-1, nach Änderung erneut zu bewerten) → `BEWERTEN` (0, offen) → `NACHFRAGEN` (1) / `AUFNEHMEN` (2) / `ABLEHNEN` (3) als Entscheidung → `AUF_ANTWORT_WARTEN` (4, nach Nachfrage-Mail, Bearbeitung via `EditController`-Token) bzw. `AUFGENOMMEN` (5, Aktivierungsmail verschickt) / `ABGELEHNT` (6) → `AKTIVIERT` (7, Endzustand, gesetzt durch `OnboardingController`).
 4. Entscheidungs-Mails laufen über editierbare Vorlagen (`TemplateController`), jede versandte Mail wird protokolliert (`EmailRepository`).
 5. `MaintenanceRunner` räumt automatisiert auf (Fristen: aktiviert 8 Wochen, unaktivierte Aufnahme-Mail 12 Wochen, abgelehnt 60 Wochen) und verschickt Erinnerungen bei überfälligen Bewertungen/Aktivierungen.
@@ -69,5 +69,14 @@ Die App erwartet LDAP und Authelia (SSO) als externe, bereits laufende Docker-Se
 - **OIDC `access_denied`:** `AuthController::login()` fängt `Jumbojett\OpenIDConnectClientException` gezielt ab und zeigt bei `access_denied` eine verständliche deutsche Fehlermeldung statt der rohen Exception-Message.
 - **Bot-Schutz in `NeuController::initEmailAuth()`:** Honeypot-Feld (`website`) plus signiertes Zeitstempel-Token (`formToken`, mind. 3 Sekunden alt) gegen automatisiertes Mailbombing über das Antragsformular. Bei Verdacht auf Bot wird dieselbe "Prüfe dein Postfach"-Antwort wie bei echten Anfragen gezeigt, nur ohne tatsächlichen Mailversand, damit Bots kein unterscheidbares Feedback erhalten. IP-/E-Mail-basiertes Rate-Limiting ist bewusst (noch) nicht umgesetzt.
 - **Totes Code-Fragment entfernt:** `Bootstrap::getLdap()` (referenzierte die nie existierende Klasse `App\Service\Ldap`) wurde ersatzlos gestrichen.
+- **LDAP komplett entfernt.** Zugriffsrechte kommen seitdem ausschließlich von Authelia/OIDC (ein `access_denied` bricht den Login ab, siehe oben). `UserRepository` ist jetzt kein LDAP-Client mehr, sondern verwaltet eine eigene DB-Tabelle `users` (`username` PK, `realName`) als reinen Klarnamen-Cache für die Anzeige historischer Voten/Mails/Statusänderungen (es gab nie eine Stelle, die eine vollständige Nutzerliste aus LDAP brauchte – immer nur Einzel-Lookups zu bereits bekannten Usernamen). `AuthController::login()` schreibt bei jedem Login Username+Klarname aus den OIDC-Claims per `UserRepository::upsert()` in diese Tabelle (write-through), die "kein Mitgliedskonto gefunden"-Fehlerseite ist entfallen. `AntragRepository::deleteOld()` ruft zusätzlich `UserRepository::deleteOrphans()` auf, das Cache-Einträge löscht, auf die kein verbliebenes Voten/Mail/`antraege.statusaenderung_username` mehr verweist – die Tabelle wächst also nicht unbegrenzt. Die nie genutzte E-Mail-Adresse wurde aus `Model/User` entfernt. `symfony/ldap` ist aus `composer.json` draußen, `LDAP_*`-Env-Variablen und das externe `ldap`-Docker-Netzwerk sind aus `docker-compose.yml`/`env.sample` entfernt, `php84-ldap` nicht mehr im `Dockerfile`.
+  **Migration nötig:** Die neue Tabelle `users` steht nur in `docker/sql/db.sql` (frische Installationen). Für bestehende Datenbanken muss einmalig manuell ausgeführt werden:
+  ```sql
+  CREATE TABLE `users` (
+    `username` varchar(255) NOT NULL,
+    `realName` varchar(255) NOT NULL,
+    PRIMARY KEY (`username`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  ```
 - **`make help`:** selbstdokumentierendes Target im `Makefile` ergänzt (parst `## `-Kommentare hinter den Target-Zeilen).
 - **Fix in `Controller::handleException()`:** Die Exception-Message wurde bisher für *jede* Exception mit nicht-leerer Message angezeigt, auch im default-Zweig (500, unbehandelte Exceptions) – dadurch konnten technische Interna (z. B. SQL-/Dateipfad-Details aus `Controller::render()` oder `NeuController::handleActionAntrag()`) beim Nutzer landen. Jetzt wird die Exception-Message nur noch für die explizit im `match` behandelten Typen (`InvalidRouteException`, `NotFoundException`, `AccessDeniedException`, `InvalidCsrfTokenException`, `InvalidUserDataException`) durchgereicht; der default-Zweig zeigt immer die generische Meldung, Details landen nur noch im Error-Log. Geprüft: im gesamten `app/Classes/`-Code wird für absichtlich nutzerlesbare Meldungen bereits ausschließlich `InvalidUserDataException`/`AccessDeniedException` verwendet, keine Stelle verließ sich auf das alte Verhalten.

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\User;
 use App\Repository\UserRepository;
 use App\Service\OpenIdConnect;
 use Hengeb\Router\Attribute\PublicAccess;
@@ -53,10 +54,13 @@ class AuthController extends Controller {
 
         if (!$this->currentUser->isLoggedIn()) {
             $username = $openIdConnect->username;
-            $user = $username ? $this->userRepository->findOneByUsername($username) : null;
-            if (!$user) {
-                return $this->showError('Es wurde kein Mitgliedskonto zu diesem Login gefunden. Bitte wende dich an die Mitgliederverwaltung.', 403);
+            if (!$username) {
+                return $this->showError('OIDC-Login fehlgeschlagen: Es wurde kein Benutzername übermittelt.', 500);
             }
+            // der Zugriff auf dieses Tool wird allein von Authelia/OIDC entschieden (siehe access_denied oben);
+            // hier wird nur der Klarname für die spätere Anzeige (z.B. bei Voten) zwischengespeichert
+            $user = new User($username, $openIdConnect->fullName);
+            $this->userRepository->upsert($user);
             $this->currentUser->logIn($user);
         }
 
