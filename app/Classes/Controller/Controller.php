@@ -34,17 +34,6 @@ class Controller {
     #[Inject]
     public CurrentUser $currentUser;
 
-    #[Route('GET /'), PublicAccess]
-    public function home(): RedirectResponse {
-        if ($this->currentUser->hasGroup('aufnahme')) {
-            return $this->redirect('/antraege');
-        } elseif ($this->currentUser->hasGroup('aktivierung')) {
-            return $this->redirect('/aktivierung');
-        } else {
-            return $this->redirect('/antrag');
-        }
-    }
-
     protected function setTemplateVariable(string $key, mixed $value): void {
         $this->templateVariables[$key] = $value;
     }

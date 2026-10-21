@@ -4,28 +4,28 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dea9d14aee776495a03936037cc5642b",
+    "content-hash": "2ebcf9e18e633894648c40ec54127971",
     "packages": [
         {
             "name": "erusev/parsedown",
-            "version": "1.7.4",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/erusev/parsedown.git",
-                "reference": "cb17b6477dfff935958ba01325f2e8a2bfa6dab3"
+                "reference": "96baaad00f71ba04d76e45b4620f54d3beabd6f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/erusev/parsedown/zipball/cb17b6477dfff935958ba01325f2e8a2bfa6dab3",
-                "reference": "cb17b6477dfff935958ba01325f2e8a2bfa6dab3",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/96baaad00f71ba04d76e45b4620f54d3beabd6f7",
+                "reference": "96baaad00f71ba04d76e45b4620f54d3beabd6f7",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
-                "php": ">=5.3.0"
+                "php": ">=7.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35"
+                "phpunit/phpunit": "^7.5|^8.5|^9.6"
             },
             "type": "library",
             "autoload": {
@@ -52,9 +52,15 @@
             ],
             "support": {
                 "issues": "https://github.com/erusev/parsedown/issues",
-                "source": "https://github.com/erusev/parsedown/tree/1.7.x"
+                "source": "https://github.com/erusev/parsedown/tree/1.8.0"
             },
-            "time": "2019-12-30T22:54:17+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/erusev",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-02-16T11:41:01+00:00"
         },
         {
             "name": "hengeb/db",
@@ -101,21 +107,26 @@
         },
         {
             "name": "hengeb/router",
-            "version": "v0.7.1",
+            "version": "v0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hengeb/router.git",
-                "reference": "7ea31b122fde0bb1a5c6038fb44edf75eff9989a"
+                "reference": "39143d80239aa667277d01d3ad8eb1d773f70957"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hengeb/router/zipball/7ea31b122fde0bb1a5c6038fb44edf75eff9989a",
-                "reference": "7ea31b122fde0bb1a5c6038fb44edf75eff9989a",
+                "url": "https://api.github.com/repos/hengeb/router/zipball/39143d80239aa667277d01d3ad8eb1d773f70957",
+                "reference": "39143d80239aa667277d01d3ad8eb1d773f70957",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.0",
-                "symfony/http-foundation": ">=7.0"
+                "php": ">=8.4.0",
+                "symfony/http-foundation": "^7.0 || ^8.0"
+            },
+            "suggest": {
+                "hengeb/db": "Required for the default Db service of ServiceContainer",
+                "latte/latte": "Required for ServiceContainer and LatteExtension",
+                "tracy/tracy": "Required for ServiceContainer::startDebugger() and the Tracy extension of the Latte engine"
             },
             "type": "library",
             "autoload": {
@@ -138,9 +149,9 @@
             "description": "a PHP router that makes use of attributes",
             "support": {
                 "issues": "https://github.com/hengeb/router/issues",
-                "source": "https://github.com/hengeb/router/tree/v0.7.1"
+                "source": "https://github.com/hengeb/router/tree/v0.12"
             },
-            "time": "2026-02-06T23:12:03+00:00"
+            "time": "2026-10-21T16:20:18+00:00"
         },
         {
             "name": "hengeb/token",
@@ -228,16 +239,16 @@
         },
         {
             "name": "latte/latte",
-            "version": "v3.1.1",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/latte.git",
-                "reference": "cb98e705eeb0fd18f1f1c5cfe1a5f6217f9fa8b3"
+                "reference": "adccfac3d5d7bff441a0e5ae85978f448787f5d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/latte/zipball/cb98e705eeb0fd18f1f1c5cfe1a5f6217f9fa8b3",
-                "reference": "cb98e705eeb0fd18f1f1c5cfe1a5f6217f9fa8b3",
+                "url": "https://api.github.com/repos/nette/latte/zipball/adccfac3d5d7bff441a0e5ae85978f448787f5d4",
+                "reference": "adccfac3d5d7bff441a0e5ae85978f448787f5d4",
                 "shasum": ""
             },
             "require": {
@@ -251,9 +262,11 @@
             },
             "require-dev": {
                 "nette/php-generator": "^4.0",
-                "nette/tester": "^2.5",
+                "nette/phpstan-rules": "^1.0",
+                "nette/tester": "^2.6",
                 "nette/utils": "^4.0",
-                "phpstan/phpstan-nette": "^2.0@stable",
+                "phpstan/extension-installer": "^1.4@stable",
+                "phpstan/phpstan": "^2.1@stable",
                 "tracy/tracy": "^2.10"
             },
             "suggest": {
@@ -311,9 +324,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/latte/issues",
-                "source": "https://github.com/nette/latte/tree/v3.1.1"
+                "source": "https://github.com/nette/latte/tree/v3.1.6"
             },
-            "time": "2025-12-18T22:30:40+00:00"
+            "time": "2026-07-27T14:32:10+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -436,16 +449,16 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v7.0.2",
+            "version": "v7.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "ebf1655bd5b99b3f97e1a3ec0a69e5f4cd7ea088"
+                "reference": "1bc1716a507a65e039d4ac9d9adebbbd0d346e15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/ebf1655bd5b99b3f97e1a3ec0a69e5f4cd7ea088",
-                "reference": "ebf1655bd5b99b3f97e1a3ec0a69e5f4cd7ea088",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/1bc1716a507a65e039d4ac9d9adebbbd0d346e15",
+                "reference": "1bc1716a507a65e039d4ac9d9adebbbd0d346e15",
                 "shasum": ""
             },
             "require": {
@@ -506,7 +519,7 @@
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "support": {
                 "issues": "https://github.com/PHPMailer/PHPMailer/issues",
-                "source": "https://github.com/PHPMailer/PHPMailer/tree/v7.0.2"
+                "source": "https://github.com/PHPMailer/PHPMailer/tree/v7.1.1"
             },
             "funding": [
                 {
@@ -514,20 +527,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-09T18:02:33+00:00"
+            "time": "2026-05-18T08:06:14+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.55",
+            "version": "3.0.57",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "db9744e6d47e742b1f974e965ad49bdd041105af"
+                "reference": "d17e0ddaeaf6f22f7e007cbb437d78792fe2a0e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/db9744e6d47e742b1f974e965ad49bdd041105af",
-                "reference": "db9744e6d47e742b1f974e965ad49bdd041105af",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d17e0ddaeaf6f22f7e007cbb437d78792fe2a0e4",
+                "reference": "d17e0ddaeaf6f22f7e007cbb437d78792fe2a0e4",
                 "shasum": ""
             },
             "require": {
@@ -608,7 +621,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.55"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.57"
             },
             "funding": [
                 {
@@ -624,24 +637,96 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-14T23:24:10+00:00"
+            "time": "2026-08-26T12:13:21+00:00"
         },
         {
-            "name": "symfony/http-foundation",
-            "version": "v8.0.5",
+            "name": "symfony/deprecation-contracts",
+            "version": "v3.7.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "e3422806e6f6760dbed0ddbc0a7fbfb6b5ce96bb"
+                "url": "https://github.com/symfony/deprecation-contracts.git",
+                "reference": "f3202fa1b5097b0af062dc978b32ecf63404e31d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/e3422806e6f6760dbed0ddbc0a7fbfb6b5ce96bb",
-                "reference": "e3422806e6f6760dbed0ddbc0a7fbfb6b5ce96bb",
+                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/f3202fa1b5097b0af062dc978b32ecf63404e31d",
+                "reference": "f3202fa1b5097b0af062dc978b32ecf63404e31d",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.4",
+                "php": ">=8.1"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/contracts",
+                    "name": "symfony/contracts"
+                },
+                "branch-alias": {
+                    "dev-main": "3.7-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "function.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "A generic function and convention to trigger deprecation notices",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.7.1"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-06-05T06:23:12+00:00"
+        },
+        {
+            "name": "symfony/http-foundation",
+            "version": "v8.1.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/http-foundation.git",
+                "reference": "7850897fb8659f98491b03be79ac48600bdaf9ab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/7850897fb8659f98491b03be79ac48600bdaf9ab",
+                "reference": "7850897fb8659f98491b03be79ac48600bdaf9ab",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.4.1",
+                "symfony/deprecation-contracts": "^2.5|^3",
                 "symfony/polyfill-mbstring": "^1.1"
             },
             "conflict": {
@@ -684,7 +769,7 @@
             "description": "Defines an object-oriented layer for the HTTP specification",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/http-foundation/tree/v8.0.5"
+                "source": "https://github.com/symfony/http-foundation/tree/v8.1.9"
             },
             "funding": [
                 {
@@ -704,20 +789,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-27T16:18:07+00:00"
+            "time": "2026-10-08T16:57:43+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.33.0",
+            "version": "v1.43.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "6d857f4d76bd4b343eac26d6b539585d2bc56493"
+                "reference": "4d5d331bf731e0aedbc6b2f5e61135b7b7996a72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/6d857f4d76bd4b343eac26d6b539585d2bc56493",
-                "reference": "6d857f4d76bd4b343eac26d6b539585d2bc56493",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/4d5d331bf731e0aedbc6b2f5e61135b7b7996a72",
+                "reference": "4d5d331bf731e0aedbc6b2f5e61135b7b7996a72",
                 "shasum": ""
             },
             "require": {
@@ -769,7 +854,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.33.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.43.0"
             },
             "funding": [
                 {
@@ -789,20 +874,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-12-23T08:48:59+00:00"
+            "time": "2026-09-24T15:19:04+00:00"
         },
         {
             "name": "tracy/tracy",
-            "version": "v2.11.0",
+            "version": "v2.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/tracy.git",
-                "reference": "eec57bcf2ff11d79f519a19da9d7ae1e2c63c42e"
+                "reference": "90d24872cd97202f79281aac7eb09c27ec48bf69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/tracy/zipball/eec57bcf2ff11d79f519a19da9d7ae1e2c63c42e",
-                "reference": "eec57bcf2ff11d79f519a19da9d7ae1e2c63c42e",
+                "url": "https://api.github.com/repos/nette/tracy/zipball/90d24872cd97202f79281aac7eb09c27ec48bf69",
+                "reference": "90d24872cd97202f79281aac7eb09c27ec48bf69",
                 "shasum": ""
             },
             "require": {
@@ -818,15 +903,17 @@
                 "nette/di": "^3.0",
                 "nette/http": "^3.0",
                 "nette/mail": "^3.0 || ^4.0",
-                "nette/tester": "^2.2",
+                "nette/phpstan-rules": "^1.0",
+                "nette/tester": "^2.6",
                 "nette/utils": "^3.0 || ^4.0",
-                "phpstan/phpstan-nette": "^2.0@stable",
+                "phpstan/extension-installer": "^1.4@stable",
+                "phpstan/phpstan": "^2.1@stable",
                 "psr/log": "^1.0 || ^2.0 || ^3.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.11-dev"
+                    "dev-master": "2.12-dev"
                 }
             },
             "autoload": {
@@ -865,9 +952,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/tracy/issues",
-                "source": "https://github.com/nette/tracy/tree/v2.11.0"
+                "source": "https://github.com/nette/tracy/tree/v2.12.1"
             },
-            "time": "2025-10-31T00:12:50+00:00"
+            "time": "2026-08-18T10:56:11+00:00"
         }
     ],
     "packages-dev": [],
@@ -877,7 +964,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.3"
+        "php": ">=8.5"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"

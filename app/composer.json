@@ -3,7 +3,7 @@
     "description": "Aufnahmetool",
     "type": "project",
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.5",
         "phpmailer/phpmailer": ">=6.3",
         "erusev/parsedown": ">=1.7",
         "hengeb/db": ">=0.4",
